@@ -223,7 +223,7 @@ curl -X POST https://<app>/v1/billing/portal -H "Authorization: Bearer cn_live_.
    (Project Settings → Database → Connect, port 6543) for `DATABASE_URL`.
 3. **Vercel**: import this repo (framework preset *Other*) and set the variables in
    `.env.example` (`DATABASE_URL`, `STRIPE_*`, `CANON_PUBLIC_URL`, `CRON_SECRET`), then deploy.
-4. Smoke test: `curl https://<app>/healthz` should show `"billing_enabled": true`. Then sign up and complete a test Checkout with card `4242 4242 4242 4242`.
+4. Smoke test: `curl https://<app>/healthz` should show `"billing_enabled": true`. Then sign up and complete a test Checkout with card `4242 4242 4242 4242` (test mode only; in live mode a real card is charged).
 
 Use Stripe test keys until you're ready, then swap in live keys and re-run `setup` in live mode.
 

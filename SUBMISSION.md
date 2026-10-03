@@ -49,7 +49,7 @@ Python (standard library only for the core: zero runtime dependencies), Supabase
   - Upload a document: `curl -X POST "https://primaryaihackathon.vercel.app/v1/documents?filename=note.txt" -H "Authorization: Bearer cn_live_primaryaisupabasehackathon" --data-binary @note.txt`
   - The key is unmetered: upload as much as you like, it's never billed.
   - Use it from Claude over MCP: `claude mcp add --transport http canon https://primaryaihackathon.vercel.app/mcp --header "Authorization: Bearer cn_live_primaryaisupabasehackathon"`
-- Your own key: `curl -X POST https://primaryaihackathon.vercel.app/v1/signup -H 'Content-Type: application/json' -d '{"name":"Judge","email":"you@example.com"}'`. New accounts have no free pages: reads work right away, and uploads need a subscription through the returned Checkout link (Stripe test card `4242 4242 4242 4242`).
+- Your own key: `curl -X POST https://primaryaihackathon.vercel.app/v1/signup -H 'Content-Type: application/json' -d '{"name":"Judge","email":"you@example.com"}'`. New accounts have no free pages: reads work right away, and uploads need a paid subscription through the returned Checkout link (billing is live, $0.05 per page). To try uploads for free, use the judge key above.
 - API health: https://primaryaihackathon.vercel.app/healthz
 - Demo video with voice-over (2:03): https://github.com/rishadusmani/primaryaihackathon/blob/main/docs/canon-demo.mp4 (recorded on the live site; upload to YouTube or Loom if the form needs a streaming link)
 - Product images (10): https://github.com/rishadusmani/primaryaihackathon/tree/main/docs/images
