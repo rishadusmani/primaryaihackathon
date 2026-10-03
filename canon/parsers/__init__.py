@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import re
 
-from . import ccda, csv_portal, fhir, hl7v2, llm, pdf, text, x12
+from . import assertion, ccda, csv_portal, fhir, hl7v2, llm, pdf, text, x12
 
 FORMATS = ("fhir", "hl7v2", "ccda", "x12_837", "csv", "pdf", "text")
 
@@ -66,17 +66,29 @@ def _unstructured(fmt: str, data: bytes, use_llm: bool | None, info: dict) -> tu
     else:
         raw_text = data.decode("utf-8", "replace")
     facts: list[dict] = []
+    review: list[dict] = []
     if raw_text and raw_text.strip():
-        facts = text.parse(raw_text)
+        facts = text.parse(raw_text, review=review)
         info["extractors"].append("rule_nlp")
         info["text_chars"] = len(raw_text)
+    if review and assertion.enabled():
+        usage: dict = {}
+        try:
+            restored, report = assertion.resolve(review, usage)
+            facts.extend(restored)
+            info["assertion_review"] = report
+            info["extractors"].append(f"assertion:{assertion.MODEL}")
+        except Exception as e:  # the rules' conservative result stands if the model is unreachable
+            info.setdefault("warnings", []).append(f"Assertion review skipped: {e}")
+        if usage:
+            info["llm_usage"] = usage
     needs_ocr = fmt == "pdf" and info["pdf"]["needs_ocr"]
     want_llm = use_llm if use_llm is not None else (needs_ocr and llm.available())
     if want_llm:
         if not llm.available():
             info["warnings"] = ["LLM extraction requested but anthropic SDK/credentials are unavailable."]
         else:
-            usage: dict = {}
+            usage = info.get("llm_usage") or {}
             llm_facts = llm.extract(text=None if needs_ocr else raw_text, pdf=data if fmt == "pdf" else None,
                                     usage=usage)
             facts.extend(llm_facts)
