@@ -58,15 +58,15 @@ def signed(payload: dict, secret: str, ts: int | None = None):
 
 class HostedTest(unittest.TestCase):
     def setUp(self):
-        os.environ.update(STRIPE_PRICE_ID="price_123", STRIPE_WEBHOOK_SECRET="whsec_test", CANON_FREE_DOCUMENTS="2",
+        os.environ.update(STRIPE_PRICE_ID="price_123", STRIPE_WEBHOOK_SECRET="whsec_test", CANON_FREE_PAGES="2",
                           CRON_SECRET="cron123", CANON_PUBLIC_URL="https://canon.test")
         self.fake = FakeStripe()
         self.store = Store(":memory:")
         self.app = App(self.store, Billing(self.store, Stripe("sk_test_x", transport=self.fake)), sandbox=False)
 
     def tearDown(self):
-        for k in ("STRIPE_PRICE_ID", "STRIPE_WEBHOOK_SECRET", "CANON_FREE_DOCUMENTS", "CRON_SECRET",
-                  "CANON_PUBLIC_URL"):
+        for k in ("STRIPE_PRICE_ID", "STRIPE_WEBHOOK_SECRET", "CANON_FREE_PAGES", "CRON_SECRET",
+                  "CANON_PUBLIC_URL", "CANON_LLM_PAGE_UNITS"):
             os.environ.pop(k, None)
 
     def call(self, method, path, body=b"", key=None, headers=None):
@@ -97,7 +97,7 @@ class HostedTest(unittest.TestCase):
         out = self.signup()
         self.assertTrue(out["api_key"].startswith("cn_live_"))
         self.assertEqual(out["checkout_url"], "https://checkout.stripe.com/c/pay/cs_test_1")
-        self.assertEqual(out["account"]["usage"]["free_documents_remaining"], 2)
+        self.assertEqual(out["account"]["usage"]["free_pages_remaining"], 2)
         # key is stored hashed only
         self.assertIsNone(self.store.one("SELECT * FROM api_keys WHERE key_hash=?", (out["api_key"],)))
         checkout = next(c for c in self.fake.calls if c[1] == "/v1/checkout/sessions")[2]
@@ -148,6 +148,48 @@ class HostedTest(unittest.TestCase):
         acct_view = self.call("GET", "/v1/account", key=key)[1]
         self.assertEqual(acct_view["status"], "active")
         self.assertEqual(acct_view["usage"]["documents_total"], 3)
+        self.assertEqual(acct_view["usage"]["pages_total"], 3)
+
+    def test_no_free_tier_by_default(self):
+        os.environ.pop("CANON_FREE_PAGES")
+        self.app = App(self.store, Billing(self.store, Stripe("sk_test_x", transport=self.fake)), sandbox=False)
+        a = self.signup()
+        self.assertEqual(a["account"]["usage"]["free_pages_remaining"], 0)
+        st, out = self.call("POST", "/v1/documents", HL7, key=a["api_key"])
+        self.assertEqual((st, out["error"]["code"]), (402, "payment_required"))
+        self.activate(a["account"]["id"])
+        self.assertEqual(self.call("POST", "/v1/documents", HL7, key=a["api_key"])[0], 201)
+        self.assertEqual(len(self.fake.meter_events()), 1)
+
+    def test_billed_per_page(self):
+        a = self.signup()
+        self.activate(a["account"]["id"])
+        long_fax = (FAX.decode() + "\n") * 5                         # ~6,400 chars -> 3 text pages
+        st, r = self.call("POST", "/v1/documents", long_fax.encode(), key=a["api_key"])
+        self.assertEqual(st, 201)
+        self.assertEqual(r["document"]["extraction"]["pages"], 3)
+        self.assertEqual(self.fake.meter_events()[-1][2]["payload"]["value"], 3)
+        st, r = self.call("POST", "/v1/documents", _read("07_dermatology_letter.pdf"), key=a["api_key"])
+        self.assertEqual((st, r["document"]["extraction"]["pages"]), (201, 1))
+        self.assertEqual(self.fake.meter_events()[-1][2]["payload"]["value"], 1)
+        self.assertEqual(self.call("GET", "/v1/account", key=a["api_key"])[1]["usage"]["pages_total"], 4)
+
+    def test_llm_pages_can_weigh_more(self):
+        os.environ["CANON_LLM_PAGE_UNITS"] = "3"
+        b = Billing(self.store, Stripe("sk_test_x", transport=self.fake))
+        self.assertEqual(b.units({"pages": 2, "extractors": ["pdf_parser", "llm:claude-opus-5-5"]}), 6)
+        self.assertEqual(b.units({"pages": 2, "extractors": ["pdf_parser", "rule_nlp"]}), 2)
+        self.assertEqual(b.units({}), 1)
+
+    def test_exempt_account_is_never_gated_or_billed(self):
+        os.environ.pop("CANON_FREE_PAGES")
+        self.app = App(self.store, Billing(self.store, Stripe("sk_test_x", transport=self.fake)), sandbox=False)
+        a = self.signup("Hackathon judges")
+        self.store.execute("UPDATE accounts SET status='sandbox' WHERE id=?", (a["account"]["id"],))
+        self.assertEqual(self.call("POST", "/v1/documents", HL7, key=a["api_key"])[0], 201)
+        self.assertEqual(self.fake.meter_events(), [])
+        self.assertEqual(self.store.one("SELECT billable, quantity FROM usage_events")["billable"], 0)
+        self.assertEqual(self.call("GET", "/v1/usage", key=a["api_key"])[1]["totals"]["pages"], 1)
 
     def test_failed_meter_event_is_retried_by_cron(self):
         a = self.signup()
@@ -211,6 +253,7 @@ class StripeEncodingTest(unittest.TestCase):
         with self.assertRaises(BillingError) as cm:
             b.stripe.request("POST", "/v1/customers")
         self.assertEqual(cm.exception.status, 503)
+        b.check_can_ingest({"id": "acct_x", "status": "trial"})  # no Stripe: ingest is not gated
 
 
 if __name__ == "__main__":

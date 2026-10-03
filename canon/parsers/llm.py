@@ -22,7 +22,9 @@ import re
 
 from ..model import fact
 
-MODEL = os.environ.get("CANON_LLM_MODEL", "claude-opus-5-5")
+# Scanned pages are the only thing sent to a model, and reading a fax is simple transcription with a fixed
+# schema, so the default is the cheapest Claude model. Override with CANON_LLM_MODEL.
+MODEL = os.environ.get("CANON_LLM_MODEL", "claude-haiku-4-5")
 
 _NULLABLE_STR = {"type": ["string", "null"]}
 EXTRACTION_SCHEMA = {
@@ -79,20 +81,26 @@ def available() -> bool:
                 or os.environ.get("CANON_LLM_FORCE"))
 
 
+def request_params(model: str, content_blocks: list[dict]) -> dict:
+    """Messages API arguments for `model`. Haiku takes no effort setting and has no refusal fallback;
+    Opus/Sonnet/Fable get medium effort and the server-side fallback."""
+    params = {"model": model, "max_tokens": 16000, "system": SYSTEM,
+              "messages": [{"role": "user", "content": content_blocks}],
+              "output_config": {"format": {"type": "json_schema", "schema": EXTRACTION_SCHEMA}}}
+    if not model.startswith("claude-haiku"):
+        params["output_config"]["effort"] = "medium"
+        params["betas"] = ["server-side-fallback-2026-07-01"]
+        params["fallbacks"] = "default"
+    return params
+
+
 def _call(content_blocks: list[dict], usage: dict | None = None) -> dict:
     import anthropic
 
     client = anthropic.Anthropic()
-    response = client.beta.messages.create(
-        model=MODEL,
-        max_tokens=16000,
-        system=SYSTEM,
-        messages=[{"role": "user", "content": content_blocks}],
-        output_config={"effort": "medium",
-                       "format": {"type": "json_schema", "schema": EXTRACTION_SCHEMA}},
-        betas=["server-side-fallback-2026-07-01"],
-        fallbacks="default",
-    )
+    params = request_params(MODEL, content_blocks)
+    create = client.beta.messages.create if "betas" in params else client.messages.create
+    response = create(**params)
     if response.stop_reason == "refusal":
         raise RuntimeError(f"Extraction declined by the model: {response.stop_details}")
     if response.stop_reason == "max_tokens":

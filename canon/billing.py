@@ -4,11 +4,16 @@ Model
 -----
 * Each customer is an **account** with one or more **API keys** (stored only as
   SHA-256 hashes; the plaintext is shown once at creation).
-* Every newly normalized document is a billable **usage event**
-  (`document.normalized`, quantity 1). Re-uploading an identical document is free.
-* New accounts get CANON_FREE_DOCUMENTS free documents (default 25). After that
-  they need an active Stripe subscription, otherwise ingest returns
-  402 payment_required with a checkout link. Reads are never blocked.
+* Billing is **per page**. Every newly normalized document is a **usage event**
+  (`document.normalized`) whose quantity is its page count: real pages for PDFs,
+  ~3,000-character pages for text/OCR, and 1 for structured formats (HL7, FHIR,
+  C-CDA, X12, CSV). Pages that needed Claude (scanned faxes) can count as more
+  than one unit (CANON_LLM_PAGE_UNITS). Re-uploading an identical document is free.
+* There is no free tier by default (CANON_FREE_PAGES=0): ingest needs an active
+  Stripe subscription, otherwise it returns 402 payment_required with a checkout
+  link. While Stripe is not configured, ingest is not gated. Reads are never blocked.
+* Accounts with status `sandbox` (the demo, and accounts deliberately exempted,
+  e.g. hackathon judges) are never gated or billed.
 * Usage is sent to a Stripe **Billing Meter** right away (idempotent by usage
   event id). Anything that fails to send is retried by the /v1/billing/sync cron.
 * Stripe webhooks activate, suspend or cancel accounts.
@@ -20,7 +25,8 @@ STRIPE_WEBHOOK_SECRET   whsec_...  (from the Stripe webhook endpoint)
 STRIPE_PRICE_ID         price_...  (metered price; create with `python -m canon.billing setup`)
 STRIPE_METER_EVENT      meter event name (default canon_document_normalized)
 CANON_PUBLIC_URL        e.g. https://canon.example.com (Checkout/Portal return URLs)
-CANON_FREE_DOCUMENTS    free documents per account before a subscription is required (default 25)
+CANON_FREE_PAGES        free pages per account before a subscription is required (default 0)
+CANON_LLM_PAGE_UNITS    billing units per page read by Claude, e.g. scanned faxes (default 1)
 """
 
 from __future__ import annotations
@@ -141,7 +147,8 @@ class Billing:
         self.stripe = stripe or Stripe()
         self.price_id = os.environ.get("STRIPE_PRICE_ID", "")
         self.public_url = os.environ.get("CANON_PUBLIC_URL", "http://localhost:8080").rstrip("/")
-        self.free_documents = int(os.environ.get("CANON_FREE_DOCUMENTS", "25"))
+        self.free_pages = int(os.environ.get("CANON_FREE_PAGES", "0"))
+        self.llm_page_units = int(os.environ.get("CANON_LLM_PAGE_UNITS", "1"))
         self.webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
 
     # -- accounts / keys -------------------------------------------------------------
@@ -181,47 +188,53 @@ class Billing:
         if not r:
             raise BillingError("not_found", "Account not found.", 404)
         a = dict(r)
-        used_total = self._count(account_id)
+        docs_month, pages_month = self._totals(account_id, since=_month_start())
+        docs_total, pages_total = self._totals(account_id)
         return {"id": a["id"], "name": a["name"], "email": a["email"], "status": a["status"],
                 "billing_enabled": self.stripe.enabled,
                 "has_subscription": a["status"] in ACTIVE_STATES,
-                "usage": {"documents_this_month": self._count(account_id, since=_month_start()),
-                          "documents_total": used_total,
-                          "free_documents_remaining": max(0, self.free_documents - used_total)},
+                "usage": {"pages_this_month": pages_month, "pages_total": pages_total,
+                          "documents_this_month": docs_month, "documents_total": docs_total,
+                          "free_pages_remaining": max(0, self.free_pages - pages_total)},
                 "created_at": a["created_at"]}
 
-    def _count(self, account_id: str, since: str | None = None) -> int:
-        if since:
-            r = self.store.one("SELECT COALESCE(SUM(quantity),0) AS n FROM usage_events WHERE account_id=? "
-                               "AND created_at>=?", (account_id, since))
-        else:
-            r = self.store.one("SELECT COALESCE(SUM(quantity),0) AS n FROM usage_events WHERE account_id=?",
-                               (account_id,))
-        return int(r["n"])
+    def _totals(self, account_id: str, since: str | None = None) -> tuple[int, int]:
+        """(documents, pages) recorded for an account, optionally since a timestamp."""
+        sql = "SELECT COUNT(*) AS d, COALESCE(SUM(quantity),0) AS p FROM usage_events WHERE account_id=?"
+        r = self.store.one(sql + " AND created_at>=?", (account_id, since)) if since else \
+            self.store.one(sql, (account_id,))
+        return int(r["d"]), int(r["p"])
+
+    def units(self, info: dict) -> int:
+        """Billing units for one document: its pages, weighted when Claude had to read them."""
+        pages = max(1, int(info.get("pages") or 1))
+        used_llm = any(str(e).startswith("llm:") for e in info.get("extractors") or [])
+        return pages * (self.llm_page_units if used_llm else 1)
 
     # -- entitlement + metering -------------------------------------------------------
     def check_can_ingest(self, account: dict) -> None:
         if account["status"] in ACTIVE_STATES or account["status"] == "sandbox":
             return
+        if not self.stripe.enabled:  # billing not configured: nobody could pay, so don't gate
+            return
         if account["status"] in ("past_due", "canceled"):
             raise BillingError("payment_required", f"Subscription is {account['status']}. Update billing to "
                                "continue normalizing documents.", 402, portal="/v1/billing/portal")
-        if self._count(account["id"]) >= self.free_documents:
-            raise BillingError("payment_required",
-                               f"Free tier used ({self.free_documents} documents). Start a subscription via "
-                               "POST /v1/billing/checkout.", 402, checkout="/v1/billing/checkout")
+        if self._totals(account["id"])[1] >= self.free_pages:
+            msg = (f"Free pages used ({self.free_pages})." if self.free_pages else "A subscription is required.")
+            raise BillingError("payment_required", f"{msg} Start one via POST /v1/billing/checkout.", 402,
+                               checkout="/v1/billing/checkout")
 
-    def record_usage(self, account_id: str, document_id: str) -> None:
+    def record_usage(self, account_id: str, document_id: str, info: dict | None = None) -> None:
         acct = self.store.one("SELECT status, stripe_customer_id FROM accounts WHERE id=?", (account_id,))
-        if acct and acct["status"] == "sandbox":
-            return
         uid = new_id("use")
-        billable = bool(acct and acct["status"] in ACTIVE_STATES)  # free-tier usage is never billed
+        units = self.units(info or {})
+        billable = bool(acct and acct["status"] in ACTIVE_STATES)  # free-tier and sandbox usage is never billed
         self.store.execute("INSERT INTO usage_events (id, account_id, kind, quantity, billable, document_id, "
                            "created_at) VALUES (?,?,?,?,?,?,?)",
-                           (uid, account_id, "document.normalized", 1, int(billable), document_id, _now()))
+                           (uid, account_id, "document.normalized", units, int(billable), document_id, _now()))
         if billable and acct["stripe_customer_id"]:
-            self._report(uid, acct["stripe_customer_id"], 1)
+            self._report(uid, acct["stripe_customer_id"], units)
 
     def _report(self, usage_id: str, customer_id: str, quantity: int) -> bool:
         try:
@@ -308,7 +321,7 @@ def setup(price_cents: str, currency: str = "usd") -> dict:
     """Create the Billing Meter + metered Price in Stripe. Run once per Stripe account/mode."""
     s = Stripe()
     meter = s.request("POST", "/v1/billing/meters", {
-        "display_name": "Documents normalized", "event_name": METER_EVENT,
+        "display_name": "Pages normalized", "event_name": METER_EVENT,
         "default_aggregation": {"formula": "sum"},
         "customer_mapping": {"type": "by_id", "event_payload_key": "stripe_customer_id"},
         "value_settings": {"event_payload_key": "value"}})
@@ -316,7 +329,7 @@ def setup(price_cents: str, currency: str = "usd") -> dict:
         "currency": currency, "unit_amount_decimal": price_cents,
         "recurring": {"interval": "month", "usage_type": "metered", "meter": meter["id"]},
         "product_data": {"name": "Canon clinical data normalization"},
-        "nickname": f"Per document ({price_cents}c)"})
+        "nickname": f"Per page ({price_cents}c)"})
     return {"meter_id": meter["id"], "price_id": price["id"]}
 
 
@@ -324,7 +337,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(prog="python -m canon.billing")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sp = sub.add_parser("setup", help="Create the Stripe meter and metered price")
-    sp.add_argument("--price-cents", default="10", help="Price per normalized document in cents (decimal ok)")
+    sp.add_argument("--price-cents", default="5", help="Price per normalized page in cents (decimal ok)")
     sp.add_argument("--currency", default="usd")
     a = ap.parse_args()
     if a.cmd == "setup":

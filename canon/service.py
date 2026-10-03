@@ -20,6 +20,19 @@ def _now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+TEXT_CHARS_PER_PAGE = 3000  # a typical printed page; used to count pages in text/OCR uploads
+
+
+def _pages(fmt: str, info: dict) -> int:
+    """Billable pages: real pages for PDFs, ~3,000-character pages for text, 1 for structured formats
+    (HL7, FHIR, C-CDA, X12, CSV), which have no pages."""
+    if fmt == "pdf":
+        return max(1, int((info.get("pdf") or {}).get("pages") or 1))
+    if fmt == "text":
+        return max(1, -(-int(info.get("text_chars") or 0) // TEXT_CHARS_PER_PAGE))
+    return 1
+
+
 class CanonError(Exception):
     def __init__(self, code: str, message: str, status: int = 400):
         super().__init__(message)
@@ -46,7 +59,7 @@ class Canon:
     def __init__(self, db: str | Store | None = ":memory:", account_id: str = SANDBOX_ACCOUNT):
         self.store = db if isinstance(db, Store) else Store(db)
         self.account_id = account_id
-        self.on_document_ingested = None  # hook: fn(account_id, document_id) for usage metering
+        self.on_document_ingested = None  # hook: fn(account_id, document_id, info) for usage metering
 
     # ------------------------------------------------------------------ ingest
     def ingest(self, data: bytes | str, *, filename: str | None = None, content_type: str | None = None,
@@ -93,6 +106,7 @@ class Canon:
                                                                                      "condition", "medication")]
         dates = [d for d in dates if d]
         doc_date = Counter(dates).most_common(1)[0][0] if dates else None
+        info["pages"] = _pages(fmt, info)
         doc_id = new_id("doc")
         received = _now()
         self.store.execute("INSERT INTO patients (account_id, id, created_at) VALUES (?,?,?) ON CONFLICT DO NOTHING",
@@ -110,7 +124,7 @@ class Canon:
                          patient_id=pid, document_id=doc_id,
                          detail={"format": fmt, "sha256": digest, "facts": len(facts), "match": match["method"]})
         if self.on_document_ingested:
-            self.on_document_ingested(self.account_id, doc_id)
+            self.on_document_ingested(self.account_id, doc_id, info)
         return {"document": self.get_document(doc_id), "patient_id": pid, "match": match}
 
     def _match_patient(self, patient_id: str | None, demo: dict) -> dict:
