@@ -3,82 +3,110 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Canon Agent Usage</title>
+<title>Canon Agent Usage · Primary AI</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23f8f6f2'/%3E%3Cpath d='M136 448V72q40-14 86-12c72 4 116 64 116 136 0 66-38 116-96 140v112' fill='none' stroke='%23261d17' stroke-width='48' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600&display=swap">
 <style>
+  /* Primary AI brand (primaryai.world): warm cream paper, ink brown, terracotta accent.
+     Chart pair validated for CVD + contrast in each mode (dataviz validate_palette.js). */
   :root {
     color-scheme: light;
-    --bg: #f6f6f4;
-    --surface: #fcfcfb;
-    --border: #e4e3df;
-    --grid: #ecebe7;
-    --text-primary: #0b0b0b;
-    --text-secondary: #52514e;
-    --text-muted: #7a7974;
-    --accent: #2a78d6;
-    --series-ok: #2a78d6;
-    --series-err: #e34948;
-    --bar-track: #e6effa;
-    --good: #0f7a3a;
-    --bad: #b42323;
+    --bg: #f5f1e8;
+    --surface: #fdfcfa;
+    --border: #d8d0c2;
+    --grid: #ebe5da;
+    --text-primary: #231d18;
+    --text-secondary: #5d554d;
+    --text-muted: #7f746a;
+    --accent: #a85233;
+    --cta: #c46f49;
+    --cta-fg: #ffffff;
+    --primary: #3c2c20;
+    --primary-fg: #f5f1e8;
+    --series-ok: #c46f45;
+    --series-err: #8e2d29;
+    --bar-track: #f0e6db;
+    --good: #5b833f;
+    --bad: #ca382b;
+    --font-display: "Source Serif 4", Georgia, serif;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       color-scheme: dark;
-      --bg: #121211;
-      --surface: #1a1a19;
-      --border: #2e2e2b;
-      --grid: #272725;
-      --text-primary: #ffffff;
-      --text-secondary: #c3c2b7;
-      --text-muted: #8f8e86;
-      --accent: #3987e5;
-      --series-ok: #3987e5;
-      --series-err: #e66767;
-      --bar-track: #1f2e42;
-      --good: #4cc27a;
-      --bad: #f08080;
+      --bg: #0d0d0d;
+      --surface: #141414;
+      --border: #292929;
+      --grid: #1f1f1f;
+      --text-primary: #f5f5f5;
+      --text-secondary: #a1a1a1;
+      --text-muted: #7c7c7c;
+      --accent: #df8049;
+      --cta: #df8049;
+      --cta-fg: #141414;
+      --primary: #f5f5f5;
+      --primary-fg: #141414;
+      --series-ok: #9e572e;
+      --series-err: #ec5e51;
+      --bar-track: #2a1d16;
+      --good: #7eac5d;
+      --bad: #ec5e51;
     }
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
-    --bg: #121211;
-    --surface: #1a1a19;
-    --border: #2e2e2b;
-    --grid: #272725;
-    --text-primary: #ffffff;
-    --text-secondary: #c3c2b7;
-    --text-muted: #8f8e86;
-    --accent: #3987e5;
-    --series-ok: #3987e5;
-    --series-err: #e66767;
-    --bar-track: #1f2e42;
-    --good: #4cc27a;
-    --bad: #f08080;
+    --bg: #0d0d0d;
+    --surface: #141414;
+    --border: #292929;
+    --grid: #1f1f1f;
+    --text-primary: #f5f5f5;
+    --text-secondary: #a1a1a1;
+    --text-muted: #7c7c7c;
+    --accent: #df8049;
+    --cta: #df8049;
+    --cta-fg: #141414;
+    --primary: #f5f5f5;
+    --primary-fg: #141414;
+    --series-ok: #9e572e;
+    --series-err: #ec5e51;
+    --bar-track: #2a1d16;
+    --good: #7eac5d;
+    --bad: #ec5e51;
   }
   * { box-sizing: border-box; }
   body {
     margin: 0; background: var(--bg); color: var(--text-primary);
-    font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font: 14px/1.5 var(--font-body);
   }
   .wrap { max-width: 1120px; margin: 0 auto; padding: 24px 16px 48px; }
-  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-  h1 { font-size: 20px; margin: 0; font-weight: 600; }
-  h2 { font-size: 15px; margin: 0 0 2px; font-weight: 600; }
+  .brandbar { border-bottom: 1px solid var(--border); }
+  .brandbar .in { max-width: 1120px; margin: 0 auto; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text-primary); text-decoration: none; }
+  .brand svg { width: 22px; height: 22px; }
+  .brand .word { font-family: var(--font-display); font-weight: 600; font-size: 19px; letter-spacing: -0.01em; }
+  .brand .product { color: var(--text-secondary); font-size: 13px; padding-left: 10px; border-left: 1px solid var(--border); }
+  .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.16em; font-size: 11px; font-weight: 500; margin: 0 0 6px; }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; }
+  h1 { font-family: var(--font-display); font-size: 34px; line-height: 1.1; margin: 0 0 4px; font-weight: 500; letter-spacing: -0.01em; }
+  h2 { font-family: var(--font-display); font-size: 18px; margin: 0 0 2px; font-weight: 600; }
   .sub { color: var(--text-secondary); font-size: 13px; }
   .muted { color: var(--text-muted); }
   .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface); }
-  .seg button { border: 0; background: transparent; color: var(--text-secondary); padding: 6px 12px; font: inherit; cursor: pointer; }
-  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
-  .btn { border: 1px solid var(--border); background: var(--surface); color: var(--text-primary); border-radius: 8px; padding: 6px 12px; font: inherit; cursor: pointer; }
-  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; padding: 3px; background: var(--surface); }
+  .seg button { border: 0; background: transparent; color: var(--text-secondary); padding: 5px 14px; border-radius: 999px; font: inherit; font-size: 13px; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--primary); color: var(--primary-fg); }
+  .btn { border: 1px solid var(--border); background: var(--surface); color: var(--text-primary); border-radius: 999px; padding: 7px 16px; font: inherit; font-size: 13px; cursor: pointer; }
+  .btn:hover, .seg button:not([aria-pressed="true"]):hover { border-color: var(--text-muted); color: var(--text-primary); }
+  .btn.primary { background: var(--cta); border-color: var(--cta); color: var(--cta-fg); padding: 10px 20px; font-size: 14px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
   .grid { display: grid; gap: 16px; }
   .kpis { grid-template-columns: repeat(6, 1fr); margin-bottom: 16px; }
   @media (max-width: 960px) { .kpis { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 560px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
   .kpi .label { color: var(--text-secondary); font-size: 13px; }
-  .kpi .value { font-size: 26px; font-weight: 600; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .kpi .value { font-size: 26px; font-weight: 600; letter-spacing: -0.01em; margin-top: 4px; font-variant-numeric: tabular-nums; }
   .kpi .note { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
   .kpi.hero .value { font-size: 48px; line-height: 1.1; margin-top: 0; }
   @media (max-width: 560px) { .kpi.hero .value { font-size: 36px; } }
@@ -92,7 +120,7 @@
   .chart text { fill: var(--text-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
   .tip {
     position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; padding: 8px 10px; font-size: 12px; box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    border-radius: 12px; padding: 8px 12px; font-size: 12px; box-shadow: 0 6px 20px rgba(35,29,24,.12);
     white-space: nowrap; display: none; z-index: 2;
   }
   .tip b { display: block; margin-bottom: 4px; }
@@ -111,17 +139,30 @@
   .status.err::before { background: var(--bad); }
   .split { display: flex; flex-direction: column; gap: 14px; }
   .split .rowline { display: flex; justify-content: space-between; margin-bottom: 4px; }
-  .signin { max-width: 420px; margin: 10vh auto; }
-  .signin input { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text-primary); font: inherit; margin: 12px 0; }
+  .signin { max-width: 440px; margin: 10vh auto; padding: 32px; }
+  .signin h1 { font-size: 30px; }
+  .signin input { width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text-primary); font: inherit; margin: 12px 0; }
   .error { color: var(--bad); font-size: 13px; min-height: 18px; }
+  input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  a { color: var(--accent); }
   details summary { cursor: pointer; color: var(--text-secondary); font-size: 13px; margin-top: 10px; }
   .empty { color: var(--text-muted); padding: 24px 0; text-align: center; }
   [hidden] { display: none !important; }
 </style>
 </head>
 <body>
+<div class="brandbar">
+  <div class="in">
+    <a class="brand" href="https://primaryai.world" aria-label="Primary AI">
+      <svg viewBox="0 0 512 512" aria-hidden="true"><path d="M136 448V72q40-14 86-12c72 4 116 64 116 136 0 66-38 116-96 140v112" fill="none" stroke="currentColor" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="word">Primary AI</span>
+      <span class="product">Canon API</span>
+    </a>
+  </div>
+</div>
 <div class="wrap">
   <section id="signin" class="card signin" hidden>
+    <p class="eyebrow">Canon API</p>
     <h1>Agent usage</h1>
     <p class="sub">Sign in with your Canon API key to see how your agents use the API.</p>
     <form id="signin-form">
@@ -136,6 +177,7 @@
   <main id="app" hidden>
     <header>
       <div>
+        <p class="eyebrow">Canon API</p>
         <h1>Agent usage</h1>
         <div class="sub" id="scope"></div>
       </div>
