@@ -20,10 +20,10 @@ def one(records):
 
 def test_sample_file_normalizes_with_only_the_unknown_lab_failing():
     result = normalize_records(SAMPLES)
-    assert result["normalized"] == 11
+    assert result["normalized"] == 20
     assert result["failed"] == 1
     assert "Vitamin Q" in result["issues"][0]["message"]
-    assert len(resources(result, "Patient")) == 2
+    assert len(resources(result, "Patient")) == 3
 
 
 def test_hba1c_maps_to_loinc_and_us_date():

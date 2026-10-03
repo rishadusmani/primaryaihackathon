@@ -1,0 +1,1036 @@
+[
+ {
+  "rxcui": "6809",
+  "name": "metformin",
+  "tty": "IN",
+  "aliases": [
+   "Glucophage"
+  ]
+ },
+ {
+  "rxcui": "4821",
+  "name": "glipizide",
+  "tty": "IN",
+  "aliases": [
+   "Glucotrol"
+  ]
+ },
+ {
+  "rxcui": "25789",
+  "name": "glimepiride",
+  "tty": "IN",
+  "aliases": [
+   "Amaryl"
+  ]
+ },
+ {
+  "rxcui": "33738",
+  "name": "pioglitazone",
+  "tty": "IN",
+  "aliases": [
+   "Actos"
+  ]
+ },
+ {
+  "rxcui": "593411",
+  "name": "sitagliptin",
+  "tty": "IN",
+  "aliases": [
+   "Januvia"
+  ]
+ },
+ {
+  "rxcui": "1545653",
+  "name": "empagliflozin",
+  "tty": "IN",
+  "aliases": [
+   "Jardiance"
+  ]
+ },
+ {
+  "rxcui": "1488564",
+  "name": "dapagliflozin",
+  "tty": "IN",
+  "aliases": [
+   "Farxiga"
+  ]
+ },
+ {
+  "rxcui": "1991302",
+  "name": "semaglutide",
+  "tty": "IN",
+  "aliases": [
+   "Ozempic",
+   "Wegovy",
+   "Rybelsus"
+  ]
+ },
+ {
+  "rxcui": "475968",
+  "name": "liraglutide",
+  "tty": "IN",
+  "aliases": [
+   "Victoza",
+   "Saxenda"
+  ]
+ },
+ {
+  "rxcui": "1551291",
+  "name": "dulaglutide",
+  "tty": "IN",
+  "aliases": [
+   "Trulicity"
+  ]
+ },
+ {
+  "rxcui": "2601723",
+  "name": "tirzepatide",
+  "tty": "IN",
+  "aliases": [
+   "Mounjaro",
+   "Zepbound"
+  ]
+ },
+ {
+  "rxcui": "274783",
+  "name": "insulin glargine",
+  "tty": "IN",
+  "aliases": [
+   "Lantus",
+   "Basaglar",
+   "Toujeo"
+  ]
+ },
+ {
+  "rxcui": "86009",
+  "name": "insulin lispro",
+  "tty": "IN",
+  "aliases": [
+   "Humalog",
+   "Admelog"
+  ]
+ },
+ {
+  "rxcui": "51428",
+  "name": "insulin aspart, human",
+  "tty": "IN",
+  "aliases": [
+   "insulin aspart",
+   "Novolog",
+   "Fiasp"
+  ]
+ },
+ {
+  "rxcui": "139825",
+  "name": "insulin detemir",
+  "tty": "IN",
+  "aliases": [
+   "Levemir"
+  ]
+ },
+ {
+  "rxcui": "29046",
+  "name": "lisinopril",
+  "tty": "IN",
+  "aliases": [
+   "Zestril",
+   "Prinivil"
+  ]
+ },
+ {
+  "rxcui": "3827",
+  "name": "enalapril",
+  "tty": "IN",
+  "aliases": [
+   "Vasotec"
+  ]
+ },
+ {
+  "rxcui": "52175",
+  "name": "losartan",
+  "tty": "IN",
+  "aliases": [
+   "Cozaar"
+  ]
+ },
+ {
+  "rxcui": "69749",
+  "name": "valsartan",
+  "tty": "IN",
+  "aliases": [
+   "Diovan"
+  ]
+ },
+ {
+  "rxcui": "17767",
+  "name": "amlodipine",
+  "tty": "IN",
+  "aliases": [
+   "Norvasc"
+  ]
+ },
+ {
+  "rxcui": "3443",
+  "name": "diltiazem",
+  "tty": "IN",
+  "aliases": [
+   "Cardizem"
+  ]
+ },
+ {
+  "rxcui": "11170",
+  "name": "verapamil",
+  "tty": "IN",
+  "aliases": [
+   "Calan"
+  ]
+ },
+ {
+  "rxcui": "6918",
+  "name": "metoprolol",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "20352",
+  "name": "carvedilol",
+  "tty": "IN",
+  "aliases": [
+   "Coreg"
+  ]
+ },
+ {
+  "rxcui": "1202",
+  "name": "atenolol",
+  "tty": "IN",
+  "aliases": [
+   "Tenormin"
+  ]
+ },
+ {
+  "rxcui": "8787",
+  "name": "propranolol",
+  "tty": "IN",
+  "aliases": [
+   "Inderal"
+  ]
+ },
+ {
+  "rxcui": "5487",
+  "name": "hydrochlorothiazide",
+  "tty": "IN",
+  "aliases": [
+   "HCTZ"
+  ]
+ },
+ {
+  "rxcui": "2409",
+  "name": "chlorthalidone",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "4603",
+  "name": "furosemide",
+  "tty": "IN",
+  "aliases": [
+   "Lasix"
+  ]
+ },
+ {
+  "rxcui": "9997",
+  "name": "spironolactone",
+  "tty": "IN",
+  "aliases": [
+   "Aldactone"
+  ]
+ },
+ {
+  "rxcui": "5470",
+  "name": "hydralazine",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "28004",
+  "name": "isosorbide mononitrate",
+  "tty": "PIN",
+  "aliases": []
+ },
+ {
+  "rxcui": "6058",
+  "name": "isosorbide dinitrate",
+  "tty": "IN",
+  "aliases": [
+   "Isordil"
+  ]
+ },
+ {
+  "rxcui": "4917",
+  "name": "nitroglycerin",
+  "tty": "IN",
+  "aliases": [
+   "Nitrostat"
+  ]
+ },
+ {
+  "rxcui": "3407",
+  "name": "digoxin",
+  "tty": "IN",
+  "aliases": [
+   "Lanoxin"
+  ]
+ },
+ {
+  "rxcui": "703",
+  "name": "amiodarone",
+  "tty": "IN",
+  "aliases": [
+   "Pacerone"
+  ]
+ },
+ {
+  "rxcui": "83367",
+  "name": "atorvastatin",
+  "tty": "IN",
+  "aliases": [
+   "Lipitor"
+  ]
+ },
+ {
+  "rxcui": "301542",
+  "name": "rosuvastatin",
+  "tty": "IN",
+  "aliases": [
+   "Crestor"
+  ]
+ },
+ {
+  "rxcui": "36567",
+  "name": "simvastatin",
+  "tty": "IN",
+  "aliases": [
+   "Zocor"
+  ]
+ },
+ {
+  "rxcui": "42463",
+  "name": "pravastatin",
+  "tty": "IN",
+  "aliases": [
+   "Pravachol"
+  ]
+ },
+ {
+  "rxcui": "341248",
+  "name": "ezetimibe",
+  "tty": "IN",
+  "aliases": [
+   "Zetia"
+  ]
+ },
+ {
+  "rxcui": "8703",
+  "name": "fenofibrate",
+  "tty": "IN",
+  "aliases": [
+   "Tricor"
+  ]
+ },
+ {
+  "rxcui": "1191",
+  "name": "aspirin",
+  "tty": "IN",
+  "aliases": [
+   "ASA"
+  ]
+ },
+ {
+  "rxcui": "32968",
+  "name": "clopidogrel",
+  "tty": "IN",
+  "aliases": [
+   "Plavix"
+  ]
+ },
+ {
+  "rxcui": "11289",
+  "name": "warfarin",
+  "tty": "IN",
+  "aliases": [
+   "Coumadin",
+   "Jantoven"
+  ]
+ },
+ {
+  "rxcui": "1364430",
+  "name": "apixaban",
+  "tty": "IN",
+  "aliases": [
+   "Eliquis"
+  ]
+ },
+ {
+  "rxcui": "1114195",
+  "name": "rivaroxaban",
+  "tty": "IN",
+  "aliases": [
+   "Xarelto"
+  ]
+ },
+ {
+  "rxcui": "67108",
+  "name": "enoxaparin",
+  "tty": "IN",
+  "aliases": [
+   "Lovenox"
+  ]
+ },
+ {
+  "rxcui": "5224",
+  "name": "heparin",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "435",
+  "name": "albuterol",
+  "tty": "IN",
+  "aliases": [
+   "salbutamol",
+   "Ventolin",
+   "ProAir"
+  ]
+ },
+ {
+  "rxcui": "41126",
+  "name": "fluticasone",
+  "tty": "IN",
+  "aliases": [
+   "Flonase",
+   "Flovent"
+  ]
+ },
+ {
+  "rxcui": "19831",
+  "name": "budesonide",
+  "tty": "IN",
+  "aliases": [
+   "Pulmicort"
+  ]
+ },
+ {
+  "rxcui": "69120",
+  "name": "tiotropium",
+  "tty": "IN",
+  "aliases": [
+   "Spiriva"
+  ]
+ },
+ {
+  "rxcui": "88249",
+  "name": "montelukast",
+  "tty": "IN",
+  "aliases": [
+   "Singulair"
+  ]
+ },
+ {
+  "rxcui": "28889",
+  "name": "loratadine",
+  "tty": "IN",
+  "aliases": [
+   "Claritin"
+  ]
+ },
+ {
+  "rxcui": "20610",
+  "name": "cetirizine",
+  "tty": "IN",
+  "aliases": [
+   "Zyrtec"
+  ]
+ },
+ {
+  "rxcui": "87636",
+  "name": "fexofenadine",
+  "tty": "IN",
+  "aliases": [
+   "Allegra"
+  ]
+ },
+ {
+  "rxcui": "7646",
+  "name": "omeprazole",
+  "tty": "IN",
+  "aliases": [
+   "Prilosec"
+  ]
+ },
+ {
+  "rxcui": "40790",
+  "name": "pantoprazole",
+  "tty": "IN",
+  "aliases": [
+   "Protonix"
+  ]
+ },
+ {
+  "rxcui": "4278",
+  "name": "famotidine",
+  "tty": "IN",
+  "aliases": [
+   "Pepcid"
+  ]
+ },
+ {
+  "rxcui": "26225",
+  "name": "ondansetron",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "161",
+  "name": "acetaminophen",
+  "tty": "IN",
+  "aliases": [
+   "paracetamol",
+   "Tylenol",
+   "APAP"
+  ]
+ },
+ {
+  "rxcui": "5640",
+  "name": "ibuprofen",
+  "tty": "IN",
+  "aliases": [
+   "Advil",
+   "Motrin"
+  ]
+ },
+ {
+  "rxcui": "7258",
+  "name": "naproxen",
+  "tty": "IN",
+  "aliases": [
+   "Aleve",
+   "Naprosyn"
+  ]
+ },
+ {
+  "rxcui": "41493",
+  "name": "meloxicam",
+  "tty": "IN",
+  "aliases": [
+   "Mobic"
+  ]
+ },
+ {
+  "rxcui": "10689",
+  "name": "tramadol",
+  "tty": "IN",
+  "aliases": [
+   "Ultram"
+  ]
+ },
+ {
+  "rxcui": "7804",
+  "name": "oxycodone",
+  "tty": "IN",
+  "aliases": [
+   "OxyContin",
+   "Roxicodone"
+  ]
+ },
+ {
+  "rxcui": "7052",
+  "name": "morphine",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "21949",
+  "name": "cyclobenzaprine",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "1292",
+  "name": "baclofen",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "57258",
+  "name": "tizanidine",
+  "tty": "IN",
+  "aliases": [
+   "Zanaflex"
+  ]
+ },
+ {
+  "rxcui": "8640",
+  "name": "prednisone",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "6851",
+  "name": "methotrexate",
+  "tty": "IN",
+  "aliases": [
+   "Trexall"
+  ]
+ },
+ {
+  "rxcui": "5521",
+  "name": "hydroxychloroquine",
+  "tty": "IN",
+  "aliases": [
+   "Plaquenil"
+  ]
+ },
+ {
+  "rxcui": "519",
+  "name": "allopurinol",
+  "tty": "IN",
+  "aliases": [
+   "Zyloprim"
+  ]
+ },
+ {
+  "rxcui": "2683",
+  "name": "colchicine",
+  "tty": "IN",
+  "aliases": [
+   "Colcrys"
+  ]
+ },
+ {
+  "rxcui": "46041",
+  "name": "alendronate",
+  "tty": "IN",
+  "aliases": [
+   "Fosamax"
+  ]
+ },
+ {
+  "rxcui": "25480",
+  "name": "gabapentin",
+  "tty": "IN",
+  "aliases": [
+   "Neurontin"
+  ]
+ },
+ {
+  "rxcui": "187832",
+  "name": "pregabalin",
+  "tty": "IN",
+  "aliases": [
+   "Lyrica"
+  ]
+ },
+ {
+  "rxcui": "114477",
+  "name": "levetiracetam",
+  "tty": "IN",
+  "aliases": [
+   "Keppra"
+  ]
+ },
+ {
+  "rxcui": "28439",
+  "name": "lamotrigine",
+  "tty": "IN",
+  "aliases": [
+   "Lamictal"
+  ]
+ },
+ {
+  "rxcui": "38404",
+  "name": "topiramate",
+  "tty": "IN",
+  "aliases": [
+   "Topamax"
+  ]
+ },
+ {
+  "rxcui": "37418",
+  "name": "sumatriptan",
+  "tty": "IN",
+  "aliases": [
+   "Imitrex"
+  ]
+ },
+ {
+  "rxcui": "135447",
+  "name": "donepezil",
+  "tty": "IN",
+  "aliases": [
+   "Aricept"
+  ]
+ },
+ {
+  "rxcui": "6719",
+  "name": "memantine",
+  "tty": "IN",
+  "aliases": [
+   "Namenda"
+  ]
+ },
+ {
+  "rxcui": "36437",
+  "name": "sertraline",
+  "tty": "IN",
+  "aliases": [
+   "Zoloft"
+  ]
+ },
+ {
+  "rxcui": "321988",
+  "name": "escitalopram",
+  "tty": "IN",
+  "aliases": [
+   "Lexapro"
+  ]
+ },
+ {
+  "rxcui": "2556",
+  "name": "citalopram",
+  "tty": "IN",
+  "aliases": [
+   "Celexa"
+  ]
+ },
+ {
+  "rxcui": "4493",
+  "name": "fluoxetine",
+  "tty": "IN",
+  "aliases": [
+   "Prozac"
+  ]
+ },
+ {
+  "rxcui": "32937",
+  "name": "paroxetine",
+  "tty": "IN",
+  "aliases": [
+   "Paxil"
+  ]
+ },
+ {
+  "rxcui": "72625",
+  "name": "duloxetine",
+  "tty": "IN",
+  "aliases": [
+   "Cymbalta"
+  ]
+ },
+ {
+  "rxcui": "39786",
+  "name": "venlafaxine",
+  "tty": "IN",
+  "aliases": [
+   "Effexor"
+  ]
+ },
+ {
+  "rxcui": "42347",
+  "name": "bupropion",
+  "tty": "IN",
+  "aliases": [
+   "Wellbutrin"
+  ]
+ },
+ {
+  "rxcui": "15996",
+  "name": "mirtazapine",
+  "tty": "IN",
+  "aliases": [
+   "Remeron"
+  ]
+ },
+ {
+  "rxcui": "10737",
+  "name": "trazodone",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "704",
+  "name": "amitriptyline",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "1827",
+  "name": "buspirone",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "51272",
+  "name": "quetiapine",
+  "tty": "IN",
+  "aliases": [
+   "Seroquel"
+  ]
+ },
+ {
+  "rxcui": "89013",
+  "name": "aripiprazole",
+  "tty": "IN",
+  "aliases": [
+   "Abilify"
+  ]
+ },
+ {
+  "rxcui": "35636",
+  "name": "risperidone",
+  "tty": "IN",
+  "aliases": [
+   "Risperdal"
+  ]
+ },
+ {
+  "rxcui": "61381",
+  "name": "olanzapine",
+  "tty": "IN",
+  "aliases": [
+   "Zyprexa"
+  ]
+ },
+ {
+  "rxcui": "42351",
+  "name": "lithium carbonate",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "596",
+  "name": "alprazolam",
+  "tty": "IN",
+  "aliases": [
+   "Xanax"
+  ]
+ },
+ {
+  "rxcui": "6470",
+  "name": "lorazepam",
+  "tty": "IN",
+  "aliases": [
+   "Ativan"
+  ]
+ },
+ {
+  "rxcui": "2598",
+  "name": "clonazepam",
+  "tty": "IN",
+  "aliases": [
+   "Klonopin"
+  ]
+ },
+ {
+  "rxcui": "39993",
+  "name": "zolpidem",
+  "tty": "IN",
+  "aliases": [
+   "Ambien"
+  ]
+ },
+ {
+  "rxcui": "6901",
+  "name": "methylphenidate",
+  "tty": "IN",
+  "aliases": [
+   "Ritalin",
+   "Concerta"
+  ]
+ },
+ {
+  "rxcui": "700810",
+  "name": "lisdexamfetamine",
+  "tty": "IN",
+  "aliases": [
+   "Vyvanse"
+  ]
+ },
+ {
+  "rxcui": "723",
+  "name": "amoxicillin",
+  "tty": "IN",
+  "aliases": []
+ },
+ {
+  "rxcui": "18631",
+  "name": "azithromycin",
+  "tty": "IN",
+  "aliases": [
+   "Zithromax"
+  ]
+ },
+ {
+  "rxcui": "3640",
+  "name": "doxycycline",
+  "tty": "IN",
+  "aliases": [
+   "Vibramycin"
+  ]
+ },
+ {
+  "rxcui": "2231",
+  "name": "cephalexin",
+  "tty": "IN",
+  "aliases": [
+   "Keflex"
+  ]
+ },
+ {
+  "rxcui": "2551",
+  "name": "ciprofloxacin",
+  "tty": "IN",
+  "aliases": [
+   "Cipro"
+  ]
+ },
+ {
+  "rxcui": "82122",
+  "name": "levofloxacin",
+  "tty": "IN",
+  "aliases": [
+   "Levaquin"
+  ]
+ },
+ {
+  "rxcui": "7454",
+  "name": "nitrofurantoin",
+  "tty": "IN",
+  "aliases": [
+   "Macrobid"
+  ]
+ },
+ {
+  "rxcui": "6922",
+  "name": "metronidazole",
+  "tty": "IN",
+  "aliases": [
+   "Flagyl"
+  ]
+ },
+ {
+  "rxcui": "2582",
+  "name": "clindamycin",
+  "tty": "IN",
+  "aliases": [
+   "Cleocin"
+  ]
+ },
+ {
+  "rxcui": "4450",
+  "name": "fluconazole",
+  "tty": "IN",
+  "aliases": [
+   "Diflucan"
+  ]
+ },
+ {
+  "rxcui": "73645",
+  "name": "valacyclovir",
+  "tty": "IN",
+  "aliases": [
+   "Valtrex"
+  ]
+ },
+ {
+  "rxcui": "260101",
+  "name": "oseltamivir",
+  "tty": "IN",
+  "aliases": [
+   "Tamiflu"
+  ]
+ },
+ {
+  "rxcui": "10582",
+  "name": "levothyroxine",
+  "tty": "IN",
+  "aliases": [
+   "Synthroid",
+   "Levoxyl"
+  ]
+ },
+ {
+  "rxcui": "77492",
+  "name": "tamsulosin",
+  "tty": "IN",
+  "aliases": [
+   "Flomax"
+  ]
+ },
+ {
+  "rxcui": "25025",
+  "name": "finasteride",
+  "tty": "IN",
+  "aliases": [
+   "Proscar",
+   "Propecia"
+  ]
+ },
+ {
+  "rxcui": "136411",
+  "name": "sildenafil",
+  "tty": "IN",
+  "aliases": [
+   "Viagra"
+  ]
+ },
+ {
+  "rxcui": "4083",
+  "name": "estradiol",
+  "tty": "IN",
+  "aliases": [
+   "Estrace"
+  ]
+ },
+ {
+  "rxcui": "8591",
+  "name": "potassium chloride",
+  "tty": "IN",
+  "aliases": [
+   "KCl",
+   "Klor-Con"
+  ]
+ },
+ {
+  "rxcui": "2418",
+  "name": "cholecalciferol",
+  "tty": "IN",
+  "aliases": [
+   "vitamin D3",
+   "vitamin D"
+  ]
+ },
+ {
+  "rxcui": "11248",
+  "name": "vitamin B12",
+  "tty": "IN",
+  "aliases": [
+   "cyanocobalamin",
+   "vitamin B12",
+   "B12"
+  ]
+ },
+ {
+  "rxcui": "4511",
+  "name": "folic acid",
+  "tty": "IN",
+  "aliases": [
+   "folate"
+  ]
+ },
+ {
+  "rxcui": "24947",
+  "name": "ferrous sulfate",
+  "tty": "IN",
+  "aliases": []
+ }
+]

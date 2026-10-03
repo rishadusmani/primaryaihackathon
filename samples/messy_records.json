@@ -1,16 +1,142 @@
 {
   "records": [
-    {"patient_id": "MRN-1001", "type": "lab", "test": "HbA1c", "value": "7.2 %", "date": "03/02/2024"},
-    {"patient_id": "MRN-1001", "type": "lab", "test": "Glucose", "value": "8.1", "unit": "mmol/L", "date": "2024-03-02"},
-    {"patient_id": "MRN-1001", "type": "vitals", "name": "BP", "value": "138/88", "date": "2024-03-02"},
-    {"patient_id": "MRN-1001", "type": "vitals", "name": "Wt", "value": "212 lbs", "date": "2024-03-02"},
-    {"patient_id": "MRN-1001", "type": "dx", "diagnosis": "T2DM", "onset": "May 1, 2019"},
-    {"patient_id": "MRN-1001", "type": "dx", "diagnosis": "HTN"},
-    {"patient_id": "MRN-1001", "type": "rx", "drug": "Glucophage 500mg tab", "sig": "1 tab PO BID"},
-    {"patient_id": "MRN-2002", "type": "lab", "test": "creat", "value": "97", "unit": "umol/L", "date": "20240115"},
-    {"patient_id": "MRN-2002", "type": "vitals", "name": "Temp", "value": "101.3 F", "date": "15-Jan-2024"},
-    {"patient_id": "MRN-2002", "type": "rx", "drug": "Ventolin HFA 90 mcg", "sig": "2 puffs q4h PRN"},
-    {"patient_id": "MRN-2002", "type": "dx", "diagnosis": "Asthma"},
-    {"patient_id": "MRN-2002", "type": "lab", "test": "Vitamin Q", "value": "12"}
+    {
+      "patient_id": "MRN-1001",
+      "type": "lab",
+      "test": "HbA1c",
+      "value": "7.2 %",
+      "date": "03/02/2024"
+    },
+    {
+      "patient_id": "MRN-1001",
+      "type": "lab",
+      "test": "Glucose",
+      "value": "8.1",
+      "unit": "mmol/L",
+      "date": "2024-03-02"
+    },
+    {
+      "patient_id": "MRN-1001",
+      "type": "vitals",
+      "name": "BP",
+      "value": "138/88",
+      "date": "2024-03-02"
+    },
+    {
+      "patient_id": "MRN-1001",
+      "type": "vitals",
+      "name": "Wt",
+      "value": "212 lbs",
+      "date": "2024-03-02"
+    },
+    {
+      "patient_id": "MRN-1001",
+      "type": "dx",
+      "diagnosis": "T2DM",
+      "onset": "May 1, 2019"
+    },
+    {
+      "patient_id": "MRN-1001",
+      "type": "dx",
+      "diagnosis": "HTN"
+    },
+    {
+      "patient_id": "MRN-1001",
+      "type": "rx",
+      "drug": "Glucophage 500mg tab",
+      "sig": "1 tab PO BID"
+    },
+    {
+      "patient_id": "MRN-2002",
+      "type": "lab",
+      "test": "creat",
+      "value": "97",
+      "unit": "umol/L",
+      "date": "20240115"
+    },
+    {
+      "patient_id": "MRN-2002",
+      "type": "vitals",
+      "name": "Temp",
+      "value": "101.3 F",
+      "date": "15-Jan-2024"
+    },
+    {
+      "patient_id": "MRN-2002",
+      "type": "rx",
+      "drug": "Ventolin HFA 90 mcg",
+      "sig": "2 puffs q4h PRN"
+    },
+    {
+      "patient_id": "MRN-2002",
+      "type": "dx",
+      "diagnosis": "Asthma"
+    },
+    {
+      "patient_id": "MRN-3003",
+      "type": "lab",
+      "test": "Hgb",
+      "value": "118",
+      "unit": "g/L",
+      "date": "2024-06-10"
+    },
+    {
+      "patient_id": "MRN-3003",
+      "type": "lab",
+      "test": "WBC",
+      "value": "11.4",
+      "unit": "x10^9/L",
+      "date": "2024-06-10"
+    },
+    {
+      "patient_id": "MRN-3003",
+      "type": "lab",
+      "test": "Troponin I",
+      "value": "45",
+      "unit": "ng/L",
+      "date": "2024-06-10"
+    },
+    {
+      "patient_id": "MRN-3003",
+      "type": "lab",
+      "test": "NT-proBNP",
+      "value": "2150 pg/mL",
+      "date": "2024-06-10"
+    },
+    {
+      "patient_id": "MRN-3003",
+      "type": "vitals",
+      "name": "SpO2",
+      "value": "91%",
+      "date": "2024-06-10"
+    },
+    {
+      "patient_id": "MRN-3003",
+      "type": "dx",
+      "diagnosis": "CHF"
+    },
+    {
+      "patient_id": "MRN-3003",
+      "type": "dx",
+      "diagnosis": "AFib"
+    },
+    {
+      "patient_id": "MRN-3003",
+      "type": "rx",
+      "drug": "Eliquis 5mg",
+      "sig": "1 tab PO BID"
+    },
+    {
+      "patient_id": "MRN-3003",
+      "type": "rx",
+      "drug": "Lasix 40 mg",
+      "sig": "daily"
+    },
+    {
+      "patient_id": "MRN-2002",
+      "type": "lab",
+      "test": "Vitamin Q",
+      "value": "12"
+    }
   ]
 }

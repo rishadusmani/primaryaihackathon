@@ -6,17 +6,20 @@ standard vocabularies (LOINC, SNOMED CT, ICD-10-CM, RxNorm, UCUM), plus a list
 of issues for anything that could not be mapped. Unmappable records are
 reported, never guessed.
 
-The vocabularies below are a small hand-curated starter set. Extend the tables
-(or swap in a terminology server) to cover more codes.
+Vocabularies live in app/vocab/*.json (100+ codes each for observations,
+conditions and medications), generated and verified against NLM and SNOMED
+sources by scripts/build_vocab.py. Add codes there, not here.
 """
 
 from __future__ import annotations
 
+import json
 import re
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Callable
+from pathlib import Path
+from typing import Any
 
 LOINC = "http://loinc.org"
 SNOMED = "http://snomed.info/sct"
@@ -35,7 +38,15 @@ def _key(text: str) -> str:
     return re.sub(r"[^a-z0-9]", "", str(text).lower())
 
 
-# ---------------------------------------------------------------- observations
+# ----------------------------------------------------------------- vocabularies
+# Built and verified against NLM / SNOMED sources by scripts/build_vocab.py.
+
+_VOCAB = Path(__file__).parent / "vocab"
+
+
+def _load(name: str) -> list[dict]:
+    return json.loads((_VOCAB / name).read_text())
+
 
 @dataclass(frozen=True)
 class ObsDef:
@@ -44,75 +55,18 @@ class ObsDef:
     unit: str  # canonical UCUM unit
     category: str  # "laboratory" | "vital-signs"
     aliases: tuple[str, ...]
-    # Conversions from other UCUM units into the canonical unit.
-    convert: dict[str, Callable[[float], float]] | None = None
+    # Other UCUM unit -> factor (v * f) or [scale, offset] into the canonical unit.
+    convert: dict[str, float | list[float]]
 
+    def to_canonical(self, value: float, unit: str) -> float | None:
+        if unit == self.unit:
+            return value
+        rule = self.convert.get(unit)
+        if rule is None:
+            return None
+        scale, offset = rule if isinstance(rule, list) else (rule, 0.0)
+        return value * scale + offset
 
-OBSERVATIONS: list[ObsDef] = [
-    ObsDef("4548-4", "Hemoglobin A1c/Hemoglobin.total in Blood", "%", "laboratory",
-           ("hba1c", "a1c", "hemoglobina1c", "haemoglobina1c", "glycatedhemoglobin", "glycohemoglobin"),
-           {"mmol/mol": lambda v: 0.09148 * v + 2.152}),
-    ObsDef("2345-7", "Glucose [Mass/volume] in Serum or Plasma", "mg/dL", "laboratory",
-           ("glucose", "glu", "bloodglucose", "bloodsugar", "serumglucose"),
-           {"mmol/L": lambda v: v * 18.016}),
-    ObsDef("2160-0", "Creatinine [Mass/volume] in Serum or Plasma", "mg/dL", "laboratory",
-           ("creatinine", "creat", "cr", "scr", "serumcreatinine"),
-           {"umol/L": lambda v: v / 88.42}),
-    ObsDef("2093-3", "Cholesterol [Mass/volume] in Serum or Plasma", "mg/dL", "laboratory",
-           ("cholesterol", "totalcholesterol", "chol", "tc"),
-           {"mmol/L": lambda v: v * 38.67}),
-    ObsDef("2823-3", "Potassium [Moles/volume] in Serum or Plasma", "mmol/L", "laboratory",
-           ("potassium", "k", "serumpotassium"),
-           {"meq/L": lambda v: v}),
-    ObsDef("2951-2", "Sodium [Moles/volume] in Serum or Plasma", "mmol/L", "laboratory",
-           ("sodium", "na", "serumsodium"),
-           {"meq/L": lambda v: v}),
-    ObsDef("29463-7", "Body weight", "kg", "vital-signs",
-           ("weight", "bodyweight", "wt"),
-           {"[lb_av]": lambda v: v * 0.45359237, "g": lambda v: v / 1000}),
-    ObsDef("8310-5", "Body temperature", "Cel", "vital-signs",
-           ("temperature", "temp", "bodytemperature"),
-           {"[degF]": lambda v: (v - 32) * 5 / 9}),
-    ObsDef("8867-4", "Heart rate", "/min", "vital-signs",
-           ("heartrate", "hr", "pulse", "pulserate")),
-]
-BLOOD_PRESSURE_ALIASES = {"bloodpressure", "bp", "85354-9"}
-
-_OBS_BY_KEY: dict[str, ObsDef] = {}
-for _d in OBSERVATIONS:
-    _OBS_BY_KEY[_key(_d.loinc)] = _d
-    for _a in _d.aliases:
-        _OBS_BY_KEY[_a] = _d
-
-# Free-text unit spellings -> UCUM
-UNIT_ALIASES = {
-    "%": "%", "percent": "%",
-    "mg/dl": "mg/dL", "mgdl": "mg/dL",
-    "mmol/l": "mmol/L", "mmoll": "mmol/L",
-    "mmol/mol": "mmol/mol",
-    "umol/l": "umol/L", "µmol/l": "umol/L", "μmol/l": "umol/L",
-    "meq/l": "meq/L",
-    "kg": "kg", "kgs": "kg", "kilograms": "kg",
-    "g": "g", "grams": "g",
-    "lb": "[lb_av]", "lbs": "[lb_av]", "pounds": "[lb_av]",
-    "c": "Cel", "°c": "Cel", "degc": "Cel", "celsius": "Cel", "cel": "Cel",
-    "f": "[degF]", "°f": "[degF]", "degf": "[degF]", "fahrenheit": "[degF]",
-    "bpm": "/min", "/min": "/min", "beats/min": "/min", "beatsperminute": "/min",
-    "mmhg": "mm[Hg]", "mm[hg]": "mm[Hg]",
-}
-
-
-def _ucum(unit: str | None) -> str | None:
-    if not unit:
-        return None
-    u = unit.strip().lower().replace(" ", "")
-    return UNIT_ALIASES.get(u)
-
-
-_VALUE_RE = re.compile(r"^\s*(<=|>=|<|>)?\s*(-?\d+(?:\.\d+)?)\s*(.*?)\s*$")
-
-
-# ------------------------------------------------------------------ conditions
 
 @dataclass(frozen=True)
 class CondDef:
@@ -123,40 +77,88 @@ class CondDef:
     aliases: tuple[str, ...]
 
 
-CONDITIONS: list[CondDef] = [
-    CondDef("44054006", "Diabetes mellitus type 2", "E11.9", "Type 2 diabetes mellitus without complications",
-            ("type2diabetes", "type2diabetesmellitus", "diabetesmellitustype2", "t2dm", "dm2", "dmii", "niddm", "e119")),
-    CondDef("46635009", "Diabetes mellitus type 1", "E10.9", "Type 1 diabetes mellitus without complications",
-            ("type1diabetes", "type1diabetesmellitus", "diabetesmellitustype1", "t1dm", "dm1", "iddm", "e109")),
-    CondDef("59621000", "Essential hypertension", "I10", "Essential (primary) hypertension",
-            ("hypertension", "essentialhypertension", "htn", "highbloodpressure", "i10")),
-    CondDef("55822004", "Hyperlipidemia", "E78.5", "Hyperlipidemia, unspecified",
-            ("hyperlipidemia", "hyperlipidaemia", "hld", "highcholesterol", "e785")),
-    CondDef("195967001", "Asthma", "J45.909", "Unspecified asthma, uncomplicated",
-            ("asthma", "j45909")),
-    CondDef("709044004", "Chronic kidney disease", "N18.9", "Chronic kidney disease, unspecified",
-            ("chronickidneydisease", "ckd", "n189")),
-]
-_COND_BY_KEY = {a: d for d in CONDITIONS for a in (*d.aliases, d.snomed)}
+@dataclass(frozen=True)
+class MedDef:
+    rxcui: str
+    name: str
+    tty: str
+    aliases: tuple[str, ...]
 
-# ----------------------------------------------------------------- medications
 
-# RxNorm ingredient concepts, with common brand / international names.
-MEDICATIONS: dict[str, tuple[str, tuple[str, ...]]] = {
-    "metformin": ("6809", ("glucophage",)),
-    "lisinopril": ("29046", ("zestril", "prinivil")),
-    "atorvastatin": ("83367", ("lipitor",)),
-    "amlodipine": ("17767", ("norvasc",)),
-    "insulin glargine": ("274783", ("lantus", "basaglar", "toujeo", "glargine")),
-    "albuterol": ("435", ("salbutamol", "ventolin", "proair")),
-    "aspirin": ("1191", ("asa", "acetylsalicylicacid")),
+def _index(defs: list, code_attr: str, kind: str) -> dict:
+    index: dict[str, Any] = {}
+    for d in defs:
+        for k in {_key(a) for a in (*d.aliases, getattr(d, code_attr))}:
+            if k in index and index[k] is not d:
+                raise ValueError(f"{kind} alias {k!r} is ambiguous")
+            index[k] = d
+    return index
+
+
+OBSERVATIONS = [ObsDef(**{**o, "aliases": tuple(o["aliases"])}) for o in _load("observations.json")]
+CONDITIONS = [CondDef(**{**c, "aliases": tuple(c["aliases"])}) for c in _load("conditions.json")]
+MEDICATIONS = [MedDef(**{**m, "aliases": tuple(m["aliases"])}) for m in _load("medications.json")]
+BLOOD_PRESSURE_ALIASES = {"bloodpressure", "bp", "853549"}
+
+_OBS_BY_KEY: dict[str, ObsDef] = _index(OBSERVATIONS, "loinc", "observation")
+_COND_BY_KEY: dict[str, CondDef] = _index(CONDITIONS, "snomed", "condition")
+_MED_BY_KEY: dict[str, MedDef] = _index(MEDICATIONS, "name", "medication")
+_MED_BY_RXCUI: dict[str, MedDef] = {m.rxcui: m for m in MEDICATIONS}
+_MED_MAX_WORDS = max(len(re.findall(r"[a-z0-9]+", a.lower())) for m in MEDICATIONS for a in (*m.aliases, m.name))
+
+# Free-text unit spellings (lowercased, spaces removed) -> UCUM
+UNIT_ALIASES = {
+    "%": "%", "percent": "%", "pct": "%",
+    "mg/dl": "mg/dL", "mgdl": "mg/dL",
+    "g/dl": "g/dL", "gm/dl": "g/dL", "g/l": "g/L",
+    "mmol/l": "mmol/L", "mmoll": "mmol/L", "mmol/mol": "mmol/mol",
+    "umol/l": "umol/L", "µmol/l": "umol/L", "μmol/l": "umol/L", "micromol/l": "umol/L",
+    "nmol/l": "nmol/L", "pmol/l": "pmol/L",
+    "meq/l": "meq/L",
+    "u/l": "U/L", "iu/l": "U/L", "units/l": "U/L",
+    "ng/ml": "ng/mL", "ng/dl": "ng/dL", "ng/l": "ng/L",
+    "ug/l": "ug/L", "mcg/l": "ug/L", "µg/l": "ug/L",
+    "ug/dl": "ug/dL", "mcg/dl": "ug/dL", "µg/dl": "ug/dL",
+    "ug/ml": "ug/mL", "mcg/ml": "ug/mL", "µg/ml": "ug/mL",
+    "pg/ml": "pg/mL", "mg/l": "mg/L", "mg/g": "mg/g", "mg/gcr": "mg/g", "mg/gcreat": "mg/g",
+    "miu/l": "m[IU]/L", "uiu/ml": "m[IU]/L", "µiu/ml": "m[IU]/L", "μiu/ml": "m[IU]/L", "mu/l": "m[IU]/L",
+    "miu/ml": "m[IU]/mL",
+    "10*3/ul": "10*3/uL", "10^3/ul": "10*3/uL", "x10^3/ul": "10*3/uL", "x10e3/ul": "10*3/uL",
+    "k/ul": "10*3/uL", "k/mcl": "10*3/uL", "thou/ul": "10*3/uL", "10*3/mm3": "10*3/uL", "/nl": "10*3/uL",
+    "10*9/l": "10*9/L", "10^9/l": "10*9/L", "x10^9/l": "10*9/L", "x10e9/l": "10*9/L",
+    "10*6/ul": "10*6/uL", "10^6/ul": "10*6/uL", "x10^6/ul": "10*6/uL", "x10e6/ul": "10*6/uL",
+    "m/ul": "10*6/uL", "mil/ul": "10*6/uL", "/pl": "10*6/uL",
+    "10*12/l": "10*12/L", "10^12/l": "10*12/L", "x10^12/l": "10*12/L", "x10e12/l": "10*12/L",
+    "l/l": "L/L", "fl": "fL", "pg": "pg",
+    "s": "s", "sec": "s", "secs": "s", "seconds": "s",
+    "{inr}": "{INR}", "inr": "{INR}", "ratio": "{ratio}", "{ratio}": "{ratio}",
+    "mm/h": "mm/h", "mm/hr": "mm/h", "mm/hour": "mm/h",
+    "mosm/kg": "mosm/kg", "mosmol/kg": "mosm/kg", "mmol/kg": "mosm/kg",
+    "ml/min/1.73m2": "mL/min/{1.73_m2}", "ml/min/1.73m^2": "mL/min/{1.73_m2}", "ml/min": "mL/min/{1.73_m2}",
+    "ml/min/{1.73_m2}": "mL/min/{1.73_m2}",
+    "kg": "kg", "kgs": "kg", "kilograms": "kg", "g": "g", "grams": "g",
+    "lb": "[lb_av]", "lbs": "[lb_av]", "pounds": "[lb_av]", "[lb_av]": "[lb_av]",
+    "cm": "cm", "m": "m", "in": "[in_i]", "inch": "[in_i]", "inches": "[in_i]", "[in_i]": "[in_i]", '"': "[in_i]",
+    "kg/m2": "kg/m2", "kg/m^2": "kg/m2",
+    "c": "Cel", "°c": "Cel", "degc": "Cel", "celsius": "Cel", "cel": "Cel",
+    "f": "[degF]", "°f": "[degF]", "degf": "[degF]", "fahrenheit": "[degF]", "[degf]": "[degF]",
+    "bpm": "/min", "/min": "/min", "beats/min": "/min", "breaths/min": "/min", "br/min": "/min", "perminute": "/min",
+    "mmhg": "mm[Hg]", "mm[hg]": "mm[Hg]", "kpa": "kPa",
+    "{score}": "{score}", "score": "{score}", "/10": "{score}",
+    "[ph]": "[pH]", "ph": "[pH]", "1": "1",
 }
-_MED_BY_KEY: dict[str, str] = {}
-for _name, (_code, _aliases) in MEDICATIONS.items():
-    _MED_BY_KEY[_key(_name)] = _name
-    _MED_BY_KEY[_code] = _name
-    for _a in _aliases:
-        _MED_BY_KEY[_key(_a)] = _name
+
+
+def _ucum(unit: str | None) -> str | None:
+    if not unit:
+        return None
+    u = unit.strip().lower().replace(" ", "")
+    if u.endswith("feu") or u.startswith("feu"):  # D-dimer "ng/mL FEU": FEU lives in the code
+        u = u.replace("feu", "")
+    return UNIT_ALIASES.get(u)
+
+
+_VALUE_RE = re.compile(r"^\s*(<=|>=|<|>)?\s*(-?\d+(?:\.\d+)?)\s*(.*?)\s*$")
 
 _STRENGTH_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(mg|mcg|g|units?|iu|ml)\b", re.I)
 _STRENGTH_UCUM = {"mg": "mg", "mcg": "ug", "g": "g", "unit": "[iU]", "units": "[iU]", "iu": "[iU]", "ml": "mL"}
@@ -283,11 +285,10 @@ def _observation(record: dict, pid: str, subject: dict) -> dict:
     unit = _ucum(raw_unit) if raw_unit else obs.unit
     if unit is None:
         raise RecordError(f"unrecognized unit {raw_unit!r} for {name!r}")
-    if unit != obs.unit:
-        conv = (obs.convert or {}).get(unit)
-        if conv is None:
-            raise RecordError(f"cannot convert {raw_unit!r} to {obs.unit} for {name!r}")
-        number = conv(number)
+    converted = obs.to_canonical(number, unit)
+    if converted is None:
+        raise RecordError(f"cannot convert {raw_unit!r} to {obs.unit} for {name!r}")
+    number = converted
 
     quantity = _qty(_round(number), obs.unit)
     if comparator:
@@ -335,20 +336,21 @@ def _medication(record: dict, pid: str, subject: dict) -> dict:
     if text is None:
         raise RecordError("medication is missing a name")
     text = str(text)
-    ingredient = _MED_BY_KEY.get(_key(text))
-    if ingredient is None:
-        # Try word windows: "Metformin HCl 500mg tab" -> "metformin"
-        words = re.findall(r"[A-Za-z]+", text)
-        for size in (2, 1):
+    med = _MED_BY_KEY.get(_key(text)) or _MED_BY_RXCUI.get(text.strip())
+    if med is None:
+        # Longest word window first: "Insulin Aspart 100 unit/mL pen" -> insulin aspart,
+        # "Glucophage XR 500mg tab" -> metformin
+        words = re.findall(r"[A-Za-z0-9]+", text)
+        for size in range(min(_MED_MAX_WORDS, len(words)), 0, -1):
             for i in range(len(words) - size + 1):
-                ingredient = _MED_BY_KEY.get(_key("".join(words[i:i + size])))
-                if ingredient:
+                med = _MED_BY_KEY.get(_key("".join(words[i:i + size])))
+                if med:
                     break
-            if ingredient:
+            if med:
                 break
-    if ingredient is None:
+    if med is None:
         raise RecordError(f"no RxNorm mapping for medication {text!r}")
-    rxcui = MEDICATIONS[ingredient][0]
+    rxcui, ingredient = med.rxcui, med.name
     when = normalize_date(_get(record, "date", "start", "started", "effective", "prescribed"))
     status = _key(_get(record, "status") or "active")
     status = {"onhold": "on-hold", "nottaken": "not-taken"}.get(status, status)

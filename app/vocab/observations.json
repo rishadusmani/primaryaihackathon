@@ -1,0 +1,1454 @@
+[
+ {
+  "loinc": "8867-4",
+  "display": "Heart rate",
+  "category": "vital-signs",
+  "unit": "/min",
+  "aliases": [
+   "heartrate",
+   "hr",
+   "pulse",
+   "pulserate"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "9279-1",
+  "display": "Respiratory rate",
+  "category": "vital-signs",
+  "unit": "/min",
+  "aliases": [
+   "respiratoryrate",
+   "resprate",
+   "rr",
+   "respirations",
+   "resp"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "8310-5",
+  "display": "Body temperature",
+  "category": "vital-signs",
+  "unit": "Cel",
+  "aliases": [
+   "temperature",
+   "temp",
+   "bodytemperature",
+   "bodytemp"
+  ],
+  "convert": {
+   "[degF]": [
+    0.5555555555555556,
+    -17.77777777777778
+   ]
+  }
+ },
+ {
+  "loinc": "29463-7",
+  "display": "Body weight",
+  "category": "vital-signs",
+  "unit": "kg",
+  "aliases": [
+   "weight",
+   "bodyweight",
+   "wt"
+  ],
+  "convert": {
+   "[lb_av]": 0.45359237,
+   "g": 0.001
+  }
+ },
+ {
+  "loinc": "8302-2",
+  "display": "Body height",
+  "category": "vital-signs",
+  "unit": "cm",
+  "aliases": [
+   "height",
+   "bodyheight",
+   "ht",
+   "length"
+  ],
+  "convert": {
+   "[in_i]": 2.54,
+   "m": 100
+  }
+ },
+ {
+  "loinc": "39156-5",
+  "display": "Body mass index (BMI) [Ratio]",
+  "category": "vital-signs",
+  "unit": "kg/m2",
+  "aliases": [
+   "bmi",
+   "bodymassindex"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "59408-5",
+  "display": "Oxygen saturation in Arterial blood by Pulse oximetry",
+  "category": "vital-signs",
+  "unit": "%",
+  "aliases": [
+   "spo2",
+   "o2sat",
+   "oxygensaturation",
+   "pulseox",
+   "sao2",
+   "pulseoximetry"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "8480-6",
+  "display": "Systolic blood pressure",
+  "category": "vital-signs",
+  "unit": "mm[Hg]",
+  "aliases": [
+   "systolic",
+   "systolicbp",
+   "sbp",
+   "systolicbloodpressure"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "8462-4",
+  "display": "Diastolic blood pressure",
+  "category": "vital-signs",
+  "unit": "mm[Hg]",
+  "aliases": [
+   "diastolic",
+   "diastolicbp",
+   "dbp",
+   "diastolicbloodpressure"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "9843-4",
+  "display": "Head Occipital-frontal circumference",
+  "category": "vital-signs",
+  "unit": "cm",
+  "aliases": [
+   "headcircumference",
+   "hc",
+   "ofc"
+  ],
+  "convert": {
+   "[in_i]": 2.54
+  }
+ },
+ {
+  "loinc": "8280-0",
+  "display": "Waist Circumference at umbilicus by Tape measure",
+  "category": "vital-signs",
+  "unit": "cm",
+  "aliases": [
+   "waistcircumference",
+   "waist"
+  ],
+  "convert": {
+   "[in_i]": 2.54
+  }
+ },
+ {
+  "loinc": "72514-3",
+  "display": "Pain severity - 0-10 verbal numeric rating [Score] - Reported",
+  "category": "vital-signs",
+  "unit": "{score}",
+  "aliases": [
+   "pain",
+   "painscore",
+   "painseverity",
+   "painlevel"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "6690-2",
+  "display": "Leukocytes [#/volume] in Blood by Automated count",
+  "category": "laboratory",
+  "unit": "10*3/uL",
+  "aliases": [
+   "wbc",
+   "whitebloodcells",
+   "whitecellcount",
+   "leukocytes",
+   "whitebloodcellcount"
+  ],
+  "convert": {
+   "10*9/L": 1
+  }
+ },
+ {
+  "loinc": "789-8",
+  "display": "Erythrocytes [#/volume] in Blood by Automated count",
+  "category": "laboratory",
+  "unit": "10*6/uL",
+  "aliases": [
+   "rbc",
+   "redbloodcells",
+   "redcellcount",
+   "erythrocytes",
+   "redbloodcellcount"
+  ],
+  "convert": {
+   "10*12/L": 1
+  }
+ },
+ {
+  "loinc": "718-7",
+  "display": "Hemoglobin [Mass/volume] in Blood",
+  "category": "laboratory",
+  "unit": "g/dL",
+  "aliases": [
+   "hemoglobin",
+   "haemoglobin",
+   "hgb",
+   "hb"
+  ],
+  "convert": {
+   "g/L": 0.1
+  }
+ },
+ {
+  "loinc": "4544-3",
+  "display": "Hematocrit [Volume Fraction] of Blood by Automated count",
+  "category": "laboratory",
+  "unit": "%",
+  "aliases": [
+   "hematocrit",
+   "haematocrit",
+   "hct",
+   "pcv"
+  ],
+  "convert": {
+   "L/L": 100
+  }
+ },
+ {
+  "loinc": "787-2",
+  "display": "MCV [Entitic mean volume] in Red Blood Cells by Automated count",
+  "category": "laboratory",
+  "unit": "fL",
+  "aliases": [
+   "mcv",
+   "meancorpuscularvolume"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "785-6",
+  "display": "MCH [Entitic mass] by Automated count",
+  "category": "laboratory",
+  "unit": "pg",
+  "aliases": [
+   "mch",
+   "meancorpuscularhemoglobin"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "786-4",
+  "display": "MCHC [Entitic Mass/volume] in Red Blood Cells by Automated count",
+  "category": "laboratory",
+  "unit": "g/dL",
+  "aliases": [
+   "mchc"
+  ],
+  "convert": {
+   "g/L": 0.1
+  }
+ },
+ {
+  "loinc": "788-0",
+  "display": "Erythrocyte [DistWidth] in Blood by Automated count",
+  "category": "laboratory",
+  "unit": "%",
+  "aliases": [
+   "rdw",
+   "redcelldistributionwidth",
+   "rdwcv"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "777-3",
+  "display": "Platelets [#/volume] in Blood by Automated count",
+  "category": "laboratory",
+  "unit": "10*3/uL",
+  "aliases": [
+   "platelets",
+   "plt",
+   "plateletcount",
+   "plts"
+  ],
+  "convert": {
+   "10*9/L": 1
+  }
+ },
+ {
+  "loinc": "32623-1",
+  "display": "Platelet [Entitic mean volume] in Blood by Automated count",
+  "category": "laboratory",
+  "unit": "fL",
+  "aliases": [
+   "mpv",
+   "meanplateletvolume"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "770-8",
+  "display": "Neutrophils/Leukocytes in Blood by Automated count",
+  "category": "laboratory",
+  "unit": "%",
+  "aliases": [
+   "neutrophils",
+   "neut",
+   "neutrophilspercent",
+   "polys",
+   "segs"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "736-9",
+  "display": "Lymphocytes/Leukocytes in Blood by Automated count",
+  "category": "laboratory",
+  "unit": "%",
+  "aliases": [
+   "lymphocytes",
+   "lymph",
+   "lymphs",
+   "lymphocytespercent"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "5905-5",
+  "display": "Monocytes/Leukocytes in Blood by Automated count",
+  "category": "laboratory",
+  "unit": "%",
+  "aliases": [
+   "monocytes",
+   "mono",
+   "monos",
+   "monocytespercent"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "713-8",
+  "display": "Eosinophils/Leukocytes in Blood by Automated count",
+  "category": "laboratory",
+  "unit": "%",
+  "aliases": [
+   "eosinophils",
+   "eos",
+   "eosinophilspercent"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "706-2",
+  "display": "Basophils/Leukocytes in Blood by Automated count",
+  "category": "laboratory",
+  "unit": "%",
+  "aliases": [
+   "basophils",
+   "baso",
+   "basos",
+   "basophilspercent"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "751-8",
+  "display": "Neutrophils [#/volume] in Blood by Automated count",
+  "category": "laboratory",
+  "unit": "10*3/uL",
+  "aliases": [
+   "anc",
+   "absoluteneutrophils",
+   "neutrophilsabsolute",
+   "absoluteneutrophilcount",
+   "neutabs"
+  ],
+  "convert": {
+   "10*9/L": 1
+  }
+ },
+ {
+  "loinc": "731-0",
+  "display": "Lymphocytes [#/volume] in Blood by Automated count",
+  "category": "laboratory",
+  "unit": "10*3/uL",
+  "aliases": [
+   "alc",
+   "absolutelymphocytes",
+   "lymphocytesabsolute",
+   "absolutelymphocytecount",
+   "lymphabs"
+  ],
+  "convert": {
+   "10*9/L": 1
+  }
+ },
+ {
+  "loinc": "4679-7",
+  "display": "Reticulocytes/Erythrocytes in Blood",
+  "category": "laboratory",
+  "unit": "%",
+  "aliases": [
+   "reticulocytes",
+   "retic",
+   "reticcount",
+   "reticulocytecount"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "30341-2",
+  "display": "Erythrocyte [Sedimentation Rate] in Blood",
+  "category": "laboratory",
+  "unit": "mm/h",
+  "aliases": [
+   "esr",
+   "sedrate",
+   "sedimentationrate",
+   "erythrocytesedimentationrate"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "2345-7",
+  "display": "Glucose [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "glucose",
+   "glu",
+   "bloodglucose",
+   "bloodsugar",
+   "serumglucose"
+  ],
+  "convert": {
+   "mmol/L": 18.016
+  }
+ },
+ {
+  "loinc": "1558-6",
+  "display": "Fasting glucose [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "fastingglucose",
+   "fbg",
+   "fbs",
+   "fastingbloodsugar",
+   "fastingbloodglucose",
+   "fpg"
+  ],
+  "convert": {
+   "mmol/L": 18.016
+  }
+ },
+ {
+  "loinc": "41653-7",
+  "display": "Glucose [Mass/volume] in Capillary blood by Glucometer",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "fingerstickglucose",
+   "fingerstick",
+   "pocglucose",
+   "cbg",
+   "capillaryglucose",
+   "glucometer"
+  ],
+  "convert": {
+   "mmol/L": 18.016
+  }
+ },
+ {
+  "loinc": "2951-2",
+  "display": "Sodium [Moles/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mmol/L",
+  "aliases": [
+   "sodium",
+   "na",
+   "serumsodium"
+  ],
+  "convert": {
+   "meq/L": 1
+  }
+ },
+ {
+  "loinc": "2823-3",
+  "display": "Potassium [Moles/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mmol/L",
+  "aliases": [
+   "potassium",
+   "k",
+   "serumpotassium"
+  ],
+  "convert": {
+   "meq/L": 1
+  }
+ },
+ {
+  "loinc": "2075-0",
+  "display": "Chloride [Moles/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mmol/L",
+  "aliases": [
+   "chloride",
+   "cl",
+   "serumchloride"
+  ],
+  "convert": {
+   "meq/L": 1
+  }
+ },
+ {
+  "loinc": "2028-9",
+  "display": "Carbon dioxide, total [Moles/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mmol/L",
+  "aliases": [
+   "co2",
+   "bicarbonate",
+   "bicarb",
+   "totalco2",
+   "tco2",
+   "hco3"
+  ],
+  "convert": {
+   "meq/L": 1
+  }
+ },
+ {
+  "loinc": "33037-3",
+  "display": "Anion gap in Serum or Plasma by calculation",
+  "category": "laboratory",
+  "unit": "mmol/L",
+  "aliases": [
+   "aniongap",
+   "ag"
+  ],
+  "convert": {
+   "meq/L": 1
+  }
+ },
+ {
+  "loinc": "3094-0",
+  "display": "Urea nitrogen [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "bun",
+   "ureanitrogen",
+   "bloodureanitrogen"
+  ],
+  "convert": {
+   "mmol/L": 2.801
+  }
+ },
+ {
+  "loinc": "2160-0",
+  "display": "Creatinine [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "creatinine",
+   "creat",
+   "cr",
+   "scr",
+   "serumcreatinine"
+  ],
+  "convert": {
+   "umol/L": 0.011309658448314861
+  }
+ },
+ {
+  "loinc": "62238-1",
+  "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI)/1.73 sq M",
+  "category": "laboratory",
+  "unit": "mL/min/{1.73_m2}",
+  "aliases": [
+   "egfr",
+   "gfr",
+   "estimatedgfr",
+   "egfrckdepi"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "17861-6",
+  "display": "Calcium [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "calcium",
+   "ca",
+   "serumcalcium",
+   "totalcalcium"
+  ],
+  "convert": {
+   "mmol/L": 4.008,
+   "meq/L": 2.004
+  }
+ },
+ {
+  "loinc": "2777-1",
+  "display": "Phosphate [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "phosphate",
+   "phosphorus",
+   "phos",
+   "po4"
+  ],
+  "convert": {
+   "mmol/L": 3.097
+  }
+ },
+ {
+  "loinc": "19123-9",
+  "display": "Magnesium [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "magnesium",
+   "mg",
+   "mag",
+   "serummagnesium"
+  ],
+  "convert": {
+   "mmol/L": 2.431,
+   "meq/L": 1.2153
+  }
+ },
+ {
+  "loinc": "2885-2",
+  "display": "Protein [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "g/dL",
+  "aliases": [
+   "totalprotein",
+   "tp",
+   "protein",
+   "serumprotein"
+  ],
+  "convert": {
+   "g/L": 0.1
+  }
+ },
+ {
+  "loinc": "1751-7",
+  "display": "Albumin [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "g/dL",
+  "aliases": [
+   "albumin",
+   "alb",
+   "serumalbumin"
+  ],
+  "convert": {
+   "g/L": 0.1
+  }
+ },
+ {
+  "loinc": "1975-2",
+  "display": "Bilirubin.total [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "bilirubin",
+   "totalbilirubin",
+   "tbili",
+   "bilitotal"
+  ],
+  "convert": {
+   "umol/L": 0.05847953216374269
+  }
+ },
+ {
+  "loinc": "1968-7",
+  "display": "Bilirubin.direct [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "directbilirubin",
+   "dbili",
+   "conjugatedbilirubin",
+   "bilidirect"
+  ],
+  "convert": {
+   "umol/L": 0.05847953216374269
+  }
+ },
+ {
+  "loinc": "6768-6",
+  "display": "Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "U/L",
+  "aliases": [
+   "alkalinephosphatase",
+   "alkphos",
+   "alp"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "1742-6",
+  "display": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "U/L",
+  "aliases": [
+   "alt",
+   "sgpt",
+   "alanineaminotransferase"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "1920-8",
+  "display": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "U/L",
+  "aliases": [
+   "ast",
+   "sgot",
+   "aspartateaminotransferase"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "2324-2",
+  "display": "Gamma glutamyl transferase [Enzymatic activity/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "U/L",
+  "aliases": [
+   "ggt",
+   "gammagt",
+   "gammaglutamyltransferase"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "3084-1",
+  "display": "Urate [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "uricacid",
+   "urate"
+  ],
+  "convert": {
+   "umol/L": 0.016812373907195696
+  }
+ },
+ {
+  "loinc": "1798-8",
+  "display": "Amylase [Enzymatic activity/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "U/L",
+  "aliases": [
+   "amylase"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "3040-3",
+  "display": "Lipase [Enzymatic activity/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "U/L",
+  "aliases": [
+   "lipase"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "2532-0",
+  "display": "Lactate dehydrogenase [Enzymatic activity/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "U/L",
+  "aliases": [
+   "ldh",
+   "lactatedehydrogenase",
+   "ld"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "2157-6",
+  "display": "Creatine kinase [Enzymatic activity/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "U/L",
+  "aliases": [
+   "ck",
+   "cpk",
+   "creatinekinase",
+   "creatinephosphokinase"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "2692-2",
+  "display": "Osmolality of Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mosm/kg",
+  "aliases": [
+   "osmolality",
+   "serumosmolality",
+   "osmo",
+   "sosm"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "2524-7",
+  "display": "Lactate [Moles/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mmol/L",
+  "aliases": [
+   "lactate",
+   "lacticacid",
+   "lactatelevel"
+  ],
+  "convert": {
+   "mg/dL": 0.11101243339253998
+  }
+ },
+ {
+  "loinc": "16362-6",
+  "display": "Ammonia [Moles/volume] in Plasma",
+  "category": "laboratory",
+  "unit": "umol/L",
+  "aliases": [
+   "ammonia",
+   "nh3"
+  ],
+  "convert": {
+   "ug/dL": 0.5872
+  }
+ },
+ {
+  "loinc": "2093-3",
+  "display": "Cholesterol [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "cholesterol",
+   "totalcholesterol",
+   "chol",
+   "tc"
+  ],
+  "convert": {
+   "mmol/L": 38.67
+  }
+ },
+ {
+  "loinc": "2571-8",
+  "display": "Triglyceride [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "triglycerides",
+   "trig",
+   "trigs",
+   "tg"
+  ],
+  "convert": {
+   "mmol/L": 88.57
+  }
+ },
+ {
+  "loinc": "2085-9",
+  "display": "Cholesterol in HDL [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "hdl",
+   "hdlc",
+   "hdlcholesterol"
+  ],
+  "convert": {
+   "mmol/L": 38.67
+  }
+ },
+ {
+  "loinc": "13457-7",
+  "display": "Cholesterol in LDL [Mass/volume] in Serum or Plasma by calculation",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "ldl",
+   "ldlc",
+   "ldlcholesterol",
+   "ldlcalculated"
+  ],
+  "convert": {
+   "mmol/L": 38.67
+  }
+ },
+ {
+  "loinc": "43396-1",
+  "display": "Cholesterol non HDL [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "nonhdl",
+   "nonhdlc",
+   "nonhdlcholesterol"
+  ],
+  "convert": {
+   "mmol/L": 38.67
+  }
+ },
+ {
+  "loinc": "9830-1",
+  "display": "Cholesterol.total/Cholesterol in HDL [Mass Ratio] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "{ratio}",
+  "aliases": [
+   "cholhdlratio",
+   "cholesterolhdlratio",
+   "tchdlratio"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "4548-4",
+  "display": "Hemoglobin A1c/Hemoglobin.total in Blood",
+  "category": "laboratory",
+  "unit": "%",
+  "aliases": [
+   "hba1c",
+   "a1c",
+   "hemoglobina1c",
+   "haemoglobina1c",
+   "glycatedhemoglobin",
+   "glycohemoglobin"
+  ],
+  "convert": {
+   "mmol/mol": [
+    0.09148,
+    2.152
+   ]
+  }
+ },
+ {
+  "loinc": "14959-1",
+  "display": "Microalbumin/Creatinine [Mass Ratio] in Urine",
+  "category": "laboratory",
+  "unit": "mg/g",
+  "aliases": [
+   "uacr",
+   "microalbumincreatinineratio",
+   "albumincreatinineratio",
+   "acr"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "20448-7",
+  "display": "Insulin [Units/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "m[IU]/L",
+  "aliases": [
+   "insulin",
+   "insulinlevel",
+   "fastinginsulin"
+  ],
+  "convert": {
+   "pmol/L": 0.16666666666666666
+  }
+ },
+ {
+  "loinc": "1986-9",
+  "display": "C peptide [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "ng/mL",
+  "aliases": [
+   "cpeptide"
+  ],
+  "convert": {
+   "nmol/L": 3.02
+  }
+ },
+ {
+  "loinc": "3016-3",
+  "display": "Thyrotropin [Units/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "m[IU]/L",
+  "aliases": [
+   "tsh",
+   "thyrotropin",
+   "thyroidstimulatinghormone"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "3024-7",
+  "display": "Thyroxine (T4) free [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "ng/dL",
+  "aliases": [
+   "freet4",
+   "ft4",
+   "freethyroxine",
+   "t4free"
+  ],
+  "convert": {
+   "pmol/L": 0.07770007770007771
+  }
+ },
+ {
+  "loinc": "3051-0",
+  "display": "Triiodothyronine (T3) Free [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "pg/mL",
+  "aliases": [
+   "freet3",
+   "ft3",
+   "freetriiodothyronine",
+   "t3free"
+  ],
+  "convert": {
+   "pmol/L": 0.651
+  }
+ },
+ {
+  "loinc": "3026-2",
+  "display": "Thyroxine (T4) [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "ug/dL",
+  "aliases": [
+   "t4",
+   "totalt4",
+   "thyroxine",
+   "t4total"
+  ],
+  "convert": {
+   "nmol/L": 0.07770007770007771
+  }
+ },
+ {
+  "loinc": "2731-8",
+  "display": "Parathyrin.intact [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "pg/mL",
+  "aliases": [
+   "pth",
+   "parathyroidhormone",
+   "intactpth"
+  ],
+  "convert": {
+   "pmol/L": 9.43
+  }
+ },
+ {
+  "loinc": "2143-6",
+  "display": "Cortisol [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "ug/dL",
+  "aliases": [
+   "cortisol",
+   "serumcortisol"
+  ],
+  "convert": {
+   "nmol/L": 0.03624501631025734
+  }
+ },
+ {
+  "loinc": "2986-8",
+  "display": "Testosterone [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "ng/dL",
+  "aliases": [
+   "testosterone",
+   "totaltestosterone"
+  ],
+  "convert": {
+   "nmol/L": 28.84
+  }
+ },
+ {
+  "loinc": "2857-1",
+  "display": "Prostate specific Ag [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "ng/mL",
+  "aliases": [
+   "psa",
+   "prostatespecificantigen"
+  ],
+  "convert": {
+   "ug/L": 1
+  }
+ },
+ {
+  "loinc": "21198-7",
+  "display": "Choriogonadotropin.beta subunit [Units/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "m[IU]/mL",
+  "aliases": [
+   "hcg",
+   "betahcg",
+   "bhcg",
+   "quantitativehcg",
+   "serumhcg"
+  ],
+  "convert": {
+   "U/L": 1
+  }
+ },
+ {
+  "loinc": "2498-4",
+  "display": "Iron [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "ug/dL",
+  "aliases": [
+   "iron",
+   "serumiron",
+   "fe"
+  ],
+  "convert": {
+   "umol/L": 5.585
+  }
+ },
+ {
+  "loinc": "2276-4",
+  "display": "Ferritin [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "ng/mL",
+  "aliases": [
+   "ferritin"
+  ],
+  "convert": {
+   "ug/L": 1
+  }
+ },
+ {
+  "loinc": "2500-7",
+  "display": "Iron binding capacity [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "ug/dL",
+  "aliases": [
+   "tibc",
+   "totalironbindingcapacity"
+  ],
+  "convert": {
+   "umol/L": 5.585
+  }
+ },
+ {
+  "loinc": "2502-3",
+  "display": "Iron saturation [Mass Fraction] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "%",
+  "aliases": [
+   "transferrinsaturation",
+   "tsat",
+   "ironsaturation"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "2132-9",
+  "display": "Cobalamin (Vitamin B12) [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "pg/mL",
+  "aliases": [
+   "b12",
+   "vitaminb12",
+   "cobalamin"
+  ],
+  "convert": {
+   "pmol/L": 1.355
+  }
+ },
+ {
+  "loinc": "2284-8",
+  "display": "Folate [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "ng/mL",
+  "aliases": [
+   "folate",
+   "folicacidlevel",
+   "serumfolate"
+  ],
+  "convert": {
+   "nmol/L": 0.44130626654898497
+  }
+ },
+ {
+  "loinc": "62292-8",
+  "display": "25-Hydroxyvitamin D3+25-Hydroxyvitamin D2 [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "ng/mL",
+  "aliases": [
+   "vitamind",
+   "25ohd",
+   "25ohvitamind",
+   "vitd",
+   "25hydroxyvitamind"
+  ],
+  "convert": {
+   "nmol/L": 0.40064102564102566
+  }
+ },
+ {
+  "loinc": "5902-2",
+  "display": "Prothrombin time (PT)",
+  "category": "laboratory",
+  "unit": "s",
+  "aliases": [
+   "pt",
+   "prothrombintime",
+   "protime"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "6301-6",
+  "display": "INR in Platelet poor plasma by Coagulation assay",
+  "category": "laboratory",
+  "unit": "{INR}",
+  "aliases": [
+   "inr"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "14979-9",
+  "display": "aPTT in Platelet poor plasma by Coagulation assay",
+  "category": "laboratory",
+  "unit": "s",
+  "aliases": [
+   "aptt",
+   "ptt",
+   "partialthromboplastintime"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "3255-7",
+  "display": "Fibrinogen [Mass/volume] in Platelet poor plasma by Coagulation assay",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "fibrinogen"
+  ],
+  "convert": {
+   "g/L": 100
+  }
+ },
+ {
+  "loinc": "48065-7",
+  "display": "Fibrin D-dimer FEU [Mass/volume] in Platelet poor plasma",
+  "category": "laboratory",
+  "unit": "ng/mL",
+  "aliases": [
+   "ddimer",
+   "dimer"
+  ],
+  "convert": {
+   "ug/mL": 1000,
+   "mg/L": 1000
+  }
+ },
+ {
+  "loinc": "10839-9",
+  "display": "Troponin I.cardiac [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "ng/mL",
+  "aliases": [
+   "troponin",
+   "troponini",
+   "tni",
+   "ctni"
+  ],
+  "convert": {
+   "ng/L": 0.001
+  }
+ },
+ {
+  "loinc": "89579-7",
+  "display": "Troponin I.cardiac [Mass/volume] in Serum or Plasma by High sensitivity method",
+  "category": "laboratory",
+  "unit": "ng/L",
+  "aliases": [
+   "hstroponin",
+   "hstroponini",
+   "hstni",
+   "highsensitivitytroponin"
+  ],
+  "convert": {
+   "ng/mL": 1000
+  }
+ },
+ {
+  "loinc": "30934-4",
+  "display": "Natriuretic peptide B [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "pg/mL",
+  "aliases": [
+   "bnp",
+   "brainnatriureticpeptide"
+  ],
+  "convert": {
+   "ng/L": 1
+  }
+ },
+ {
+  "loinc": "33762-6",
+  "display": "Natriuretic peptide.B prohormone N-Terminal [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "pg/mL",
+  "aliases": [
+   "ntprobnp",
+   "probnp"
+  ],
+  "convert": {
+   "ng/L": 1
+  }
+ },
+ {
+  "loinc": "1988-5",
+  "display": "C reactive protein [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "mg/L",
+  "aliases": [
+   "crp",
+   "creactiveprotein"
+  ],
+  "convert": {
+   "mg/dL": 10
+  }
+ },
+ {
+  "loinc": "30522-7",
+  "display": "C reactive protein [Mass/volume] in Serum or Plasma by High sensitivity method",
+  "category": "laboratory",
+  "unit": "mg/L",
+  "aliases": [
+   "hscrp",
+   "highsensitivitycrp",
+   "cardiaccrp"
+  ],
+  "convert": {
+   "mg/dL": 10
+  }
+ },
+ {
+  "loinc": "33959-8",
+  "display": "Procalcitonin [Mass/volume] in Serum or Plasma",
+  "category": "laboratory",
+  "unit": "ng/mL",
+  "aliases": [
+   "procalcitonin",
+   "pct"
+  ],
+  "convert": {
+   "ug/L": 1
+  }
+ },
+ {
+  "loinc": "2744-1",
+  "display": "pH of Arterial blood",
+  "category": "laboratory",
+  "unit": "[pH]",
+  "aliases": [
+   "ph",
+   "arterialph",
+   "abgph"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "2019-8",
+  "display": "Carbon dioxide [Partial pressure] in Arterial blood",
+  "category": "laboratory",
+  "unit": "mm[Hg]",
+  "aliases": [
+   "pco2",
+   "paco2",
+   "arterialpco2"
+  ],
+  "convert": {
+   "kPa": 7.50062
+  }
+ },
+ {
+  "loinc": "2703-7",
+  "display": "Oxygen [Partial pressure] in Arterial blood",
+  "category": "laboratory",
+  "unit": "mm[Hg]",
+  "aliases": [
+   "po2",
+   "pao2",
+   "arterialpo2"
+  ],
+  "convert": {
+   "kPa": 7.50062
+  }
+ },
+ {
+  "loinc": "1960-4",
+  "display": "Bicarbonate [Moles/volume] in Arterial blood",
+  "category": "laboratory",
+  "unit": "mmol/L",
+  "aliases": [
+   "arterialbicarbonate",
+   "abghco3",
+   "arterialhco3"
+  ],
+  "convert": {
+   "meq/L": 1
+  }
+ },
+ {
+  "loinc": "2756-5",
+  "display": "pH of Urine",
+  "category": "laboratory",
+  "unit": "[pH]",
+  "aliases": [
+   "urineph"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "2965-2",
+  "display": "Specific gravity of Urine",
+  "category": "laboratory",
+  "unit": "1",
+  "aliases": [
+   "specificgravity",
+   "urinespecificgravity",
+   "sg",
+   "usg"
+  ],
+  "convert": {}
+ },
+ {
+  "loinc": "2161-8",
+  "display": "Creatinine [Mass/volume] in Urine",
+  "category": "laboratory",
+  "unit": "mg/dL",
+  "aliases": [
+   "urinecreatinine"
+  ],
+  "convert": {
+   "umol/L": 0.011309658448314861
+  }
+ }
+]

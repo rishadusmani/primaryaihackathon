@@ -1,0 +1,1232 @@
+[
+ {
+  "snomed": "44054006",
+  "display": "Type 2 diabetes mellitus",
+  "icd10": "E11.9",
+  "icd10_display": "Type 2 diabetes mellitus without complications",
+  "aliases": [
+   "type2diabetes",
+   "type2diabetesmellitus",
+   "diabetesmellitustype2",
+   "t2dm",
+   "dm2",
+   "dmii",
+   "niddm",
+   "diabetestype2"
+  ]
+ },
+ {
+  "snomed": "46635009",
+  "display": "Type 1 diabetes mellitus",
+  "icd10": "E10.9",
+  "icd10_display": "Type 1 diabetes mellitus without complications",
+  "aliases": [
+   "type1diabetes",
+   "type1diabetesmellitus",
+   "diabetesmellitustype1",
+   "t1dm",
+   "dm1",
+   "iddm",
+   "diabetestype1"
+  ]
+ },
+ {
+  "snomed": "714628002",
+  "display": "Prediabetes",
+  "icd10": "R73.03",
+  "icd10_display": "Prediabetes",
+  "aliases": [
+   "prediabetes",
+   "prediabetic",
+   "impairedfastingglucose"
+  ]
+ },
+ {
+  "snomed": "302866003",
+  "display": "Hypoglycemia",
+  "icd10": "E16.2",
+  "icd10_display": "Hypoglycemia, unspecified",
+  "aliases": [
+   "hypoglycemia",
+   "hypoglycaemia",
+   "lowbloodsugar"
+  ]
+ },
+ {
+  "snomed": "59621000",
+  "display": "Essential hypertension",
+  "icd10": "I10",
+  "icd10_display": "Essential (primary) hypertension",
+  "aliases": [
+   "hypertension",
+   "essentialhypertension",
+   "htn",
+   "highbloodpressure"
+  ]
+ },
+ {
+  "snomed": "45007003",
+  "display": "Low blood pressure",
+  "icd10": "I95.9",
+  "icd10_display": "Hypotension, unspecified",
+  "aliases": [
+   "hypotension",
+   "lowbloodpressure"
+  ]
+ },
+ {
+  "snomed": "55822004",
+  "display": "Hyperlipidemia",
+  "icd10": "E78.5",
+  "icd10_display": "Hyperlipidemia, unspecified",
+  "aliases": [
+   "hyperlipidemia",
+   "hyperlipidaemia",
+   "hld"
+  ]
+ },
+ {
+  "snomed": "13644009",
+  "display": "Hypercholesterolemia",
+  "icd10": "E78.00",
+  "icd10_display": "Pure hypercholesterolemia, unspecified",
+  "aliases": [
+   "hypercholesterolemia",
+   "hypercholesterolaemia",
+   "highcholesterol"
+  ]
+ },
+ {
+  "snomed": "302870006",
+  "display": "Hypertriglyceridemia",
+  "icd10": "E78.1",
+  "icd10_display": "Pure hyperglyceridemia",
+  "aliases": [
+   "hypertriglyceridemia",
+   "hypertriglyceridaemia",
+   "hightriglycerides"
+  ]
+ },
+ {
+  "snomed": "414916001",
+  "display": "Obesity",
+  "icd10": "E66.9",
+  "icd10_display": "Obesity, unspecified",
+  "aliases": [
+   "obesity",
+   "obese"
+  ]
+ },
+ {
+  "snomed": "53741008",
+  "display": "Coronary arteriosclerosis",
+  "icd10": "I25.10",
+  "icd10_display": "Atherosclerotic heart disease of native coronary artery without angina pectoris",
+  "aliases": [
+   "coronaryarterydisease",
+   "cad",
+   "coronaryheartdisease",
+   "chd",
+   "ischemicheartdisease",
+   "ihd",
+   "ascvd"
+  ]
+ },
+ {
+  "snomed": "22298006",
+  "display": "Myocardial infarction",
+  "icd10": "I21.9",
+  "icd10_display": "Acute myocardial infarction, unspecified",
+  "aliases": [
+   "myocardialinfarction",
+   "mi",
+   "heartattack",
+   "ami",
+   "acutemyocardialinfarction"
+  ]
+ },
+ {
+  "snomed": "84114007",
+  "display": "Heart failure",
+  "icd10": "I50.9",
+  "icd10_display": "Heart failure, unspecified",
+  "aliases": [
+   "heartfailure",
+   "chf",
+   "congestiveheartfailure",
+   "hf",
+   "cardiacfailure"
+  ]
+ },
+ {
+  "snomed": "49436004",
+  "display": "Atrial fibrillation",
+  "icd10": "I48.91",
+  "icd10_display": "Unspecified atrial fibrillation",
+  "aliases": [
+   "atrialfibrillation",
+   "afib",
+   "af"
+  ]
+ },
+ {
+  "snomed": "5370000",
+  "display": "Atrial flutter",
+  "icd10": "I48.92",
+  "icd10_display": "Unspecified atrial flutter",
+  "aliases": [
+   "atrialflutter",
+   "aflutter"
+  ]
+ },
+ {
+  "snomed": "60573004",
+  "display": "Aortic valve stenosis",
+  "icd10": "I35.0",
+  "icd10_display": "Nonrheumatic aortic (valve) stenosis",
+  "aliases": [
+   "aorticstenosis",
+   "aorticvalvestenosis"
+  ]
+ },
+ {
+  "snomed": "233873004",
+  "display": "Hypertrophic cardiomyopathy",
+  "icd10": "I42.2",
+  "icd10_display": "Other hypertrophic cardiomyopathy",
+  "aliases": [
+   "hypertrophiccardiomyopathy",
+   "hcm"
+  ]
+ },
+ {
+  "snomed": "400047006",
+  "display": "Peripheral vascular disease",
+  "icd10": "I73.9",
+  "icd10_display": "Peripheral vascular disease, unspecified",
+  "aliases": [
+   "peripheralvasculardisease",
+   "pvd",
+   "peripheralarterydisease",
+   "pad"
+  ]
+ },
+ {
+  "snomed": "128053003",
+  "display": "Deep venous thrombosis",
+  "icd10": "I82.409",
+  "icd10_display": "Acute embolism and thrombosis of unspecified deep veins of unspecified lower extremity",
+  "aliases": [
+   "dvt",
+   "deepveinthrombosis",
+   "deepvenousthrombosis"
+  ]
+ },
+ {
+  "snomed": "59282003",
+  "display": "Pulmonary embolism",
+  "icd10": "I26.99",
+  "icd10_display": "Other pulmonary embolism without acute cor pulmonale",
+  "aliases": [
+   "pulmonaryembolism",
+   "pe"
+  ]
+ },
+ {
+  "snomed": "230690007",
+  "display": "Cerebrovascular accident",
+  "icd10": "I63.9",
+  "icd10_display": "Cerebral infarction, unspecified",
+  "aliases": [
+   "stroke",
+   "cva",
+   "cerebrovascularaccident"
+  ]
+ },
+ {
+  "snomed": "266257000",
+  "display": "Transient cerebral ischemia",
+  "icd10": "G45.9",
+  "icd10_display": "Transient cerebral ischemic attack, unspecified",
+  "aliases": [
+   "tia",
+   "transientischemicattack",
+   "ministroke"
+  ]
+ },
+ {
+  "snomed": "195967001",
+  "display": "Asthma",
+  "icd10": "J45.909",
+  "icd10_display": "Unspecified asthma, uncomplicated",
+  "aliases": [
+   "asthma"
+  ]
+ },
+ {
+  "snomed": "13645005",
+  "display": "Chronic obstructive pulmonary disease",
+  "icd10": "J44.9",
+  "icd10_display": "Chronic obstructive pulmonary disease, unspecified",
+  "aliases": [
+   "copd",
+   "chronicobstructivepulmonarydisease"
+  ]
+ },
+ {
+  "snomed": "233604007",
+  "display": "Pneumonia",
+  "icd10": "J18.9",
+  "icd10_display": "Pneumonia, unspecified organism",
+  "aliases": [
+   "pneumonia",
+   "cap",
+   "communityacquiredpneumonia"
+  ]
+ },
+ {
+  "snomed": "78275009",
+  "display": "Obstructive sleep apnea syndrome",
+  "icd10": "G47.33",
+  "icd10_display": "Obstructive sleep apnea (adult) (pediatric)",
+  "aliases": [
+   "obstructivesleepapnea",
+   "osa",
+   "sleepapnea"
+  ]
+ },
+ {
+  "snomed": "233703007",
+  "display": "Interstitial lung disease",
+  "icd10": "J84.9",
+  "icd10_display": "Interstitial pulmonary disease, unspecified",
+  "aliases": [
+   "interstitiallungdisease",
+   "ild",
+   "pulmonaryfibrosis"
+  ]
+ },
+ {
+  "snomed": "190905008",
+  "display": "Cystic fibrosis",
+  "icd10": "E84.9",
+  "icd10_display": "Cystic fibrosis, unspecified",
+  "aliases": [
+   "cysticfibrosis",
+   "cf"
+  ]
+ },
+ {
+  "snomed": "61582004",
+  "display": "Allergic rhinitis",
+  "icd10": "J30.9",
+  "icd10_display": "Allergic rhinitis, unspecified",
+  "aliases": [
+   "allergicrhinitis",
+   "hayfever",
+   "seasonalallergies"
+  ]
+ },
+ {
+  "snomed": "40055000",
+  "display": "Chronic sinusitis",
+  "icd10": "J32.9",
+  "icd10_display": "Chronic sinusitis, unspecified",
+  "aliases": [
+   "chronicsinusitis"
+  ]
+ },
+ {
+  "snomed": "43878008",
+  "display": "Streptococcal sore throat",
+  "icd10": "J02.0",
+  "icd10_display": "Streptococcal pharyngitis",
+  "aliases": [
+   "strepthroat",
+   "streptococcalpharyngitis",
+   "streppharyngitis"
+  ]
+ },
+ {
+  "snomed": "6142004",
+  "display": "Influenza",
+  "icd10": "J11.1",
+  "icd10_display": "Influenza due to unidentified influenza virus with other respiratory manifestations",
+  "aliases": [
+   "influenza",
+   "flu"
+  ]
+ },
+ {
+  "snomed": "840539006",
+  "display": "COVID-19",
+  "icd10": "U07.1",
+  "icd10_display": "COVID-19",
+  "aliases": [
+   "covid19",
+   "covid",
+   "sarscov2",
+   "coronavirusdisease2019"
+  ]
+ },
+ {
+  "snomed": "709044004",
+  "display": "Chronic kidney disease",
+  "icd10": "N18.9",
+  "icd10_display": "Chronic kidney disease, unspecified",
+  "aliases": [
+   "chronickidneydisease",
+   "ckd",
+   "chronicrenaldisease",
+   "crd"
+  ]
+ },
+ {
+  "snomed": "14669001",
+  "display": "Acute kidney injury",
+  "icd10": "N17.9",
+  "icd10_display": "Acute kidney failure, unspecified",
+  "aliases": [
+   "acutekidneyinjury",
+   "aki",
+   "acuterenalfailure",
+   "arf"
+  ]
+ },
+ {
+  "snomed": "95570007",
+  "display": "Kidney stone",
+  "icd10": "N20.0",
+  "icd10_display": "Calculus of kidney",
+  "aliases": [
+   "kidneystone",
+   "kidneystones",
+   "nephrolithiasis",
+   "renalcalculus"
+  ]
+ },
+ {
+  "snomed": "68566005",
+  "display": "Urinary tract infectious disease",
+  "icd10": "N39.0",
+  "icd10_display": "Urinary tract infection, site not specified",
+  "aliases": [
+   "uti",
+   "urinarytractinfection"
+  ]
+ },
+ {
+  "snomed": "266569009",
+  "display": "Benign prostatic hyperplasia",
+  "icd10": "N40.0",
+  "icd10_display": "Benign prostatic hyperplasia without lower urinary tract symptoms",
+  "aliases": [
+   "bph",
+   "benignprostatichyperplasia",
+   "enlargedprostate"
+  ]
+ },
+ {
+  "snomed": "237055002",
+  "display": "Polycystic ovary syndrome",
+  "icd10": "E28.2",
+  "icd10_display": "Polycystic ovarian syndrome",
+  "aliases": [
+   "pcos",
+   "polycysticovarysyndrome",
+   "polycysticovariansyndrome"
+  ]
+ },
+ {
+  "snomed": "129103003",
+  "display": "Endometriosis (clinical)",
+  "icd10": "N80.9",
+  "icd10_display": "Endometriosis, unspecified",
+  "aliases": [
+   "endometriosis"
+  ]
+ },
+ {
+  "snomed": "235595009",
+  "display": "Gastroesophageal reflux disease",
+  "icd10": "K21.9",
+  "icd10_display": "Gastro-esophageal reflux disease without esophagitis",
+  "aliases": [
+   "gerd",
+   "gastroesophagealrefluxdisease",
+   "acidreflux",
+   "reflux",
+   "gord"
+  ]
+ },
+ {
+  "snomed": "10743008",
+  "display": "Irritable bowel syndrome",
+  "icd10": "K58.9",
+  "icd10_display": "Irritable bowel syndrome, unspecified",
+  "aliases": [
+   "ibs",
+   "irritablebowelsyndrome"
+  ]
+ },
+ {
+  "snomed": "34000006",
+  "display": "Crohn's disease",
+  "icd10": "K50.90",
+  "icd10_display": "Crohn's disease, unspecified, without complications",
+  "aliases": [
+   "crohnsdisease",
+   "crohns",
+   "crohn",
+   "crohndisease"
+  ]
+ },
+ {
+  "snomed": "64766004",
+  "display": "Ulcerative colitis",
+  "icd10": "K51.90",
+  "icd10_display": "Ulcerative colitis, unspecified, without complications",
+  "aliases": [
+   "ulcerativecolitis",
+   "uc"
+  ]
+ },
+ {
+  "snomed": "19943007",
+  "display": "Cirrhosis of liver",
+  "icd10": "K74.60",
+  "icd10_display": "Unspecified cirrhosis of liver",
+  "aliases": [
+   "cirrhosis",
+   "livercirrhosis",
+   "cirrhosisofliver"
+  ]
+ },
+ {
+  "snomed": "197321007",
+  "display": "Steatotic liver disease",
+  "icd10": "K76.0",
+  "icd10_display": "Fatty (change of) liver, not elsewhere classified",
+  "aliases": [
+   "fattyliver",
+   "hepaticsteatosis",
+   "nafld",
+   "masld",
+   "steatosisofliver"
+  ]
+ },
+ {
+  "snomed": "61977001",
+  "display": "Chronic type B viral hepatitis",
+  "icd10": "B18.1",
+  "icd10_display": "Chronic viral hepatitis B without delta-agent",
+  "aliases": [
+   "hepatitisb",
+   "chronichepatitisb",
+   "hbv",
+   "hepb"
+  ]
+ },
+ {
+  "snomed": "128302006",
+  "display": "Chronic hepatitis C",
+  "icd10": "B18.2",
+  "icd10_display": "Chronic viral hepatitis C",
+  "aliases": [
+   "hepatitisc",
+   "chronichepatitisc",
+   "hcv",
+   "hepc"
+  ]
+ },
+ {
+  "snomed": "197456007",
+  "display": "Acute pancreatitis",
+  "icd10": "K85.90",
+  "icd10_display": "Acute pancreatitis without necrosis or infection, unspecified",
+  "aliases": [
+   "acutepancreatitis",
+   "pancreatitis"
+  ]
+ },
+ {
+  "snomed": "14760008",
+  "display": "Constipation",
+  "icd10": "K59.00",
+  "icd10_display": "Constipation, unspecified",
+  "aliases": [
+   "constipation"
+  ]
+ },
+ {
+  "snomed": "40930008",
+  "display": "Hypothyroidism",
+  "icd10": "E03.9",
+  "icd10_display": "Hypothyroidism, unspecified",
+  "aliases": [
+   "hypothyroidism",
+   "hypothyroid",
+   "underactivethyroid"
+  ]
+ },
+ {
+  "snomed": "34486009",
+  "display": "Hyperthyroidism",
+  "icd10": "E05.90",
+  "icd10_display": "Thyrotoxicosis, unspecified without thyrotoxic crisis or storm",
+  "aliases": [
+   "hyperthyroidism",
+   "hyperthyroid",
+   "overactivethyroid",
+   "thyrotoxicosis"
+  ]
+ },
+ {
+  "snomed": "34713006",
+  "display": "Vitamin D deficiency",
+  "icd10": "E55.9",
+  "icd10_display": "Vitamin D deficiency, unspecified",
+  "aliases": [
+   "vitaminddeficiency",
+   "lowvitamind"
+  ]
+ },
+ {
+  "snomed": "43339004",
+  "display": "Hypokalemia",
+  "icd10": "E87.6",
+  "icd10_display": "Hypokalemia",
+  "aliases": [
+   "hypokalemia",
+   "hypokalaemia",
+   "lowpotassium"
+  ]
+ },
+ {
+  "snomed": "14140009",
+  "display": "Hyperkalemia",
+  "icd10": "E87.5",
+  "icd10_display": "Hyperkalemia",
+  "aliases": [
+   "hyperkalemia",
+   "hyperkalaemia",
+   "highpotassium"
+  ]
+ },
+ {
+  "snomed": "89627008",
+  "display": "Hyponatremia",
+  "icd10": "E87.1",
+  "icd10_display": "Hypo-osmolality and hyponatremia",
+  "aliases": [
+   "hyponatremia",
+   "hyponatraemia",
+   "lowsodium"
+  ]
+ },
+ {
+  "snomed": "90560007",
+  "display": "Gout",
+  "icd10": "M10.9",
+  "icd10_display": "Gout, unspecified",
+  "aliases": [
+   "gout"
+  ]
+ },
+ {
+  "snomed": "271737000",
+  "display": "Anemia",
+  "icd10": "D64.9",
+  "icd10_display": "Anemia, unspecified",
+  "aliases": [
+   "anemia",
+   "anaemia"
+  ]
+ },
+ {
+  "snomed": "87522002",
+  "display": "Iron deficiency anemia",
+  "icd10": "D50.9",
+  "icd10_display": "Iron deficiency anemia, unspecified",
+  "aliases": [
+   "irondeficiencyanemia",
+   "irondeficiencyanaemia",
+   "ida"
+  ]
+ },
+ {
+  "snomed": "417357006",
+  "display": "Sickling disorder due to hemoglobin S",
+  "icd10": "D57.1",
+  "icd10_display": "Sickle-cell disease without crisis",
+  "aliases": [
+   "sicklecelldisease",
+   "sicklecellanemia",
+   "scd"
+  ]
+ },
+ {
+  "snomed": "363346000",
+  "display": "Malignant neoplastic disease",
+  "icd10": "C80.1",
+  "icd10_display": "Malignant (primary) neoplasm, unspecified",
+  "aliases": [
+   "cancer",
+   "malignancy",
+   "malignantneoplasm"
+  ]
+ },
+ {
+  "snomed": "254837009",
+  "display": "Malignant neoplasm of breast",
+  "icd10": "C50.919",
+  "icd10_display": "Malignant neoplasm of unspecified site of unspecified female breast",
+  "aliases": [
+   "breastcancer",
+   "breastcarcinoma"
+  ]
+ },
+ {
+  "snomed": "399068003",
+  "display": "Malignant neoplasm of prostate",
+  "icd10": "C61",
+  "icd10_display": "Malignant neoplasm of prostate",
+  "aliases": [
+   "prostatecancer",
+   "prostatecarcinoma"
+  ]
+ },
+ {
+  "snomed": "363358000",
+  "display": "Malignant neoplasm of lung",
+  "icd10": "C34.90",
+  "icd10_display": "Malignant neoplasm of unspecified part of unspecified bronchus or lung",
+  "aliases": [
+   "lungcancer",
+   "lungcarcinoma"
+  ]
+ },
+ {
+  "snomed": "363406005",
+  "display": "Malignant neoplasm of colon",
+  "icd10": "C18.9",
+  "icd10_display": "Malignant neoplasm of colon, unspecified",
+  "aliases": [
+   "coloncancer",
+   "colorectalcancer",
+   "coloncarcinoma"
+  ]
+ },
+ {
+  "snomed": "363418001",
+  "display": "Malignant neoplasm of pancreas",
+  "icd10": "C25.9",
+  "icd10_display": "Malignant neoplasm of pancreas, unspecified",
+  "aliases": [
+   "pancreaticcancer",
+   "pancreascancer"
+  ]
+ },
+ {
+  "snomed": "372244006",
+  "display": "Malignant melanoma",
+  "icd10": "C43.9",
+  "icd10_display": "Malignant melanoma of skin, unspecified",
+  "aliases": [
+   "melanoma",
+   "malignantmelanoma"
+  ]
+ },
+ {
+  "snomed": "93143009",
+  "display": "Leukemia",
+  "icd10": "C95.90",
+  "icd10_display": "Leukemia, unspecified not having achieved remission",
+  "aliases": [
+   "leukemia",
+   "leukaemia"
+  ]
+ },
+ {
+  "snomed": "118600007",
+  "display": "Malignant lymphoma",
+  "icd10": "C85.90",
+  "icd10_display": "Non-Hodgkin lymphoma, unspecified, unspecified site",
+  "aliases": [
+   "lymphoma"
+  ]
+ },
+ {
+  "snomed": "84757009",
+  "display": "Epilepsy",
+  "icd10": "G40.909",
+  "icd10_display": "Epilepsy, unspecified, not intractable, without status epilepticus",
+  "aliases": [
+   "epilepsy",
+   "seizuredisorder"
+  ]
+ },
+ {
+  "snomed": "37796009",
+  "display": "Migraine",
+  "icd10": "G43.909",
+  "icd10_display": "Migraine, unspecified, not intractable, without status migrainosus",
+  "aliases": [
+   "migraine",
+   "migraines"
+  ]
+ },
+ {
+  "snomed": "49049000",
+  "display": "Parkinson's disease",
+  "icd10": "G20.A1",
+  "icd10_display": "Parkinson's disease without dyskinesia, without mention of fluctuations",
+  "aliases": [
+   "parkinsonsdisease",
+   "parkinsons",
+   "parkinson",
+   "parkinsondisease",
+   "pd"
+  ]
+ },
+ {
+  "snomed": "26929004",
+  "display": "Alzheimer's disease",
+  "icd10": "G30.9",
+  "icd10_display": "Alzheimer's disease, unspecified",
+  "aliases": [
+   "alzheimersdisease",
+   "alzheimers",
+   "alzheimer",
+   "alzheimerdisease"
+  ]
+ },
+ {
+  "snomed": "52448006",
+  "display": "Dementia",
+  "icd10": "F03.90",
+  "icd10_display": "Unspecified dementia, unspecified severity, without behavioral disturbance, psychotic disturbance, mood disturbance, and anxiety",
+  "aliases": [
+   "dementia"
+  ]
+ },
+ {
+  "snomed": "302226006",
+  "display": "Peripheral nerve disease",
+  "icd10": "G62.9",
+  "icd10_display": "Polyneuropathy, unspecified",
+  "aliases": [
+   "peripheralneuropathy",
+   "neuropathy",
+   "polyneuropathy"
+  ]
+ },
+ {
+  "snomed": "193462001",
+  "display": "Insomnia",
+  "icd10": "G47.00",
+  "icd10_display": "Insomnia, unspecified",
+  "aliases": [
+   "insomnia"
+  ]
+ },
+ {
+  "snomed": "82423001",
+  "display": "Chronic pain",
+  "icd10": "G89.29",
+  "icd10_display": "Other chronic pain",
+  "aliases": [
+   "chronicpain"
+  ]
+ },
+ {
+  "snomed": "35489007",
+  "display": "Depressive disorder",
+  "icd10": "F32.A",
+  "icd10_display": "Depression, unspecified",
+  "aliases": [
+   "depression",
+   "depressivedisorder"
+  ]
+ },
+ {
+  "snomed": "370143000",
+  "display": "Major depressive disorder",
+  "icd10": "F32.9",
+  "icd10_display": "Major depressive disorder, single episode, unspecified",
+  "aliases": [
+   "majordepressivedisorder",
+   "mdd",
+   "majordepression"
+  ]
+ },
+ {
+  "snomed": "197480006",
+  "display": "Anxiety disorder",
+  "icd10": "F41.9",
+  "icd10_display": "Anxiety disorder, unspecified",
+  "aliases": [
+   "anxiety",
+   "anxietydisorder"
+  ]
+ },
+ {
+  "snomed": "21897009",
+  "display": "Generalized anxiety disorder",
+  "icd10": "F41.1",
+  "icd10_display": "Generalized anxiety disorder",
+  "aliases": [
+   "generalizedanxietydisorder",
+   "gad",
+   "generalisedanxietydisorder"
+  ]
+ },
+ {
+  "snomed": "13746004",
+  "display": "Bipolar disorder",
+  "icd10": "F31.9",
+  "icd10_display": "Bipolar disorder, unspecified",
+  "aliases": [
+   "bipolardisorder",
+   "bipolar",
+   "manicdepression"
+  ]
+ },
+ {
+  "snomed": "58214004",
+  "display": "Schizophrenia",
+  "icd10": "F20.9",
+  "icd10_display": "Schizophrenia, unspecified",
+  "aliases": [
+   "schizophrenia"
+  ]
+ },
+ {
+  "snomed": "47505003",
+  "display": "Posttraumatic stress disorder",
+  "icd10": "F43.10",
+  "icd10_display": "Post-traumatic stress disorder, unspecified",
+  "aliases": [
+   "ptsd",
+   "posttraumaticstressdisorder"
+  ]
+ },
+ {
+  "snomed": "406506008",
+  "display": "Attention deficit hyperactivity disorder",
+  "icd10": "F90.9",
+  "icd10_display": "Attention-deficit hyperactivity disorder, unspecified type",
+  "aliases": [
+   "adhd",
+   "attentiondeficithyperactivitydisorder",
+   "add"
+  ]
+ },
+ {
+  "snomed": "191736004",
+  "display": "Obsessive-compulsive disorder",
+  "icd10": "F42.9",
+  "icd10_display": "Obsessive-compulsive disorder, unspecified",
+  "aliases": [
+   "ocd",
+   "obsessivecompulsivedisorder"
+  ]
+ },
+ {
+  "snomed": "7200002",
+  "display": "Alcoholism",
+  "icd10": "F10.20",
+  "icd10_display": "Alcohol dependence, uncomplicated",
+  "aliases": [
+   "alcoholism",
+   "alcoholdependence",
+   "alcoholusedisorder",
+   "aud"
+  ]
+ },
+ {
+  "snomed": "56294008",
+  "display": "Nicotine dependence",
+  "icd10": "F17.200",
+  "icd10_display": "Nicotine dependence, unspecified, uncomplicated",
+  "aliases": [
+   "nicotinedependence",
+   "tobaccouse",
+   "smoker",
+   "tobaccodependence"
+  ]
+ },
+ {
+  "snomed": "75544000",
+  "display": "Opioid dependence",
+  "icd10": "F11.20",
+  "icd10_display": "Opioid dependence, uncomplicated",
+  "aliases": [
+   "opioiddependence",
+   "opioidusedisorder",
+   "oud"
+  ]
+ },
+ {
+  "snomed": "69896004",
+  "display": "Rheumatoid arthritis",
+  "icd10": "M06.9",
+  "icd10_display": "Rheumatoid arthritis, unspecified",
+  "aliases": [
+   "rheumatoidarthritis",
+   "ra"
+  ]
+ },
+ {
+  "snomed": "396275006",
+  "display": "Osteoarthritis",
+  "icd10": "M19.90",
+  "icd10_display": "Unspecified osteoarthritis, unspecified site",
+  "aliases": [
+   "osteoarthritis",
+   "oa",
+   "degenerativejointdisease",
+   "djd"
+  ]
+ },
+ {
+  "snomed": "64859006",
+  "display": "Osteoporosis",
+  "icd10": "M81.0",
+  "icd10_display": "Age-related osteoporosis without current pathological fracture",
+  "aliases": [
+   "osteoporosis"
+  ]
+ },
+ {
+  "snomed": "55464009",
+  "display": "Systemic lupus erythematosus",
+  "icd10": "M32.9",
+  "icd10_display": "Systemic lupus erythematosus, unspecified",
+  "aliases": [
+   "sle",
+   "lupus",
+   "systemiclupuserythematosus"
+  ]
+ },
+ {
+  "snomed": "279039007",
+  "display": "Low back pain",
+  "icd10": "M54.50",
+  "icd10_display": "Low back pain, unspecified",
+  "aliases": [
+   "lowbackpain",
+   "lbp"
+  ]
+ },
+ {
+  "snomed": "9014002",
+  "display": "Psoriasis",
+  "icd10": "L40.9",
+  "icd10_display": "Psoriasis, unspecified",
+  "aliases": [
+   "psoriasis"
+  ]
+ },
+ {
+  "snomed": "24079001",
+  "display": "Atopic dermatitis",
+  "icd10": "L20.9",
+  "icd10_display": "Atopic dermatitis, unspecified",
+  "aliases": [
+   "atopicdermatitis",
+   "eczema"
+  ]
+ },
+ {
+  "snomed": "128045006",
+  "display": "Cellulitis",
+  "icd10": "L03.90",
+  "icd10_display": "Cellulitis, unspecified",
+  "aliases": [
+   "cellulitis"
+  ]
+ },
+ {
+  "snomed": "126485001",
+  "display": "Urticaria",
+  "icd10": "L50.9",
+  "icd10_display": "Urticaria, unspecified",
+  "aliases": [
+   "urticaria",
+   "hives"
+  ]
+ },
+ {
+  "snomed": "86406008",
+  "display": "Human immunodeficiency virus infection",
+  "icd10": "B20",
+  "icd10_display": "Human immunodeficiency virus [HIV] disease",
+  "aliases": [
+   "hiv",
+   "hivinfection",
+   "humanimmunodeficiencyvirusinfection",
+   "aids"
+  ]
+ },
+ {
+  "snomed": "56717001",
+  "display": "Tuberculosis",
+  "icd10": "A15.9",
+  "icd10_display": "Respiratory tuberculosis unspecified",
+  "aliases": [
+   "tuberculosis",
+   "tb",
+   "pulmonarytuberculosis"
+  ]
+ },
+ {
+  "snomed": "91302008",
+  "display": "Sepsis",
+  "icd10": "A41.9",
+  "icd10_display": "Sepsis, unspecified organism",
+  "aliases": [
+   "sepsis",
+   "septicemia"
+  ]
+ },
+ {
+  "snomed": "23986001",
+  "display": "Glaucoma",
+  "icd10": "H40.9",
+  "icd10_display": "Unspecified glaucoma",
+  "aliases": [
+   "glaucoma"
+  ]
+ },
+ {
+  "snomed": "193570009",
+  "display": "Cataract",
+  "icd10": "H26.9",
+  "icd10_display": "Unspecified cataract",
+  "aliases": [
+   "cataract",
+   "cataracts"
+  ]
+ },
+ {
+  "snomed": "267718000",
+  "display": "Age related macular degeneration",
+  "icd10": "H35.30",
+  "icd10_display": "Unspecified macular degeneration",
+  "aliases": [
+   "maculardegeneration",
+   "amd",
+   "agerelatedmaculardegeneration",
+   "armd"
+  ]
+ },
+ {
+  "snomed": "15188001",
+  "display": "Hearing loss",
+  "icd10": "H91.90",
+  "icd10_display": "Unspecified hearing loss, unspecified ear",
+  "aliases": [
+   "hearingloss",
+   "deafness"
+  ]
+ },
+ {
+  "snomed": "29857009",
+  "display": "Chest pain",
+  "icd10": "R07.9",
+  "icd10_display": "Chest pain, unspecified",
+  "aliases": [
+   "chestpain"
+  ]
+ },
+ {
+  "snomed": "267036007",
+  "display": "Dyspnea",
+  "icd10": "R06.00",
+  "icd10_display": "Dyspnea, unspecified",
+  "aliases": [
+   "dyspnea",
+   "shortnessofbreath",
+   "sob",
+   "dyspnoea"
+  ]
+ },
+ {
+  "snomed": "49727002",
+  "display": "Cough",
+  "icd10": "R05.9",
+  "icd10_display": "Cough, unspecified",
+  "aliases": [
+   "cough"
+  ]
+ },
+ {
+  "snomed": "25064002",
+  "display": "Headache",
+  "icd10": "R51.9",
+  "icd10_display": "Headache, unspecified",
+  "aliases": [
+   "headache"
+  ]
+ },
+ {
+  "snomed": "386661006",
+  "display": "Fever",
+  "icd10": "R50.9",
+  "icd10_display": "Fever, unspecified",
+  "aliases": [
+   "fever",
+   "pyrexia"
+  ]
+ },
+ {
+  "snomed": "21522001",
+  "display": "Abdominal pain",
+  "icd10": "R10.9",
+  "icd10_display": "Unspecified abdominal pain",
+  "aliases": [
+   "abdominalpain",
+   "abdpain",
+   "stomachache"
+  ]
+ },
+ {
+  "snomed": "422587007",
+  "display": "Nausea",
+  "icd10": "R11.0",
+  "icd10_display": "Nausea",
+  "aliases": [
+   "nausea"
+  ]
+ },
+ {
+  "snomed": "62315008",
+  "display": "Diarrhea",
+  "icd10": "R19.7",
+  "icd10_display": "Diarrhea, unspecified",
+  "aliases": [
+   "diarrhea",
+   "diarrhoea"
+  ]
+ },
+ {
+  "snomed": "84229001",
+  "display": "Fatigue",
+  "icd10": "R53.83",
+  "icd10_display": "Other fatigue",
+  "aliases": [
+   "fatigue",
+   "tiredness"
+  ]
+ },
+ {
+  "snomed": "404640003",
+  "display": "Dizziness",
+  "icd10": "R42",
+  "icd10_display": "Dizziness and giddiness",
+  "aliases": [
+   "dizziness"
+  ]
+ }
+]
