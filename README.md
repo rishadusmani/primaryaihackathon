@@ -48,14 +48,14 @@ python -m canon normalize samples/maria_chen/*
 python -m canon normalize --view record samples/maria_chen/*
 python -m canon normalize --view fhir   samples/maria_chen/*
 
-# Tests
+# Tests (add CANON_TEST_DATABASE_URL=postgresql://... to also run them on Postgres)
 python -m unittest discover -s tests -v
 ```
 
 ### HTTP API
 
 ```bash
-python -m canon serve --port 8080          # set CANON_API_KEYS="key:client" to require auth
+python -m canon serve --port 8080          # sandbox: no auth, no billing
 
 curl -X POST 'localhost:8080/v1/documents?filename=labs.hl7' --data-binary @samples/maria_chen/02_quest_labs.hl7
 curl localhost:8080/v1/patients/<patient_id>/summary
@@ -75,7 +75,10 @@ curl localhost:8080/v1/audit/verify               # tamper-evident access log
 | `GET /v1/patients/{id}/observations` | Labs/vitals in canonical units (`names=`, `since=`) |
 | `GET /v1/patients/{id}/fhir` | FHIR R4 Bundle export |
 | `GET /v1/tools`, `POST /v1/tools/{name}` | Agent tool schemas and execution |
-| `GET /v1/audit`, `GET /v1/audit/verify` | Hash-chained log of every ingest and record read |
+| `GET /v1/audit`, `GET /v1/audit/verify` | Hash-chained log of every ingest and record read (append-only in Postgres) |
+| `POST /v1/signup`, `GET /v1/account` | Create an account + API key; status and usage |
+| `POST /v1/billing/checkout`, `POST /v1/billing/portal` | Stripe Checkout / Billing Portal links |
+| `POST /v1/stripe/webhook`, `GET /v1/billing/sync` | Stripe events; cron retry for usage reporting |
 
 ### For agents
 
@@ -106,6 +109,56 @@ return schema-valid JSON with a verbatim evidence quote for each fact. Quotes
 are checked against the source, and codes are assigned by Canon's terminology
 layer, never trusted from the model.
 
+## Hosting (Vercel + Supabase) and billing (Stripe)
+
+The hosted API runs as one Python serverless function on Vercel (`api/index.py`,
+WSGI). Data lives in Supabase Postgres in a private `canon` schema
+(`migrations/001_init.sql`, already applied to the `primaryaihackathon`
+Supabase project). Customers pay per normalized document through Stripe
+usage-based billing.
+
+**How customers use it**
+
+```bash
+curl -X POST https://<app>/v1/signup -d '{"name":"Acme Clinic","email":"ops@acme.com"}'
+# -> {"api_key": "cn_live_...", "checkout_url": "https://checkout.stripe.com/...", ...}
+
+curl -X POST https://<app>/v1/documents -H "Authorization: Bearer cn_live_..." --data-binary @labs.hl7
+curl https://<app>/v1/account -H "Authorization: Bearer cn_live_..."            # status + usage
+curl -X POST https://<app>/v1/billing/portal -H "Authorization: Bearer cn_live_..." # invoices, card, cancel
+```
+
+* Every account's patients, documents and audit entries are isolated from every other account.
+* API keys are stored only as SHA-256 hashes.
+* The first `CANON_FREE_DOCUMENTS` (default 25) are free and never billed.
+* After the free tier, ingest returns `402 payment_required` until the customer finishes Stripe Checkout.
+  Reads are never blocked.
+* Each new document (duplicates are free) sends one Stripe meter event, idempotent by usage id.
+  Failed sends are retried by a daily Vercel cron (`/v1/billing/sync`).
+* Stripe webhooks activate accounts (`checkout.session.completed`) and handle `past_due` / `canceled`.
+
+**Deploy checklist** (one time)
+
+1. **Stripe**: create the meter and metered price (default $0.10 per document):
+   `STRIPE_SECRET_KEY=sk_test_... python -m canon.billing setup --price-cents 10` → note `price_id`.
+   Then add a webhook endpoint `https://<app>/v1/stripe/webhook` for `checkout.session.completed`,
+   `customer.subscription.created|updated|deleted` and `invoice.payment_failed` → note its `whsec_` secret.
+   Finally, enable the Customer Portal (Settings → Billing → Customer portal).
+2. **Supabase**: copy the *Transaction pooler* connection string
+   (Project Settings → Database → Connect, port 6543) for `DATABASE_URL`.
+3. **Vercel**: import this repo (framework preset *Other*) and set the variables in
+   `.env.example` (`DATABASE_URL`, `STRIPE_*`, `CANON_PUBLIC_URL`, `CRON_SECRET`), then deploy.
+4. Smoke test: `curl https://<app>/healthz` should show `"billing_enabled": true`. Then sign up and complete a test Checkout with card `4242 4242 4242 4242`.
+
+Use Stripe test keys until you're ready, then swap in live keys and re-run `setup` in live mode.
+
+> **PHI warning:** Don't send real patient data to the hosted service until BAAs are in place with
+> every processor in the path (Vercel Enterprise, Supabase HIPAA add-on, Anthropic if LLM extraction
+> is on). Until then use synthetic data like `samples/`.
+
+Local development stays dependency-free: `python -m canon serve` runs in sandbox mode (no auth, no
+billing, SQLite). `python -m canon serve --require-auth` turns on keys and billing locally.
+
 ## Supported inputs
 
 | Format | Parser | Notes |
@@ -130,7 +183,9 @@ canon/
   fhir_export.py   canonical → FHIR R4
   tools.py         agent tool definitions + dispatcher
   api.py           HTTP API      mcp_server.py   MCP over stdio
-  store.py         SQLite + hash-chained audit log
+  store.py         SQLite / Postgres + hash-chained audit log
+  billing.py       accounts, API keys, quota, Stripe metering + webhooks
+api/index.py       Vercel entry point         migrations/   Postgres schema
 samples/maria_chen/  one patient across 7 messy sources
 tests/               end-to-end and unit tests
 ```

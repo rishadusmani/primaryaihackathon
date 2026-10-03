@@ -59,6 +59,7 @@ def main() -> int:
     s.add_argument("--host", default="127.0.0.1")
     s.add_argument("--port", type=int, default=8080)
     s.add_argument("--db", default="canon.db")
+    s.add_argument("--require-auth", action="store_true", help="Require API keys + billing (default: sandbox)")
     m = sub.add_parser("mcp", help="Run the MCP server on stdio")
     m.add_argument("--db", default="canon.db")
     a = ap.parse_args()
@@ -66,7 +67,7 @@ def main() -> int:
         return normalize_cmd(a)
     if a.cmd == "serve":
         from .api import serve
-        httpd = serve(a.host, a.port, a.db)
+        httpd = serve(a.host, a.port, None if os.environ.get("DATABASE_URL") else a.db, sandbox=not a.require_auth)
         print(f"Canon listening on http://{a.host}:{a.port}", file=sys.stderr)
         httpd.serve_forever()
     if a.cmd == "mcp":

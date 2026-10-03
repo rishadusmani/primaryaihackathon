@@ -209,9 +209,9 @@ class InterfacesTest(unittest.TestCase):
         self.assertFalse(call["result"]["isError"])
 
     def test_http_api(self):
-        from canon.api import make_handler
+        from canon.api import App
         from http.server import ThreadingHTTPServer
-        srv = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(Canon()))
+        srv = ThreadingHTTPServer(("127.0.0.1", 0), App(sandbox=True).http_handler())
         threading.Thread(target=srv.serve_forever, daemon=True).start()
         base = f"http://127.0.0.1:{srv.server_port}"
         try:
@@ -227,6 +227,7 @@ class InterfacesTest(unittest.TestCase):
             self.assertTrue(v["valid"])
         finally:
             srv.shutdown()
+            srv.server_close()
 
 
 if __name__ == "__main__":
