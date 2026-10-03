@@ -5,6 +5,8 @@ messages, dictated notes) -> facts, using deterministic rules:
 * section detection (Medications / Allergies / Assessment / Labs / Family history ...)
 * dictionary matching against the terminology layer, longest phrase first
 * negation and family-history suppression ("denies chest pain", "mother had diabetes")
+* escalation: conditions dropped because a cue made the rules unsure (negation, a relative,
+  a hedge) are reported to `review` so a model can confirm or restore them (see assertion.py)
 * medication sig parsing (dose, route, frequency) and stop/start intent
 * lab and vital value extraction with units and nearby dates
 
@@ -46,6 +48,25 @@ HEADING_RX = re.compile(r"^\s*([A-Za-z][A-Za-z /&]{0,40}?)\s*:\s*(.*)$")
 
 NEGATION_RX = re.compile(r"\b(no|denies|denied|negative for|without|not|never|rule out|r/o|ruled out|"
                          r"no history of|no hx of|free of|resolved)\b[^.;]*$", re.I)
+# "No improvement in X" / "without change in X" are about X getting worse or staying put, not X being absent.
+PSEUDO_NEG_RX = re.compile(r"\b(no|without) (significant |further )?(improvement|change|better|worse|response)\b|"
+                           r"\bnot (yet )?(improv\w*|better|controlled|well[- ]controlled|at goal)\b", re.I)
+# Someone other than the patient is the subject.
+RELATIVE_RX = re.compile(r"\b(mother|father|mom|dad|parents?|sisters?|brothers?|siblings?|sons?|daughters?|aunts?|"
+                         r"uncles?|grand(mother|father|parents?)|cousins?|wife|husband|spouse|partner|family history of|"
+                         r"fhx? of|fh of)\b", re.I)
+# Not (yet) established: possible, suspected, being ruled in or out.
+HEDGE_RX = re.compile(r"\b(possible|possibly|probable|probably|suspected|suspect|suspicion of|concern(ing)? for|likely|"
+                      r"questionable|cannot exclude|can't exclude|consider|evaluate for|screen(ing)? for|risk of|"
+                      r"at risk for|vs\.?|versus)\b", re.I)
+# Cues that follow the condition in the same clause ("depression screen negative", "asthma vs COPD").
+# Narrower than the before-cues: a bare "no"/"not" after a term usually belongs to something else
+# ("asthma exacerbation, no wheezing"; "hypertension, not well controlled").
+POST_NEGATION_RX = re.compile(r"\b(negative|neg|ruled out|r/o'?d|unlikely|excluded|absent|not present|not found|"
+                              r"not seen|resolved)\b", re.I)
+POST_RELATIVE_RX = re.compile(r"\b(runs in (the|his|her) family|in (the|his|her) family|family history|"
+                              r"in (his|her|the patient's) (mother|father|sister|brother|parents?|son|daughter))\b", re.I)
+POST_HEDGE_RX = re.compile(r"(\?|\b(vs\.?|versus|suspected|possible|probable|likely|questionable|pending)\b)", re.I)
 STOP_RX = re.compile(r"\b(stop|stopped|discontinue|discontinued|d/c|dc'd|hold|held|off)\b", re.I)
 DOSE_RX = re.compile(r"(\d+(?:\.\d+)?(?:\s*[/-]\s*\d+(?:\.\d+)?)?)\s*(mg|mcg|µg|g|units?|u|ml|mL|puffs?|tabs?|"
                      r"tablets?|capsules?|caps?|drops?|%)\b", re.I)
@@ -151,7 +172,8 @@ def _nearby_date(s: str) -> str | None:
     return _date(m) if m else None
 
 
-def parse(content: str, *, method: str = "rule_nlp") -> list[dict]:
+def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None = None) -> list[dict]:
+    """Extract facts. Conditions the rules drop as uncertain are appended to `review` when given."""
     raw_lines = content.replace("\r", "\n").split("\n")
     lines = [l for l in raw_lines if not NOISE_RX.match(l)]
     cleaned, fixes = ocr_clean("\n".join(lines))
@@ -213,7 +235,12 @@ def parse(content: str, *, method: str = "rule_nlp") -> list[dict]:
                     if any(a <= m.start() < b for a, b in taken):
                         continue
                     taken.append((m.start(), m.end()))
-                    if _negated(low, m.start()):
+                    reason = _uncertain(low, m.start(), m.end())
+                    if reason:
+                        if review is not None:
+                            review.append({"term": phrase, "sentence": line.strip(), "locator": loc, "reason": reason,
+                                           "fact": {"text": phrase, "mapped_code": icd, "recorded": dos,
+                                                    "snippet": line}})
                         continue
                     status = "resolved" if re.search(r"\b(resolved|history of|h/o|s/p)\b", low) and \
                         section != "assessment" else "active"
@@ -301,7 +328,28 @@ def _plain(s: str) -> str:
     return re.sub(r"[^a-z0-9]", " ", s.lower())
 
 
-def _negated(low: str, pos: int) -> bool:
+def _clause_before(low: str, pos: int) -> str:
+    """Text between the start of the current clause and `pos` (at most 60 characters)."""
     window = low[max(0, pos - 60):pos]
-    window = re.split(r"[.;:]|\bbut\b", window)[-1]
-    return bool(NEGATION_RX.search(window))
+    return re.split(r"[.;:]|\bbut\b", window)[-1]
+
+
+def _negated(low: str, pos: int) -> bool:
+    return bool(NEGATION_RX.search(PSEUDO_NEG_RX.sub(" ", _clause_before(low, pos))))
+
+
+def _clause_after(low: str, end: int) -> str:
+    """Text from `end` to the end of the current clause (at most 60 characters)."""
+    return re.split(r"[.;]|\bbut\b", low[end:end + 60])[0]
+
+
+def _uncertain(low: str, start: int, end: int) -> str | None:
+    """Why the rules should not assert a condition at low[start:end], or None if it reads as a plain mention."""
+    before, after = _clause_before(low, start), _clause_after(low, end)
+    if NEGATION_RX.search(PSEUDO_NEG_RX.sub(" ", before)) or POST_NEGATION_RX.search(after):
+        return "negated"
+    if RELATIVE_RX.search(before) or POST_RELATIVE_RX.search(after):
+        return "relative"
+    if HEDGE_RX.search(before) or POST_HEDGE_RX.search(after):
+        return "hedged"
+    return None

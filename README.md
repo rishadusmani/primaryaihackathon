@@ -194,6 +194,29 @@ return schema-valid JSON with a verbatim evidence quote for each fact. Quotes
 are checked against the source, and codes are assigned by Canon's terminology
 layer, never trusted from the model.
 
+### Uncertain conditions (assertion review)
+
+The rule engine holds back a condition when a cue in the same clause makes it unsure the
+condition applies to the patient now. The cue can come before or after the term:
+
+| Cue | Examples |
+|---|---|
+| Negation | "denies asthma", "no history of HTN", "depression screen negative", "resolved" |
+| Someone else | "mother had type 2 diabetes", "diabetes runs in the family" |
+| Hedge | "possible pneumonia", "screen for depression", "asthma vs COPD" |
+
+Phrases like "no improvement in", "not well controlled" and "not at goal" are not negation, so
+"No improvement in hypertension" keeps hypertension.
+
+Without a model, held-back conditions stay out of the record. When `OPENAI_API_KEY` is set,
+those sentences (and only those, at most 25 per document, in one request) go to GPT-5.6 Luna
+(`CANON_ASSERTION_MODEL` overrides it). It labels each one present, historical, absent,
+hypothetical or other_person, quoting the deciding words. Only present or historical puts the
+condition back, and a quote that isn't in the sentence discards the label, so the model can
+restore what the rules dropped but never adds a condition the rules didn't find. If the call
+fails, the rules' result stands and the document gets a warning. Tokens are counted in
+`llm_usage`. `CANON_ASSERTION=0` turns it off.
+
 ## Hosting (Vercel + Supabase) and billing (Stripe)
 
 The hosted API runs as one Python serverless function on Vercel (`app.py`,
