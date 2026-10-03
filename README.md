@@ -46,6 +46,12 @@ item to see the exact source line it came from. The page uses the public playgro
 (`POST /v1/playground/normalize`), which processes documents in memory only: nothing is stored or billed, and
 LLM extraction is off.
 
+Then click **Load tricky note**: a cardiology note and a FHIR export written to fool keyword matchers. It's full of
+phrases like "influenza vaccine given", "low sodium diet", "potassium chloride 20 mEq" and "Troponin I 15 ng/L",
+plus codes that aren't in Canon's tables (Entresto, `I50.22`). A panel lists each phrase, what a context-free
+keyword matcher would code, and what Canon recorded. `tests/test_live_terminology.py` checks every one of those
+claims against the engine, so the demo can't drift from the code.
+
 ## Quickstart (Python 3.10+, no dependencies)
 
 ```bash
@@ -249,6 +255,39 @@ billing, SQLite). `python -m canon serve --require-auth` turns on keys and billi
   - "calcium" and "chloride", so "Calcium 600 mg" and "potassium chloride 20 mEq" aren't lab results;
   - symptoms like "fever", so a mention in the HPI doesn't fill the problem list.
 
+### Reference ranges
+
+89 of the 105 labs and vitals carry an adult reference range, so values are flagged `low`/`high`/`normal`.
+A flag sent by the source (e.g. HL7 `OBX-8`) always wins.
+
+- **Source:** ranges added by the vocabulary come from the
+  [ABIM Laboratory Test Reference Ranges, January 2026](https://www.abim.org/media/e2wdwdqu/laboratory-reference-ranges.pdf).
+  Each entry in `canon/vocab/observations.json` records the ABIM wording it came from.
+- **Sex-specific ranges** use the outer bounds of both sexes, as the hand-written hemoglobin range does.
+- **No single range, no flag:** PSA, cortisol, hCG, NT-proBNP, hs-CRP and testosterone get no range rather than a misleading one.
+
+### Live NLM lookup
+
+When a code or name isn't in Canon's tables, `canon/live_terminology.py` asks the National Library of Medicine
+before marking a fact unmapped:
+
+| Input | Service | Example |
+|---|---|---|
+| ICD-10-CM code, or the exact official title | NLM Clinical Tables (billable codes only) | `I50.22` → chronic systolic heart failure |
+| RxCUI, generic, brand or combination | NLM RxNav, with FDA drug class from RxClass | Entresto → sacubitril / valsartan |
+| LOINC code | NLM Clinical Tables | `2947-0` → sodium in blood (value kept in the unit sent) |
+
+- **Only verifiable matches are accepted.** A fuzzy RxNav match counts only if every ingredient it resolves to is named in the original text. "metfromin" stays unmapped rather than becoming the wrong drug.
+- **Live items are marked.** They carry `terminology: "nlm_live"`, and the demo shows an **NLM live** chip.
+- **Lookups are bounded:**
+  - 2.5 s timeout per call;
+  - an in-process cache;
+  - a circuit breaker after repeated failures;
+  - at most 10 s of lookups per document (`CANON_LIVE_BUDGET`).
+
+  If NLM is slow or down, facts simply stay `unmapped` as before.
+- **Turning it off:** set `CANON_LIVE_TERMINOLOGY=0`.
+
 ## Layout
 
 ```
@@ -256,6 +295,7 @@ canon/
   parsers/         format detection + one parser per format (+ llm.py)
   terminology.py   code systems, synonyms, unit conversion, frequencies
   vocab/*.json     verified LOINC / SNOMED CT / ICD-10-CM / RxNorm tables (generated)
+  live_terminology.py  live NLM fallback for codes not in the tables
   normalize.py     fact → canonical item (or unmapped with reason)
   reconcile.py     cross-source merge, current state, conflicts
   service.py       ingest, patient matching, record/summary queries
@@ -269,6 +309,7 @@ canon/
 app.py             Vercel entry point         migrations/   Postgres schema
 scripts/build_vocab.py  regenerates and verifies canon/vocab/ online
 samples/maria_chen/  one patient across 7 messy sources
+samples/tricky_cardiology/  the tricky-note demo (traps for keyword matchers)
 tests/               end-to-end and unit tests
 ```
 

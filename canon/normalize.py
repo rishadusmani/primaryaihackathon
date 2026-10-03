@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import re
 
+from . import live_terminology as L
 from . import terminology as T
 from .parsers.text import DOSE_RX
 
@@ -59,6 +60,15 @@ def _condition(f: dict):
         c = T.lookup_condition(code=alt["code"], system=alt.get("system")) or c
     if not c and f.get("text"):
         c = T.lookup_condition(text=f["text"])
+    if not c or not c.get("verified"):  # not in our tables (or an unverified ICD-10 code): ask NLM
+        sys_ = T.norm_system(f.get("system"))
+        live = L.condition(text=f.get("text"), code=f.get("code") if sys_ in (None, T.ICD10) else None, system=sys_)
+        for alt in f.get("alt_codes", []) or []:
+            if live:
+                break
+            if T.norm_system(alt.get("system")) in (None, T.ICD10):
+                live = L.condition(code=alt["code"], system=T.ICD10)
+        c = live or c
     if not c:
         return None
     status = CONDITION_STATUS.get((f.get("status") or "").lower())
@@ -68,7 +78,7 @@ def _condition(f: dict):
             "codes": {"icd10": c["icd10"], **({"snomed": c["snomed"]} if c.get("snomed") else {})},
             "code_verified": c["verified"], "status": status, "onset": _d(f.get("onset")),
             "date": _d(f.get("recorded")) or _d(f.get("onset")), "billed_only": bool(f.get("billed_only")),
-            "original_text": f.get("text") or f.get("code")}
+            "original_text": f.get("text") or f.get("code"), "terminology": c.get("terminology")}
 
 
 def _medication(f: dict):
@@ -76,6 +86,8 @@ def _medication(f: dict):
     m = T.lookup_medication(text=f.get("text"), code=f.get("code") if sys in (None, T.RXNORM) else None)
     if not m and f.get("code"):
         m = T.lookup_medication(text=f.get("text"))
+    if not m:
+        m = L.medication(text=f.get("text"), code=f.get("code") if sys in (None, T.RXNORM) else None)
     if not m:
         return None
     dose = None
@@ -92,6 +104,7 @@ def _medication(f: dict):
     status = MED_STATUS.get((f.get("status") or "active").lower(), "unknown")
     return {"key": m["ingredient"], "ingredient": m["ingredient"], "display": f.get("text") or m["ingredient"],
             "codes": {"rxnorm": m["rxnorm"]}, "drug_class": m["drug_class"], "dose": dose,
+            "terminology": m.get("terminology"),
             "route": route, "frequency": freq, "status": status, "date": _d(f.get("start")),
             **({"change": f["change"]} if f.get("change") else {})}
 
@@ -119,6 +132,8 @@ def _observation(f: dict):
     if not o and f.get("text"):
         o = T.lookup_observation(text=f["text"])
     if not o:
+        o = L.observation(code=f.get("code") if sys in (None, T.LOINC) else None)
+    if not o:
         return None
     raw = str(f.get("value")).strip()
     m = re.match(r"^([<>]=?)?\s*(-?\d+(?:\.\d+)?)", raw)
@@ -129,6 +144,10 @@ def _observation(f: dict):
         return {**item, "value": None, "value_text": raw, "unit": None,
                 "interpretation": FLAGS.get((f.get("flag") or "").lower())}
     v = float(m.group(2))
+    if o.get("terminology"):  # live LOINC: no canonical unit known, keep the value as sent
+        return {**item, "value": v, "unit": f.get("unit"), "unit_converted": False, "terminology": o["terminology"],
+                "interpretation": FLAGS.get((f.get("flag") or "").strip().lower()),
+                **({"qualifier": m.group(1)} if m.group(1) else {})}
     try:
         cv, unit, converted = T.convert_unit(o["loinc"], v, f.get("unit"))
     except ValueError as e:

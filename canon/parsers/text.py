@@ -47,7 +47,7 @@ HEADING_RX = re.compile(r"^\s*([A-Za-z][A-Za-z /&]{0,40}?)\s*:\s*(.*)$")
 NEGATION_RX = re.compile(r"\b(no|denies|denied|negative for|without|not|never|rule out|r/o|ruled out|"
                          r"no history of|no hx of|free of|resolved)\b[^.;]*$", re.I)
 STOP_RX = re.compile(r"\b(stop|stopped|discontinue|discontinued|d/c|dc'd|hold|held|off)\b", re.I)
-DOSE_RX = re.compile(r"(\d+(?:\.\d+)?(?:\s*/\s*\d+(?:\.\d+)?)?)\s*(mg|mcg|µg|g|units?|u|ml|mL|puffs?|tabs?|"
+DOSE_RX = re.compile(r"(\d+(?:\.\d+)?(?:\s*[/-]\s*\d+(?:\.\d+)?)?)\s*(mg|mcg|µg|g|units?|u|ml|mL|puffs?|tabs?|"
                      r"tablets?|capsules?|caps?|drops?|%)\b", re.I)
 NOISE_RX = re.compile(r"^\s*(page \d+ of \d+|fax|from:|to:|confidential|this fax|.*\bfax\b.*\d{3}.\d{4}).*$", re.I)
 

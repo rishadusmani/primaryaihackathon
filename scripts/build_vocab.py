@@ -185,6 +185,82 @@ OBSERVATIONS = [
     ("2161-8", LAB, "mg/dL", "Creatinine, urine", ["urine creatinine"], [], {"umol/L": 1 / 88.42}),
 ]
 
+# Adult reference ranges in each observation's canonical unit, transcribed from
+# "ABIM Laboratory Test Reference Ranges, January 2026"
+# (https://www.abim.org/media/e2wdwdqu/laboratory-reference-ranges.pdf). The third
+# element is ABIM's wording. Sex-specific ranges use the outer bounds of both sexes,
+# as Canon's hand-written hemoglobin range does. Tests with no single normal range
+# (PSA, cortisol, hCG, NT-proBNP, hs-CRP, testosterone, random urine) get none.
+RANGE_SOURCE = "ABIM Laboratory Test Reference Ranges, January 2026"
+REFERENCE_RANGES = {
+    "789-8": (4.2, 5.9, "Erythrocyte count 4.2–5.9 million/μL"),
+    "4544-3": (37, 50, "Hematocrit, blood: Female 37%–47%; male 42%–50%"),
+    "787-2": (80, 98, "Mean corpuscular volume 80–98 fL"),
+    "785-6": (28, 32, "Mean corpuscular hemoglobin 28–32 pg"),
+    "786-4": (33, 36, "Mean corpuscular hemoglobin concentration 33–36 g/dL"),
+    "788-0": (9.0, 14.5, "Red cell distribution width (RDW) 9.0%–14.5%"),
+    "32623-1": (7, 9, "Mean platelet volume 7–9 fL"),
+    "770-8": (50, 70, "Leukocyte count: segmented neutrophils 50%–70%"),
+    "736-9": (30, 45, "Leukocyte count: lymphocytes 30%–45%"),
+    "5905-5": (0, 6, "Leukocyte count: monocytes 0%–6%"),
+    "713-8": (0, 3, "Leukocyte count: eosinophils 0%–3%"),
+    "706-2": (0, 1, "Leukocyte count: basophils 0%–1%"),
+    "751-8": (2.0, 8.25, "Absolute neutrophil count (ANC) 2000–8250/μL"),
+    "731-0": (1.2, 4.95, "Absolute lymphocyte count 1200–4950/μL"),
+    "4679-7": (0.5, 1.5, "Reticulocyte count 0.5%–1.5% of red cells"),
+    "30341-2": (0, 20, "Erythrocyte sedimentation rate (Westergren): Female 0–20 mm/hr; male 0–15 mm/hr"),
+    "2075-0": (98, 106, "Chloride, serum 98–106 mEq/L"),
+    "2028-9": (23, 30, "Carbon dioxide, serum 23–30 mEq/L"),
+    "33037-3": (7, 13, "Anion gap, serum 7–13 mEq/L"),
+    "3094-0": (8, 20, "Blood urea nitrogen (BUN), serum or plasma 8–20 mg/dL"),
+    "17861-6": (8.6, 10.2, "Calcium, serum 8.6–10.2 mg/dL"),
+    "2777-1": (3.0, 4.5, "Phosphorus, serum 3.0–4.5 mg/dL"),
+    "19123-9": (1.6, 2.6, "Magnesium, serum 1.6–2.6 mg/dL"),
+    "2885-2": (5.5, 9.0, "Proteins, serum: total 5.5–9.0 g/dL"),
+    "1751-7": (3.5, 5.5, "Albumin, serum 3.5–5.5 g/dL"),
+    "1975-2": (0.3, 1.0, "Bilirubin, serum: total 0.3–1.0 mg/dL"),
+    "1968-7": (0.1, 0.3, "Bilirubin, serum: direct 0.1–0.3 mg/dL"),
+    "6768-6": (30, 120, "Alkaline phosphatase, serum 30–120 U/L"),
+    "1920-8": (10, 40, "Aminotransferase, serum aspartate (AST, SGOT) 10–40 U/L"),
+    "2324-2": (8, 50, "Gamma-glutamyltransferase, serum: Female 8–40 U/L; male 9–50 U/L"),
+    "3084-1": (3.0, 7.0, "Uric acid, serum 3.0–7.0 mg/dL"),
+    "1798-8": (25, 125, "Amylase, serum 25–125 U/L"),
+    "3040-3": (10, 140, "Lipase, serum 10–140 U/L"),
+    "2532-0": (80, 225, "Lactate dehydrogenase, serum 80–225 U/L"),
+    "2157-6": (30, 170, "Creatine kinase, serum, total: Female 30–135 U/L; male 55–170 U/L"),
+    "2692-2": (275, 295, "Osmolality, serum 275–295 mOsm/kg H2O"),
+    "2524-7": (0.7, 2.1, "Lactate, serum or plasma 0.7–2.1 mmol/L"),
+    "16362-6": (23.5, 41.1, "Ammonia, plasma 40–70 μg/dL (converted to μmol/L at 0.5872)"),
+    "20448-7": (None, 20, "Insulin, serum (fasting) <20 μU/mL"),
+    "1986-9": (0.8, 3.1, "C peptide, serum 0.8–3.1 ng/mL"),
+    "3024-7": (0.8, 1.8, "Thyroxine (T4), serum: free 0.8–1.8 ng/dL"),
+    "3051-0": (2.3, 4.2, "Triiodothyronine (T3), serum: free 2.3–4.2 pg/mL"),
+    "3026-2": (5, 12, "Thyroxine (T4), serum: total 5–12 μg/dL"),
+    "2731-8": (10, 65, "Parathyroid hormone, serum: intact 10–65 pg/mL"),
+    "2498-4": (50, 150, "Iron, serum 50–150 μg/dL"),
+    "2276-4": (24, 336, "Ferritin, serum: Female 24–307 ng/mL; male 24–336 ng/mL"),
+    "2500-7": (250, 310, "Iron-binding capacity, serum (total) 250–310 μg/dL"),
+    "2502-3": (20, 50, "Transferrin saturation 20%–50%"),
+    "2132-9": (200, 800, "Vitamin B12, serum 200–800 pg/mL"),
+    "2284-8": (1.8, 9.0, "Folate, serum 1.8–9.0 ng/mL"),
+    "62292-8": (30, 60, "Vitamin D metabolites, serum: 25-hydroxyvitamin D 30–60 ng/mL"),
+    "5902-2": (11, 13, "Prothrombin time, plasma 11–13 seconds"),
+    "14979-9": (25, 35, "Activated partial thromboplastin time 25–35 seconds"),
+    "3255-7": (200, 400, "Fibrinogen, plasma 200–400 mg/dL"),
+    "48065-7": (None, 500, "D-dimer, plasma <0.5 μg/mL"),
+    "10839-9": (None, 0.04, "Troponin I, cardiac, serum ≤0.04 ng/mL"),
+    "89579-7": (None, 20, "Troponin I, cardiac, high-sensitivity, plasma: Female ≤15 ng/L; male ≤20 ng/L"),
+    "30934-4": (None, 100, "B-type natriuretic peptide, plasma <100 pg/mL"),
+    "1988-5": (None, 8, "C-reactive protein, serum ≤0.8 mg/dL"),
+    "33959-8": (None, 0.10, "Procalcitonin, serum ≤0.10 ng/mL"),
+    "2744-1": (7.38, 7.44, "Arterial blood gas (room air): pH 7.38–7.44"),
+    "2019-8": (38, 42, "Arterial blood gas (room air): PaCO2 38–42 mm Hg"),
+    "2703-7": (75, 100, "Arterial blood gas (room air): PaO2 75–100 mm Hg"),
+    "1960-4": (23, 26, "Arterial blood gas (room air): bicarbonate 23–26 mEq/L"),
+    "2756-5": (4.5, 8.0, "pH, urine 4.5–8.0"),
+    "2965-2": (1.002, 1.030, "Specific gravity, urine 1.002–1.030"),
+}
+
 # Synonyms added to observations Canon already defines (its units/ranges stay as they are).
 EXTRA_OBSERVATION_SYNONYMS = {
     "9279-1": (["respiratory rate", "resp rate", "respirations"], ["rr", "resp"]),
@@ -618,6 +694,9 @@ def main() -> int:
     pool = ThreadPoolExecutor(max_workers=8)
 
     n_obs = len(OBSERVATIONS) + len(EXTRA_OBSERVATION_SYNONYMS)
+    unknown = set(REFERENCE_RANGES) - {o[0] for o in OBSERVATIONS}
+    if unknown:
+        problems.append(f"reference ranges for LOINC codes not in OBSERVATIONS: {sorted(unknown)}")
     print(f"Verifying {n_obs} LOINC codes...")
     check_collisions("observation", [(o[0], o[4] + o[5]) for o in OBSERVATIONS]
                      + [(c, s + e) for c, (s, e) in EXTRA_OBSERVATION_SYNONYMS.items()], problems)
@@ -631,8 +710,12 @@ def main() -> int:
         if missing:
             problems.append(f"LOINC {code}: no spellings for unit(s) {missing}")
             continue
-        observations.append({"loinc": code, "display": display, "loinc_name": name, "category": cat, "unit": unit,
-                             "synonyms": syns, "exact": exact, "convert": expand_units(conv, unit)})
+        row = {"loinc": code, "display": display, "loinc_name": name, "category": cat, "unit": unit,
+               "synonyms": syns, "exact": exact, "convert": expand_units(conv, unit)}
+        if code in REFERENCE_RANGES:
+            lo, hi, text = REFERENCE_RANGES[code]
+            row["reference_range"] = {"low": lo, "high": hi, "source": RANGE_SOURCE, "source_text": text}
+        observations.append(row)
     extra_codes = list(EXTRA_OBSERVATION_SYNONYMS)
     for code, name in zip(extra_codes, pool.map(loinc_name, extra_codes)):
         if name is None:
