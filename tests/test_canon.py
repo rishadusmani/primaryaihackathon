@@ -210,9 +210,9 @@ class InterfacesTest(unittest.TestCase):
         self.assertFalse(call["result"]["isError"])
 
     def test_http_api(self):
-        from canon.api import make_handler
+        from canon.api import App
         from http.server import ThreadingHTTPServer
-        srv = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(Canon()))
+        srv = ThreadingHTTPServer(("127.0.0.1", 0), App(sandbox=True).http_handler())
         threading.Thread(target=srv.serve_forever, daemon=True).start()
         base = f"http://127.0.0.1:{srv.server_port}"
         try:
@@ -228,47 +228,44 @@ class InterfacesTest(unittest.TestCase):
             self.assertTrue(v["valid"])
         finally:
             srv.shutdown()
+            srv.server_close()
 
 
 
 class UsageTest(unittest.TestCase):
-    def _serve(self, canon):
-        from canon.api import make_handler
-        from http.server import ThreadingHTTPServer
-        srv = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(canon))
-        threading.Thread(target=srv.serve_forever, daemon=True).start()
-        self.addCleanup(srv.server_close)
-        self.addCleanup(srv.shutdown)
-        return f"http://127.0.0.1:{srv.server_port}"
-
     @staticmethod
-    def _get(url, key=None, data=None):
-        req = urllib.request.Request(url, data=data, method="POST" if data is not None else "GET")
-        if key:
-            req.add_header("Authorization", f"Bearer {key}")
-        try:
-            with urllib.request.urlopen(req) as r:
-                return r.status, r.read()
-        except urllib.error.HTTPError as e:
-            return e.code, e.read()
+    def make_store():
+        from canon.store import Store
+        return Store(":memory:")
 
-    def test_usage_is_metered_per_api_key(self):
-        os.environ["CANON_API_KEYS"] = "ka:acme,kb:globex"
-        self.addCleanup(os.environ.pop, "CANON_API_KEYS")
-        base = self._serve(Canon())
+    def setUp(self):
+        from canon.api import App
+        from canon.billing import Billing, Stripe
+        self.store = self.make_store()
+        self.app = App(self.store, Billing(self.store, Stripe("")), sandbox=False)
+        self.ka = self.app.billing.create_account("Acme Clinic", None)[1]
+        self.kb = self.app.billing.create_account("Globex Health", None)[1]
+
+    def call(self, method, path, key=None, body=b""):
+        r = self.app.handle(method, path, {"Authorization": f"Bearer {key}"} if key else {}, body)
+        return r.status, (json.loads(r.body) if r.content_type == "application/json" else r.body.decode())
+
+    def test_usage_is_metered_per_account(self):
         with open(SAMPLES[1], "rb") as fh:
-            st, body = self._get(base + "/v1/documents?filename=labs.hl7", "ka", fh.read())
+            st, r = self.call("POST", "/v1/documents?filename=labs.hl7", self.ka, fh.read())
         self.assertEqual(st, 201)
-        pid = json.loads(body)["patient_id"]
-        self._get(f"{base}/v1/patients/{pid}/summary", "ka")
-        self._get(f"{base}/v1/patients/nope/summary", "ka")
-        self._get(base + "/v1/tools/get_conflicts", "ka", json.dumps({"patient_id": pid}).encode())
-        self._get(base + "/v1/patients", "kb")
-        self.assertEqual(self._get(base + "/v1/usage", "bad")[0], 401)
+        pid = r["patient_id"]
+        self.call("GET", f"/v1/patients/{pid}/summary", self.ka)
+        self.call("GET", "/v1/patients/nope/summary", self.ka)
+        self.call("POST", "/v1/tools/get_conflicts", self.ka, json.dumps({"patient_id": pid}).encode())
+        self.call("GET", "/v1/account", self.ka)                 # account calls are not agent work
+        self.call("GET", "/v1/patients", self.kb)
+        self.assertEqual(self.call("GET", "/v1/usage", "cn_live_wrong")[0], 401)
 
-        u = json.loads(self._get(base + "/v1/usage?days=7", "ka")[1])
-        self.assertEqual(u["client_id"], "acme")
-        self.assertEqual(u["totals"]["requests"], 4)          # /v1/usage itself is not metered
+        st, u = self.call("GET", "/v1/usage?days=7", self.ka)
+        self.assertEqual(st, 200)
+        self.assertEqual(u["account"]["name"], "Acme Clinic")
+        self.assertEqual(u["totals"]["requests"], 4)          # /v1/usage and /v1/account are not metered
         self.assertEqual(u["totals"]["errors"], 1)
         self.assertEqual(u["totals"]["documents_ingested"], 1)
         self.assertEqual(u["totals"]["patients_accessed"], 1)
@@ -276,29 +273,25 @@ class UsageTest(unittest.TestCase):
         self.assertEqual(ops, {"documents.ingest": 1, "patients.summary": 2, "tool.get_conflicts": 1})
         self.assertEqual(len(u["daily"]), 7)
         self.assertEqual(sum(d["requests"] for d in u["daily"]), 4)
-        self.assertNotIn("clients", u)
         self.assertEqual(u["recent"][0]["patient_id"], pid)   # tool call attributed via its arguments
 
-        g = json.loads(self._get(base + "/v1/usage", "kb")[1])
-        self.assertEqual(g["totals"]["requests"], 1)          # tenants never see each other's usage
+        self.assertEqual(self.call("GET", "/v1/usage", self.kb)[1]["totals"]["requests"], 1)  # tenants isolated
 
     def test_dashboard_served_without_key(self):
-        os.environ["CANON_API_KEYS"] = "ka:acme"
-        self.addCleanup(os.environ.pop, "CANON_API_KEYS")
-        st, body = self._get(self._serve(Canon()) + "/dashboard")
+        st, body = self.call("GET", "/dashboard")
         self.assertEqual(st, 200)
-        self.assertIn(b"/v1/usage", body)
+        self.assertIn("/v1/usage", body)
 
     def test_mcp_tool_calls_and_llm_tokens_are_metered(self):
         from canon import usage
-        c = Canon()
+        c = Canon(self.make_store())
         pid = load_all(c)
         handle(c, {"jsonrpc": "2.0", "id": 1, "method": "tools/call",
                    "params": {"name": "get_patient_summary", "arguments": {"patient_id": pid}}})
-        usage.record(c.store, client_id="local", channel="api", operation="documents.ingest", status=201,
+        usage.record(c.store, account_id=c.account_id, channel="api", operation="documents.ingest", status=201,
                      latency_ms=900, body={"document": {"extraction": {"llm_usage": {"input_tokens": 1200,
                                                                                      "output_tokens": 300}}}})
-        u = usage.summarize(c.store, None)
+        u = usage.summarize(c.store, c.account_id)
         self.assertEqual(u["channels"], {"mcp": 1, "api": 1})
         self.assertEqual(u["totals"]["llm_input_tokens"], 1200)
         self.assertEqual(u["daily"][-1]["llm_tokens"], 1500)

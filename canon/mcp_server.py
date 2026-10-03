@@ -16,7 +16,6 @@ from .service import Canon
 from .tools import TOOLS_BY_NAME, call_tool, mcp_tools
 
 PROTOCOL_VERSION = "2025-06-18"
-CLIENT_ID = os.environ.get("CANON_CLIENT_ID", "local")  # who MCP tool calls are metered to
 
 
 def handle(canon: Canon, msg: dict) -> dict | None:
@@ -44,7 +43,7 @@ def handle(canon: Canon, msg: dict) -> dict | None:
         started = time.perf_counter()
         out = call_tool(canon, name, args, actor="mcp")
         try:
-            usage.record(canon.store, client_id=CLIENT_ID, channel="mcp", operation=f"tool.{name}",
+            usage.record(canon.store, account_id=canon.account_id, channel="mcp", operation=f"tool.{name}",
                          status=400 if "error" in out else 200, latency_ms=(time.perf_counter() - started) * 1000,
                          bytes_in=len(json.dumps(args)), patient_id=args.get("patient_id") or out.get("patient_id"),
                          body=out)

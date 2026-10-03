@@ -167,7 +167,7 @@
     <p class="sub">Sign in with your Canon API key to see how your agents use the API.</p>
     <form id="signin-form">
       <label for="key" class="sub">API key</label>
-      <input id="key" type="password" autocomplete="off" placeholder="sk-..." required>
+      <input id="key" type="password" autocomplete="off" placeholder="cn_live_..." required>
       <div class="error" id="signin-error"></div>
       <button class="btn primary" type="submit">View usage</button>
     </form>
@@ -282,8 +282,11 @@
     $("app").hidden = false;
     document.querySelectorAll(".seg button").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.days) === days)));
     $("signout").hidden = !key;
-    const who = u.client_id ? "API client " + esc(u.client_id) : "Sandbox (all clients)";
-    $("scope").innerHTML = who + " · " + shortDate(u.period.start) + " – " + shortDate(u.period.end);
+    const plan = { active: "Active subscription", trial: "Free tier", past_due: "Payment past due", canceled: "Subscription canceled", sandbox: "Sandbox" };
+    const a = u.account || {};
+    const parts = [esc(a.name || "Your account"), plan[a.status] || esc(a.status || "")];
+    if (a.status === "trial" && a.usage) parts.push(`${nf.format(a.usage.free_documents_remaining)} free documents left`);
+    $("scope").innerHTML = parts.filter(Boolean).join(" · ") + " · " + shortDate(u.period.start) + " – " + shortDate(u.period.end);
 
     const t = u.totals;
     const tokens = t.llm_input_tokens + t.llm_output_tokens;
@@ -321,10 +324,9 @@
           <td class="num">${ms(o.latency_p50_ms)}</td><td class="num">${ms(o.latency_p95_ms)}</td></tr>`).join("")
       : `<tr><td class="empty">No requests in this period. Point your agent at this API and calls will appear here.</td></tr>`;
 
-    const showClient = u.recent.some((r) => r.client_id);
     $("recent").innerHTML = u.recent.length
-      ? `<tr><th>Time</th>${showClient ? "<th>Client</th>" : ""}<th>Operation</th><th>Status</th><th>Patient</th><th class="num">Latency</th><th class="num">LLM tokens</th></tr>` +
-        u.recent.map((r) => `<tr><td class="muted" style="white-space:nowrap">${when(r.ts)}</td>${showClient ? `<td>${esc(r.client_id)}</td>` : ""}
+      ? `<tr><th>Time</th><th>Operation</th><th>Status</th><th>Patient</th><th class="num">Latency</th><th class="num">LLM tokens</th></tr>` +
+        u.recent.map((r) => `<tr><td class="muted" style="white-space:nowrap">${when(r.ts)}</td>
           <td><code>${esc(r.operation)}</code> <span class="muted">${r.channel === "mcp" ? "MCP" : ""}</span></td>
           <td><span class="status${r.status >= 400 ? " err" : ""}">${r.status}</span></td>
           <td>${r.patient_id ? `<code>${esc(r.patient_id)}</code>` : '<span class="muted">–</span>'}</td>

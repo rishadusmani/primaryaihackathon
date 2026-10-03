@@ -1,5 +1,8 @@
-"""Usage metering: one row per agent request (HTTP API or MCP tool call), and the
-aggregates behind GET /v1/usage and the customer dashboard at /dashboard."""
+"""API metering: one row per agent request (HTTP API or MCP tool call), and the
+aggregates behind GET /v1/usage and the customer dashboard at /dashboard.
+
+This is observability, not billing: billable documents live in usage_events
+(see billing.py)."""
 
 from __future__ import annotations
 
@@ -21,13 +24,13 @@ def llm_tokens(body: dict | None) -> tuple[int, int]:
     return int(u.get("input_tokens", 0)), int(u.get("output_tokens", 0))
 
 
-def record(store: Store, *, client_id: str, channel: str, operation: str, status: int, latency_ms: float,
+def record(store: Store, *, account_id: str, channel: str, operation: str, status: int, latency_ms: float,
            bytes_in: int = 0, bytes_out: int = 0, patient_id: str | None = None, body: dict | None = None) -> None:
     tin, tout = llm_tokens(body)
     store.execute(
-        "INSERT INTO usage (ts, client_id, channel, operation, status, latency_ms, bytes_in, bytes_out, patient_id, "
+        "INSERT INTO api_requests (ts, account_id, channel, operation, status, latency_ms, bytes_in, bytes_out, patient_id, "
         "llm_input_tokens, llm_output_tokens) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-        (_now().strftime("%Y-%m-%dT%H:%M:%SZ"), client_id, channel, operation, status, round(latency_ms, 2),
+        (_now().strftime("%Y-%m-%dT%H:%M:%SZ"), account_id, channel, operation, status, round(latency_ms, 2),
          bytes_in, bytes_out, patient_id, tin, tout),
     )
 
@@ -39,23 +42,19 @@ def _pct(values: list[float], p: float) -> float | None:
     return round(v[min(len(v) - 1, int(round(p * (len(v) - 1))))], 1)
 
 
-def summarize(store: Store, client_id: str | None, days: int = 30, recent: int = 50) -> dict:
-    """Usage for one client (None = every client, sandbox mode) over the last `days` days."""
+def summarize(store: Store, account_id: str, days: int = 30, recent: int = 50) -> dict:
+    """One account's API usage over the last `days` days (UTC)."""
     days = max(1, min(int(days), MAX_DAYS))
     end = _now().date()
     start = end - timedelta(days=days - 1)
     since = start.isoformat()
-    where, params = "ts >= ?", [since]
-    if client_id is not None:
-        where += " AND client_id = ?"
-        params.append(client_id)
-    rows = store.all(f"SELECT * FROM usage WHERE {where} ORDER BY seq", tuple(params))
+    where, params = "account_id = ? AND ts >= ?", (account_id, since)
+    rows = store.all(f"SELECT * FROM api_requests WHERE {where} ORDER BY seq", params)
 
     daily = {(start + timedelta(days=i)).isoformat(): {"requests": 0, "errors": 0, "llm_tokens": 0}
              for i in range(days)}
     ops: dict[str, dict] = defaultdict(lambda: {"requests": 0, "errors": 0, "latencies": []})
     channels: dict[str, int] = defaultdict(int)
-    clients: dict[str, int] = defaultdict(int)
     latencies: list[float] = []
     patients: set[str] = set()
     errors = ingests = tin = tout = bytes_in = 0
@@ -71,7 +70,6 @@ def summarize(store: Store, client_id: str | None, days: int = 30, recent: int =
         o["errors"] += err
         o["latencies"].append(r["latency_ms"])
         channels[r["channel"]] += 1
-        clients[r["client_id"]] += 1
         latencies.append(r["latency_ms"])
         errors += err
         if r["patient_id"] and not err:
@@ -83,10 +81,10 @@ def summarize(store: Store, client_id: str | None, days: int = 30, recent: int =
         bytes_in += r["bytes_in"]
 
     n = len(rows)
-    recent_rows = store.all(f"SELECT * FROM usage WHERE {where} ORDER BY seq DESC LIMIT ?", (*params, recent))
+    recent_rows = store.all(f"SELECT * FROM api_requests WHERE {where} ORDER BY seq DESC LIMIT ?", (*params, recent))
     out = {
         "object": "usage",
-        "client_id": client_id,
+        "account_id": account_id,
         "period": {"start": since, "end": end.isoformat(), "days": days},
         "totals": {
             "requests": n, "errors": errors, "error_rate": round(errors / n, 4) if n else 0.0,
@@ -102,9 +100,6 @@ def summarize(store: Store, client_id: str | None, days: int = 30, recent: int =
         "channels": dict(channels),
         "recent": [{"ts": r["ts"], "channel": r["channel"], "operation": r["operation"], "status": r["status"],
                     "latency_ms": r["latency_ms"], "patient_id": r["patient_id"],
-                    "llm_tokens": r["llm_input_tokens"] + r["llm_output_tokens"],
-                    **({"client_id": r["client_id"]} if client_id is None else {})} for r in recent_rows],
+                    "llm_tokens": r["llm_input_tokens"] + r["llm_output_tokens"]} for r in recent_rows],
     }
-    if client_id is None:
-        out["clients"] = dict(clients)
     return out
