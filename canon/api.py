@@ -2,6 +2,9 @@
 WSGI app on Vercel (app.py).
 
 Public
+    GET  /                               web demo (normalizes documents in the browser session, stores nothing)
+    GET  /v1/playground/samples          the 7-document sample patient
+    POST /v1/playground/normalize        {documents: [...]} -> records; stateless, unbilled, no LLM
     GET  /healthz
     POST /v1/signup                      {name, email} -> account + API key (shown once) + checkout link
     POST /v1/stripe/webhook              Stripe events (signature verified)
@@ -38,7 +41,7 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
-from . import usage
+from . import playground, usage
 from .billing import Billing, BillingError
 from .service import SANDBOX_ACCOUNT, Canon, CanonError
 from .store import Store
@@ -95,6 +98,17 @@ def _page(title: str, msg: str) -> Response:
                          f"margin:4em auto;padding:0 1em'><h1>{html.escape(title)}</h1><p>{html.escape(msg)}</p>")
 
 
+_PAGE: str | None = None
+
+
+def _demo_page() -> str:
+    global _PAGE
+    if _PAGE is None:
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "web", "index.html"), encoding="utf-8") as fh:
+            _PAGE = fh.read()
+    return _PAGE
+
+
 class App:
     def __init__(self, store: Store | None = None, billing: Billing | None = None, sandbox: bool | None = None):
         self.store = store or Store()
@@ -145,7 +159,13 @@ class App:
     # ------------------------------------------------------------------ routing
     def _route(self, method: str, path: str, q: dict, h: dict, body: bytes) -> Response:
         # --- public
-        if method == "GET" and path in ("/", "/healthz"):
+        if method == "GET" and path in ("/", "/demo"):
+            return Response(200, _demo_page())
+        if method == "GET" and path == "/v1/playground/samples":
+            return Response(200, {"documents": playground.samples()})
+        if method == "POST" and path == "/v1/playground/normalize":
+            return Response(200, playground.normalize(json.loads(body or b"{}").get("documents")))
+        if method == "GET" and path == "/healthz":
             return Response(200, {"ok": True, "service": "canon", "sandbox": self.sandbox,
                                   "billing_enabled": self.billing.stripe.enabled,
                                   "docs": "https://github.com/rishadusmani/primaryaihackathon"})
