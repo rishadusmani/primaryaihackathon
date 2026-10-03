@@ -96,6 +96,7 @@ curl localhost:8080/v1/audit/verify               # tamper-evident access log
 | `POST /v1/stripe/webhook`, `GET /v1/billing/sync` | Stripe events; cron retry for usage reporting |
 | `GET /v1/usage?days=30` | This account's agent usage: requests, errors, latency, documents, patients, LLM tokens |
 | `GET /dashboard` | Customer usage dashboard (HTML) |
+| `GET /connect` | Create an API key and connect an MCP client (HTML) |
 
 ### Usage dashboard
 
@@ -130,6 +131,10 @@ two modes:
   `CANON_SEED_SAMPLES=0` to skip the sample load.
 
 ### For agents
+
+**Get a key and connect in the browser:** [`/connect`](https://primaryaihackathon.vercel.app/connect)
+creates an API key and gives one-click or copy-paste setup for Claude Code, Claude Desktop,
+Cursor and VS Code, with a button that tests the connection.
 
 **Remote MCP** (hosted, nothing to install). The API serves MCP over Streamable HTTP
 at `POST /mcp`, using the same API key, data, billing and usage metering as the REST API:
