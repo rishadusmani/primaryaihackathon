@@ -1922,6 +1922,856 @@
   }
  },
  {
+  "loinc": "2243-4",
+  "display": "Estradiol",
+  "loinc_name": "Estradiol (E2) [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "pg/mL",
+  "synonyms": [
+   "estradiol level",
+   "serum estradiol",
+   "e2 level"
+  ],
+  "exact": [
+   "estradiol",
+   "e2"
+  ],
+  "convert": {
+   "pg/mL": 1,
+   "pmol/L": 0.2724
+  }
+ },
+ {
+  "loinc": "2839-9",
+  "display": "Progesterone",
+  "loinc_name": "Progesterone [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "progesterone level",
+   "serum progesterone"
+  ],
+  "exact": [
+   "progesterone"
+  ],
+  "convert": {
+   "ng/mL": 1,
+   "nmol/L": 0.3145
+  }
+ },
+ {
+  "loinc": "2842-3",
+  "display": "Prolactin",
+  "loinc_name": "Prolactin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "prolactin",
+   "serum prolactin"
+  ],
+  "exact": [
+   "prl"
+  ],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "15067-2",
+  "display": "FSH",
+  "loinc_name": "Follitropin [Units/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "m[IU]/mL",
+  "synonyms": [
+   "follicle stimulating hormone",
+   "fsh level"
+  ],
+  "exact": [
+   "fsh"
+  ],
+  "convert": {
+   "mIU/mL": 1,
+   "m[IU]/mL": 1
+  }
+ },
+ {
+  "loinc": "10501-5",
+  "display": "LH",
+  "loinc_name": "Lutropin [Units/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "m[IU]/mL",
+  "synonyms": [
+   "luteinizing hormone",
+   "lh level"
+  ],
+  "exact": [
+   "lh"
+  ],
+  "convert": {
+   "mIU/mL": 1,
+   "m[IU]/mL": 1
+  }
+ },
+ {
+  "loinc": "2991-8",
+  "display": "Testosterone, free",
+  "loinc_name": "Testosterone Free [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "pg/mL",
+  "synonyms": [
+   "free testosterone"
+  ],
+  "exact": [],
+  "convert": {
+   "pg/mL": 1
+  }
+ },
+ {
+  "loinc": "2484-4",
+  "display": "IGF-1",
+  "loinc_name": "Insulin-like growth factor-I [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "igf-1",
+   "igf 1",
+   "insulin-like growth factor 1",
+   "somatomedin c"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "2191-5",
+  "display": "DHEA-S",
+  "loinc_name": "Dehydroepiandrosterone sulfate (DHEA-S) [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ug/dL",
+  "synonyms": [
+   "dhea-s",
+   "dhea sulfate",
+   "dehydroepiandrosterone sulfate"
+  ],
+  "exact": [
+   "dheas"
+  ],
+  "convert": {
+   "ug/dL": 1,
+   "mcg/dL": 1,
+   "µg/dL": 1
+  }
+ },
+ {
+  "loinc": "1834-1",
+  "display": "AFP",
+  "loinc_name": "Alpha-1-Fetoprotein [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "alpha fetoprotein",
+   "alpha-fetoprotein"
+  ],
+  "exact": [
+   "afp"
+  ],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "2039-6",
+  "display": "CEA",
+  "loinc_name": "Carcinoembryonic Ag [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "carcinoembryonic antigen"
+  ],
+  "exact": [
+   "cea"
+  ],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "10334-1",
+  "display": "CA-125",
+  "loinc_name": "Cancer Ag 125 [Units/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "U/mL",
+  "synonyms": [
+   "ca-125",
+   "ca 125",
+   "cancer antigen 125"
+  ],
+  "exact": [],
+  "convert": {
+   "U/mL": 1,
+   "units/mL": 1
+  }
+ },
+ {
+  "loinc": "24108-3",
+  "display": "CA 19-9",
+  "loinc_name": "Cancer Ag 19-9 [Units/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "U/mL",
+  "synonyms": [
+   "ca 19-9",
+   "ca19-9",
+   "cancer antigen 19-9"
+  ],
+  "exact": [],
+  "convert": {
+   "U/mL": 1,
+   "units/mL": 1
+  }
+ },
+ {
+  "loinc": "10886-0",
+  "display": "PSA, free",
+  "loinc_name": "Prostate Specific Ag Free [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "free psa",
+   "psa free"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "742-7",
+  "display": "Absolute monocyte count",
+  "loinc_name": "Monocytes [#/volume] in Blood by Automated count",
+  "category": "lab",
+  "unit": "10*3/uL",
+  "synonyms": [
+   "absolute monocytes",
+   "monocytes absolute",
+   "absolute monocyte count"
+  ],
+  "exact": [],
+  "convert": {
+   "10*3/uL": 1,
+   "10^3/uL": 1,
+   "x10^3/uL": 1,
+   "x10e3/uL": 1,
+   "K/uL": 1,
+   "K/mcL": 1,
+   "thou/uL": 1,
+   "10*9/L": 1,
+   "10^9/L": 1,
+   "x10^9/L": 1,
+   "x10e9/L": 1
+  }
+ },
+ {
+  "loinc": "711-2",
+  "display": "Absolute eosinophil count",
+  "loinc_name": "Eosinophils [#/volume] in Blood by Automated count",
+  "category": "lab",
+  "unit": "10*3/uL",
+  "synonyms": [
+   "absolute eosinophils",
+   "eosinophils absolute",
+   "absolute eosinophil count"
+  ],
+  "exact": [],
+  "convert": {
+   "10*3/uL": 1,
+   "10^3/uL": 1,
+   "x10^3/uL": 1,
+   "x10e3/uL": 1,
+   "K/uL": 1,
+   "K/mcL": 1,
+   "thou/uL": 1,
+   "10*9/L": 1,
+   "10^9/L": 1,
+   "x10^9/L": 1,
+   "x10e9/L": 1
+  }
+ },
+ {
+  "loinc": "704-7",
+  "display": "Absolute basophil count",
+  "loinc_name": "Basophils [#/volume] in Blood by Automated count",
+  "category": "lab",
+  "unit": "10*3/uL",
+  "synonyms": [
+   "absolute basophils",
+   "basophils absolute",
+   "absolute basophil count"
+  ],
+  "exact": [],
+  "convert": {
+   "10*3/uL": 1,
+   "10^3/uL": 1,
+   "x10^3/uL": 1,
+   "x10e3/uL": 1,
+   "K/uL": 1,
+   "K/mcL": 1,
+   "thou/uL": 1,
+   "10*9/L": 1,
+   "10^9/L": 1,
+   "x10^9/L": 1,
+   "x10e9/L": 1
+  }
+ },
+ {
+  "loinc": "1994-3",
+  "display": "Calcium, ionized",
+  "loinc_name": "Calcium.ionized [Moles/volume] in Blood",
+  "category": "lab",
+  "unit": "mmol/L",
+  "synonyms": [
+   "ionized calcium",
+   "calcium ionized"
+  ],
+  "exact": [],
+  "convert": {
+   "mmol/L": 1
+  }
+ },
+ {
+  "loinc": "33863-2",
+  "display": "Cystatin C",
+  "loinc_name": "Cystatin C [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/L",
+  "synonyms": [
+   "cystatin c"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/L": 1,
+   "mg/L FEU": 1
+  }
+ },
+ {
+  "loinc": "14338-8",
+  "display": "Prealbumin",
+  "loinc_name": "Prealbumin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "prealbumin",
+   "transthyretin"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1,
+   "g/L": 100
+  }
+ },
+ {
+  "loinc": "4542-7",
+  "display": "Haptoglobin",
+  "loinc_name": "Haptoglobin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "haptoglobin"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1,
+   "g/L": 100
+  }
+ },
+ {
+  "loinc": "13965-9",
+  "display": "Homocysteine",
+  "loinc_name": "Homocysteine [Moles/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "umol/L",
+  "synonyms": [
+   "homocysteine"
+  ],
+  "exact": [],
+  "convert": {
+   "umol/L": 1,
+   "µmol/L": 1,
+   "μmol/L": 1,
+   "micromol/L": 1
+  }
+ },
+ {
+  "loinc": "24467-3",
+  "display": "CD4 count",
+  "loinc_name": "CD3+CD4+ (T4 helper) cells [#/volume] in Blood",
+  "category": "lab",
+  "unit": "/uL",
+  "synonyms": [
+   "cd4 count",
+   "cd4 cells",
+   "absolute cd4"
+  ],
+  "exact": [],
+  "convert": {
+   "cells/uL": 1,
+   "/uL": 1,
+   "cells/µL": 1,
+   "/µL": 1,
+   "cells/mm3": 1,
+   "/mm3": 1
+  }
+ },
+ {
+  "loinc": "14957-5",
+  "display": "Microalbumin, urine",
+  "loinc_name": "Microalbumin [Mass/volume] in Urine",
+  "category": "lab",
+  "unit": "mg/L",
+  "synonyms": [
+   "urine microalbumin",
+   "microalbumin urine"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/L": 1,
+   "mg/L FEU": 1
+  }
+ },
+ {
+  "loinc": "2888-6",
+  "display": "Protein, urine",
+  "loinc_name": "Protein [Mass/volume] in Urine",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "urine protein",
+   "protein urine"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1
+  }
+ },
+ {
+  "loinc": "10835-7",
+  "display": "Lipoprotein(a)",
+  "loinc_name": "Lipoprotein a [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "lipoprotein a",
+   "lipoprotein(a)",
+   "lp(a)"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1
+  }
+ },
+ {
+  "loinc": "1884-6",
+  "display": "Apolipoprotein B",
+  "loinc_name": "Apolipoprotein B [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "apolipoprotein b",
+   "apo b"
+  ],
+  "exact": [
+   "apob"
+  ],
+  "convert": {
+   "mg/dL": 1,
+   "g/L": 100
+  }
+ },
+ {
+  "loinc": "10535-3",
+  "display": "Digoxin level",
+  "loinc_name": "Digoxin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "digoxin level",
+   "serum digoxin"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "14334-7",
+  "display": "Lithium level",
+  "loinc_name": "Lithium [Moles/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mmol/L",
+  "synonyms": [
+   "lithium level",
+   "serum lithium"
+  ],
+  "exact": [],
+  "convert": {
+   "mmol/L": 1,
+   "mEq/L": 1
+  }
+ },
+ {
+  "loinc": "4092-3",
+  "display": "Vancomycin trough",
+  "loinc_name": "Vancomycin [Mass/volume] in Serum or Plasma --trough",
+  "category": "lab",
+  "unit": "ug/mL",
+  "synonyms": [
+   "vancomycin trough",
+   "vanc trough"
+  ],
+  "exact": [],
+  "convert": {
+   "ug/mL": 1,
+   "mcg/mL": 1,
+   "µg/mL": 1,
+   "ug/mL FEU": 1,
+   "mcg/mL FEU": 1,
+   "µg/mL FEU": 1,
+   "mg/L": 1,
+   "mg/L FEU": 1
+  }
+ },
+ {
+  "loinc": "4086-5",
+  "display": "Valproate level",
+  "loinc_name": "Valproate [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ug/mL",
+  "synonyms": [
+   "valproic acid level",
+   "valproate level",
+   "depakote level"
+  ],
+  "exact": [],
+  "convert": {
+   "ug/mL": 1,
+   "mcg/mL": 1,
+   "µg/mL": 1,
+   "ug/mL FEU": 1,
+   "mcg/mL FEU": 1,
+   "µg/mL FEU": 1,
+   "mg/L": 1,
+   "mg/L FEU": 1
+  }
+ },
+ {
+  "loinc": "3968-5",
+  "display": "Phenytoin level",
+  "loinc_name": "Phenytoin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ug/mL",
+  "synonyms": [
+   "phenytoin level",
+   "dilantin level"
+  ],
+  "exact": [],
+  "convert": {
+   "ug/mL": 1,
+   "mcg/mL": 1,
+   "µg/mL": 1,
+   "ug/mL FEU": 1,
+   "mcg/mL FEU": 1,
+   "µg/mL FEU": 1,
+   "mg/L": 1,
+   "mg/L FEU": 1
+  }
+ },
+ {
+  "loinc": "11253-2",
+  "display": "Tacrolimus level",
+  "loinc_name": "Tacrolimus [Mass/volume] in Blood",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "tacrolimus level",
+   "tacrolimus trough",
+   "fk506 level"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "6598-7",
+  "display": "Troponin T",
+  "loinc_name": "Troponin T.cardiac [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "troponin t",
+   "cardiac troponin t"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "67151-1",
+  "display": "Troponin T (high sensitivity)",
+  "loinc_name": "Troponin T.cardiac [Mass/volume] in Serum or Plasma by High sensitivity method",
+  "category": "lab",
+  "unit": "ng/L",
+  "synonyms": [
+   "hs troponin t",
+   "high sensitivity troponin t",
+   "hs-tnt"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/L": 1
+  }
+ },
+ {
+  "loinc": "13969-1",
+  "display": "CK-MB",
+  "loinc_name": "Creatine kinase.MB [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "ck-mb",
+   "ckmb",
+   "creatine kinase mb"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "2639-3",
+  "display": "Myoglobin",
+  "loinc_name": "Myoglobin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "myoglobin"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "2141-0",
+  "display": "ACTH",
+  "loinc_name": "Corticotropin [Mass/volume] in Plasma",
+  "category": "lab",
+  "unit": "pg/mL",
+  "synonyms": [
+   "acth",
+   "adrenocorticotropic hormone",
+   "corticotropin"
+  ],
+  "exact": [],
+  "convert": {
+   "pg/mL": 1,
+   "ng/L": 1
+  }
+ },
+ {
+  "loinc": "1763-2",
+  "display": "Aldosterone",
+  "loinc_name": "Aldosterone [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/dL",
+  "synonyms": [
+   "aldosterone",
+   "serum aldosterone"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/dL": 1
+  }
+ },
+ {
+  "loinc": "15069-8",
+  "display": "Fructosamine",
+  "loinc_name": "Fructosamine [Moles/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "umol/L",
+  "synonyms": [
+   "fructosamine"
+  ],
+  "exact": [],
+  "convert": {
+   "umol/L": 1,
+   "µmol/L": 1,
+   "μmol/L": 1,
+   "micromol/L": 1
+  }
+ },
+ {
+  "loinc": "3013-0",
+  "display": "Thyroglobulin",
+  "loinc_name": "Thyroglobulin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "thyroglobulin"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "2064-4",
+  "display": "Ceruloplasmin",
+  "loinc_name": "Ceruloplasmin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "ceruloplasmin"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1,
+   "g/L": 100
+  }
+ },
+ {
+  "loinc": "5763-8",
+  "display": "Zinc",
+  "loinc_name": "Zinc [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ug/dL",
+  "synonyms": [
+   "zinc level",
+   "serum zinc"
+  ],
+  "exact": [],
+  "convert": {
+   "ug/dL": 1,
+   "mcg/dL": 1,
+   "µg/dL": 1
+  }
+ },
+ {
+  "loinc": "5631-7",
+  "display": "Copper",
+  "loinc_name": "Copper [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ug/dL",
+  "synonyms": [
+   "copper level",
+   "serum copper"
+  ],
+  "exact": [],
+  "convert": {
+   "ug/dL": 1,
+   "mcg/dL": 1,
+   "µg/dL": 1
+  }
+ },
+ {
+  "loinc": "2955-3",
+  "display": "Sodium, urine",
+  "loinc_name": "Sodium [Moles/volume] in Urine",
+  "category": "lab",
+  "unit": "mmol/L",
+  "synonyms": [
+   "urine sodium",
+   "sodium urine"
+  ],
+  "exact": [],
+  "convert": {
+   "mmol/L": 1,
+   "mEq/L": 1
+  }
+ },
+ {
+  "loinc": "2828-2",
+  "display": "Potassium, urine",
+  "loinc_name": "Potassium [Moles/volume] in Urine",
+  "category": "lab",
+  "unit": "mmol/L",
+  "synonyms": [
+   "urine potassium",
+   "potassium urine"
+  ],
+  "exact": [],
+  "convert": {
+   "mmol/L": 1,
+   "mEq/L": 1
+  }
+ },
+ {
+  "loinc": "5640-8",
+  "display": "Ethanol",
+  "loinc_name": "Ethanol [Mass/volume] in Blood",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "blood alcohol",
+   "serum ethanol",
+   "ethanol level",
+   "alcohol level"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1
+  }
+ },
+ {
+  "loinc": "4024-6",
+  "display": "Salicylate level",
+  "loinc_name": "Salicylates [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "salicylate level",
+   "aspirin level"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1
+  }
+ },
+ {
   "loinc": "9279-1",
   "loinc_name": "Respiratory rate",
   "synonyms": [

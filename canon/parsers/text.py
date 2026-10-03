@@ -67,6 +67,11 @@ POST_NEGATION_RX = re.compile(r"\b(negative|neg|ruled out|r/o'?d|unlikely|exclud
 POST_RELATIVE_RX = re.compile(r"\b(runs in (the|his|her) family|in (the|his|her) family|family history|"
                               r"in (his|her|the patient's) (mother|father|sister|brother|parents?|son|daughter))\b", re.I)
 POST_HEDGE_RX = re.compile(r"(\?|\b(vs\.?|versus|suspected|possible|probable|likely|questionable|pending)\b)", re.I)
+# "Measles vaccine given", "Tdap booster for pertussis": an immunization, not a diagnosis of the disease.
+VACCINE_AFTER_RX = re.compile(r"^\W*(?:\w+\W+){0,2}?(vaccines?|vaccinations?|vaccinated|immuni[sz]ations?|boosters?|shots?|"
+                              r"jabs?)\b", re.I)
+VACCINE_BEFORE_RX = re.compile(r"\b(vaccines?|vaccinations?|vaccinated|immuni[sz]ed|immuni[sz]ations?|boosters?|"
+                               r"tdap|dtap|td)\b(?:\W+\w+){0,3}\W*$", re.I)
 STOP_RX = re.compile(r"\b(stop|stopped|discontinue|discontinued|d/c|dc'd|hold|held|off)\b", re.I)
 DOSE_RX = re.compile(r"(\d+(?:\.\d+)?(?:\s*[/-]\s*\d+(?:\.\d+)?)?)\s*(mg|mcg|µg|g|units?|u|ml|mL|puffs?|tabs?|"
                      r"tablets?|capsules?|caps?|drops?|%)\b", re.I)
@@ -235,6 +240,8 @@ def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None =
                     if any(a <= m.start() < b for a, b in taken):
                         continue
                     taken.append((m.start(), m.end()))
+                    if _vaccine_context(low, m.start(), m.end()):
+                        continue
                     reason = _uncertain(low, m.start(), m.end())
                     if reason:
                         if review is not None:
@@ -243,7 +250,7 @@ def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None =
                                            "fact": {"text": phrase, "mapped_code": icd, "recorded": dos,
                                                     "snippet": line}})
                         continue
-                    status = "resolved" if re.search(r"\b(resolved|history of|h/o|s/p)\b", low) and \
+                    status = "resolved" if re.search(r"\b(resolved|history of|h/o|s/p|as a child|in childhood)\b", low) and \
                         section != "assessment" else "active"
                     if phrase == "diabetes" and "type 1" in low:
                         continue
@@ -294,15 +301,18 @@ def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None =
 
         # ---- labs and vitals by name (longest synonym first; skip overlapping shorter matches)
         obs_taken: list[tuple[int, int]] = []
+        squeezed = re.sub(r" +", " ", _plain(low))
         for phrase, loinc in T.observation_synonyms():
             if loinc in ("8480-6", "8462-4"):
                 continue
             short = len(phrase) <= 3
             if short and section not in ("labs", "vitals"):
                 continue
-            if phrase not in low:
+            if phrase not in squeezed:
                 continue
-            rx = (rf"(?<![a-z0-9]){re.escape(phrase)}(?![a-z0-9])\s*(?:\([^)]*\))?\s*(?:level|value|was|of|is|=|:|-)?"
+            # Synonyms are stored without punctuation ("ca 125", "lp a"); allow it back between words ("CA-125", "Lp(a)").
+            name_rx = r"[^a-z0-9]{1,3}".join(re.escape(w) for w in phrase.split())
+            rx = (rf"(?<![a-z0-9]){name_rx}(?![a-z0-9])[)\]]?\s*(?:\([^)]*\))?\s*(?:level|value|was|of|is|=|:|-)?"
                   rf"\s*(?:was|of|is)?\s*([<>]?\d+(?:\.\d+)?)\s*([a-zA-Z%/µ\[\]\d.*^]+(?:/[a-zA-Z0-9.]+)?)?")
             for m in re.finditer(rx, line, re.I):
                 if any(a <= m.start() < b for a, b in obs_taken) or _negated(low, m.start()):
@@ -350,6 +360,11 @@ def _sentence(line: str, start: int, end: int) -> str:
 def _clause_after(low: str, end: int) -> str:
     """Text from `end` to the end of the current clause (at most 60 characters)."""
     return re.split(r"[.;]|\bbut\b", low[end:end + 60])[0]
+
+
+def _vaccine_context(low: str, start: int, end: int) -> bool:
+    """True when the condition name is the target of a vaccine ("measles vaccine", "booster for pertussis")."""
+    return bool(VACCINE_AFTER_RX.match(_clause_after(low, end)) or VACCINE_BEFORE_RX.search(_clause_before(low, start)))
 
 
 def _uncertain(low: str, start: int, end: int) -> str | None:

@@ -59,7 +59,7 @@ Python (standard library only for the core: zero runtime dependencies), Supabase
 ```bash
 git clone https://github.com/rishadusmani/primaryaihackathon && cd primaryaihackathon
 python -m canon normalize samples/maria_chen/*        # 7 messy documents → one record (no dependencies)
-python -m unittest discover -s tests                  # 100 tests
+python -m unittest discover -s tests                  # 112 tests
 python -m canon serve                                 # local API on :8080
 claude mcp add canon -- python -m canon mcp           # local MCP (stdio) for Claude Code
 ```
