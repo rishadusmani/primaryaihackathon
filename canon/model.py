@@ -40,7 +40,8 @@ CANONICAL_RECORD_DOC = {
     "medications[]": "id, ingredient, display, codes{rxnorm}, drug_class, strength, dose, route, "
                      "frequency{code, per_day, display}, status (active|stopped|unknown), start, last_seen, "
                      "sources[], confidence",
-    "allergies[]": "id, substance, codes{snomed}, reaction, severity, status, sources[]",
+    "allergies[]": "id, substance, codes{snomed}, reactions[], severity, status (active|resolved|refuted), "
+                   "resolved_on, history[], sources[]. Only active allergies count toward allergy_status",
     "observations[]": "id, display, codes{loinc}, category (lab|vital), value, unit (canonical UCUM), "
                       "original{value, unit}, interpretation (low|normal|high), effective, sources[]",
     "procedures[]": "id, display, codes{cpt}, date, sources[]",

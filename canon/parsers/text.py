@@ -27,6 +27,19 @@ DATE_RX = re.compile(
     r"\b(\d{4})-(\d{1,2})-(\d{1,2})\b|\b(\d{1,2})/(\d{1,2})/(\d{2,4})\b|"
     r"\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2}),?\s+(\d{4})\b", re.I)
 
+# An allergy taken off the record: de-labeled, or a drug challenge passed without reaction.
+ALLERGY_RESOLVED_RX = re.compile(
+    r"\b(de-?label+(?:ed|ing)?|removed from (?:the )?allergy list|no longer (?:considered )?allergic|"
+    r"allerg\w* (?:was |has been )?(?:removed|resolved|refuted|ruled out|de-?label+ed)|"
+    r"(?:negative|passed|tolerated|uneventful)\b[^.;]{0,40}\bchallenge|"
+    r"challenge\b[^.;]{0,40}\b(?:negative|passed|tolerated|uneventful|without (?:any )?(?:reaction|symptoms)))", re.I)
+ALLERGY_CHALLENGE_FAILED_RX = re.compile(
+    r"\b(?:positive|failed|abnormal|stopped)\b[^.;]{0,30}\bchallenge|challenge\b[^.;]{0,30}\b(?:positive|failed|"
+    r"reacted|developed)\b", re.I)
+HYPOTHETICAL_RX = re.compile(r"\b(?:consider(?:ing)?|plan(?:ning)? to|schedul\w*|refer(?:red|ral)? (?:to|for)|"
+                             r"candidate for|will|recommend\w*|eligible for|due for|discuss\w*)\b(?:\s+[\w-]+){0,4}\s*$",
+                             re.I)
+
 SECTION_ALIASES = {
     "medications": ["medications", "current medications", "meds", "medication list", "home medications",
                     "active medications", "outpatient medications", "rx"],
@@ -179,6 +192,20 @@ def _nearby_date(s: str) -> str | None:
     return _date(m) if m else None
 
 
+def _resolved_allergens(line: str) -> list[str]:
+    """Allergens a clause says were removed from the record. A failed or planned challenge resolves nothing."""
+    out: list[str] = []
+    for clause in re.split(r"[;.](?:\s|$)", line):
+        m = ALLERGY_RESOLVED_RX.search(clause)
+        if not m or ALLERGY_CHALLENGE_FAILED_RX.search(clause) or HYPOTHETICAL_RX.search(clause[:m.start()]):
+            continue
+        for chunk in re.split(r",|\band\b", clause):
+            a = T.lookup_allergen(chunk)
+            if a and a["substance"] not in out:
+                out.append(a["substance"])
+    return out
+
+
 def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None = None) -> list[dict]:
     """Extract facts. Conditions the rules drop as uncertain are appended to `review` when given."""
     raw_lines = content.replace("\r", "\n").split("\n")
@@ -203,6 +230,14 @@ def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None =
         if section in ("family_history", "social_history", "ros"):
             continue
 
+        # ---- allergies taken off the record ("penicillin allergy delabeled after negative amoxicillin challenge")
+        resolved = _resolved_allergens(line)
+        for substance in resolved:
+            facts.append(fact("allergy", locator=loc, method=method, snippet=line, confidence=base_conf,
+                              text=substance, status="resolved", recorded=_nearby_date(line)))
+        if resolved and section != "allergies":
+            continue  # the challenge drug ("amoxicillin") is not a medication the patient takes
+
         # ---- allergies
         if section == "allergies":
             if re.search(T.NKDA_PATTERNS, low):
@@ -211,7 +246,7 @@ def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None =
                 continue
             for chunk in re.split(r"[;,]|\band\b", line):
                 a = T.lookup_allergen(chunk)
-                if a:
+                if a and a["substance"] not in resolved:
                     rx = re.search(r"\(([^)]+)\)|[-–:]\s*([a-z ]+)$", chunk, re.I)
                     reaction = (rx.group(1) or rx.group(2)).strip() if rx else None
                     facts.append(fact("allergy", locator=loc, method=method, snippet=line, confidence=base_conf,

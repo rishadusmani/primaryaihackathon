@@ -124,12 +124,16 @@ def parse(content: str) -> list[dict]:
                     facts.append(fact("allergy", locator=loc, method=m, no_known_allergies=True))
                     continue
                 pe = obs.find(".//participant/participantRole/playingEntity/code")
-                reaction = None
+                reaction = status = None
                 for er in obs.findall("entryRelationship/observation"):
                     v = er.find("value")
-                    if v is not None and v.get("displayName"):
+                    if v is None or not v.get("displayName"):
+                        continue
+                    if er.find("code") is not None and er.find("code").get("code") == "33999-4":
+                        status = v.get("displayName").lower()
+                    else:
                         reaction = v.get("displayName")
-                facts.append(fact("allergy", locator=loc, method=m, **_code(pe), reaction=reaction))
+                facts.append(fact("allergy", locator=loc, method=m, **_code(pe), reaction=reaction, status=status))
             elif kind in ("results", "vitals"):
                 for oi, obs in enumerate(entry.iter("observation")):
                     v = obs.find("value")

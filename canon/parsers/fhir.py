@@ -118,10 +118,14 @@ def parse(content: str | dict) -> list[dict]:
                 facts.append(fact("allergy", locator=loc, method=m, no_known_allergies=True,
                                   recorded=_date(r.get("recordedDate"))))
                 continue
+            status = ("refuted" if _status(r.get("verificationStatus")) in ("refuted", "entered-in-error")
+                      else _status(r.get("clinicalStatus")))
+            # An active entry is asserted as of the document; recordedDate is when it was first recorded, so
+            # only a resolution carries its own date into chronology.
             facts.append(fact("allergy", locator=loc, method=m, text=text, code=code, system=system,
                               reaction=_text((reaction.get("manifestation") or [{}])[0]),
-                              severity=reaction.get("severity") or r.get("criticality"),
-                              status=_status(r.get("clinicalStatus")), recorded=_date(r.get("recordedDate"))))
+                              severity=reaction.get("severity") or r.get("criticality"), status=status,
+                              recorded=_date(r.get("recordedDate")) if status not in (None, "active") else None))
         elif rt == "Observation":
             facts.extend(_observation(r, loc))
         elif rt == "Procedure":

@@ -66,7 +66,8 @@ SYSTEM = (
     "You extract clinical facts about the patient from medical documents (faxes, letters, notes, lab reports) "
     "for a data-normalization pipeline. Extract only facts that apply to this patient: skip family history, "
     "negated findings (\"denies chest pain\"), and hypotheticals. Medications that are stopped or discontinued "
-    "get status \"stopped\". Copy names, values and units exactly as written; do not convert units or invent "
+    "get status \"stopped\". An allergy removed from the record (de-labeled, or a negative drug challenge) gets "
+    "status \"resolved\" and the date it was removed. Copy names, values and units exactly as written; do not convert units or invent "
     "codes. Every fact must include an exact verbatim quote from the document as evidence. If the document "
     "states no known allergies, emit one fact of kind no_known_allergies."
 )
@@ -157,7 +158,8 @@ def to_facts(data: dict, source_text: str | None = None) -> list[dict]:
                             frequency_text=f.get("frequency"), status=f.get("status") or "active",
                             start=f.get("date"), **common, **extra))
         elif k == "allergy":
-            out.append(fact("allergy", text=f["name"], reaction=f.get("reaction"), **common, **extra))
+            out.append(fact("allergy", text=f["name"], reaction=f.get("reaction"), status=f.get("status"),
+                            recorded=f.get("date"), **common, **extra))
         elif k == "observation":
             out.append(fact("observation", text=f["name"], value=f.get("value"), unit=f.get("unit"),
                             effective=f.get("date"), **common, **extra))

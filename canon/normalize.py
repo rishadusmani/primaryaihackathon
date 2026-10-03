@@ -15,6 +15,9 @@ CONDITION_STATUS = {"active": "active", "recurrence": "active", "relapse": "acti
 MED_STATUS = {"active": "active", "intended": "active", "draft": "active", "on-hold": "on_hold", "suspended": "on_hold",
               "completed": "stopped", "stopped": "stopped", "cancelled": "stopped", "discontinued": "stopped",
               "not-taken": "stopped", "aborted": "stopped", "nullified": "stopped"}
+# Resolved: no longer applies (e.g. de-labeled after a negative drug challenge). Refuted: never was an allergy.
+ALLERGY_STATUS = {"active": "active", "confirmed": "active", "unconfirmed": "active", "resolved": "resolved",
+                  "inactive": "resolved", "refuted": "refuted", "entered-in-error": "refuted"}
 FLAGS = {"h": "high", "hh": "critical_high", "l": "low", "ll": "critical_low", "n": "normal", "a": "abnormal",
          "high": "high", "low": "low", "normal": "normal", "abnormal": "abnormal", "hi": "high", "lo": "low"}
 
@@ -122,7 +125,7 @@ def _allergy(f: dict):
     return {"key": a["substance"], "substance": a["substance"],
             "codes": {"snomed": a["snomed_allergy"], "snomed_substance": a["snomed_substance"]},
             "reaction": (f.get("reaction") or "").lower() or None, "severity": f.get("severity"),
-            "status": "active" if (f.get("status") or "active").lower() == "active" else f.get("status").lower(),
+            "status": ALLERGY_STATUS.get((f.get("status") or "active").lower(), "active"),
             "date": _d(f.get("recorded")), "original_text": f.get("text")}
 
 

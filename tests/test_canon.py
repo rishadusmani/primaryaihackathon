@@ -163,6 +163,83 @@ class MatchingTest(unittest.TestCase):
         self.assertIn("demographic_mismatch", {x["type"] for x in c.record(pid)["conflicts"]})
 
 
+HEAD = "Patient: Ann Lee DOB: 01/01/1960\n"
+
+
+class ChronologyTest(unittest.TestCase):
+    def notes(self, *docs: str) -> tuple[Canon, str]:
+        c, pid = Canon(), None
+        self.doc_ids = []
+        for d in docs:
+            r = c.ingest(d, patient_id=pid)
+            pid = r["patient_id"]
+            self.doc_ids.append(r["document"]["id"])
+        return c, pid
+
+    def test_undated_document_cannot_override_dated_one(self):
+        c, pid = self.notes(HEAD + "Date of service: 2026-01-10\nMedications:\nMetformin 1000 mg twice daily\n",
+                            HEAD + "Medications:\nMetformin 500 mg daily\n")   # uploaded later, but undated
+        rec = c.record(pid)
+        met = next(m for m in rec["medications"] if m["ingredient"] == "metformin")
+        self.assertEqual((met["dose"], met["last_changed"]), ("1000 mg", "2026-01-10"))
+        flags = [x for x in rec["conflicts"] if x["type"] == "undated_source"]
+        self.assertEqual([(f["severity"], f["document_id"]) for f in flags], [("low", self.doc_ids[1])])
+        self.assertNotIn("medication_discrepancy", {x["type"] for x in rec["conflicts"]})
+
+    def test_allergy_resolved_by_negative_challenge(self):
+        c, pid = self.notes(
+            HEAD + "Date of service: 2025-05-01\nAllergies: Penicillin (hives)\n",
+            HEAD + "Date of service: 2026-03-02\nAllergies: NKDA\nAssessment:\n"
+                   "Penicillin allergy delabeled after negative oral amoxicillin challenge.\n")
+        rec, summary = c.record(pid), c.summary(pid)
+        pcn = next(a for a in rec["allergies"] if a["substance"] == "penicillin")
+        self.assertEqual((pcn["status"], pcn["resolved_on"]), ("resolved", "2026-03-02"))
+        self.assertEqual([h["status"] for h in pcn["history"]], ["active", "resolved"])
+        self.assertEqual(rec["allergy_status"], "no_known_allergies")
+        self.assertNotIn("allergy_vs_nkda", {x["type"] for x in rec["conflicts"]})
+        self.assertEqual(summary["allergies"], [])
+        self.assertEqual(summary["resolved_allergies"][0]["substance"], "penicillin")
+        self.assertNotIn("amoxicillin", {m["ingredient"] for m in rec["medications"]})  # the challenge drug
+        fhir = next(e["resource"] for e in c.fhir(pid)["entry"] if e["resource"]["id"] == pcn["id"])
+        self.assertEqual(fhir["clinicalStatus"]["coding"][0]["code"], "resolved")
+
+    def test_allergy_listed_again_after_resolution_stays_active_and_is_flagged(self):
+        c, pid = self.notes(
+            HEAD + "Date of service: 2026-03-02\nPenicillin allergy removed after negative amoxicillin challenge.\n",
+            HEAD + "Date of service: 2026-06-15\nAllergies: Penicillin (hives)\n")   # copied-forward list
+        rec = c.record(pid)
+        self.assertEqual(rec["allergies"][0]["status"], "active")
+        self.assertEqual(rec["allergy_status"], "has_allergies")
+        self.assertIn("allergy_resolution_disputed", {x["type"] for x in rec["conflicts"]})
+
+    def test_undated_resolution_does_not_clear_a_dated_allergy(self):
+        c, pid = self.notes(HEAD + "Date of service: 2026-01-10\nAllergies: Penicillin (hives)\n",
+                            HEAD + "Penicillin allergy delabeled, tolerated amoxicillin challenge.\n")
+        rec = c.record(pid)
+        self.assertEqual(rec["allergies"][0]["status"], "active")
+        self.assertTrue({"allergy_resolution_disputed", "undated_source"} <= {x["type"] for x in rec["conflicts"]})
+
+    def test_failed_or_planned_challenge_resolves_nothing(self):
+        for line in ("Failed amoxicillin challenge, developed hives.",
+                     "Consider penicillin allergy delabeling with amoxicillin challenge."):
+            c, pid = self.notes(HEAD + "Date of service: 2026-01-10\nAllergies: Penicillin (hives)\n",
+                                HEAD + "Date of service: 2026-02-10\n" + line + "\n")
+            rec = c.record(pid)
+            self.assertEqual([a["status"] for a in rec["allergies"]], ["active"], line)
+
+    def test_fhir_refuted_allergy(self):
+        bundle = {"resourceType": "Bundle", "type": "collection", "entry": [{"resource": {
+            "resourceType": "AllergyIntolerance", "code": {"text": "Penicillin"}, "recordedDate": "2026-04-01",
+            "verificationStatus": {"coding": [{"code": "refuted"}]}}}]}
+        c, pid = self.notes(HEAD + "Date of service: 2025-05-01\nAllergies: Penicillin (hives)\n")
+        c.ingest(json.dumps(bundle), filename="portal.json", patient_id=pid)
+        rec = c.record(pid)
+        self.assertEqual((rec["allergies"][0]["status"], rec["allergy_status"]), ("refuted", "unknown"))
+        fhir = next(e["resource"] for e in c.fhir(pid)["entry"] if e["resource"]["resourceType"] == "AllergyIntolerance")
+        self.assertNotIn("clinicalStatus", fhir)
+        self.assertEqual(fhir["verificationStatus"]["coding"][0]["code"], "refuted")
+
+
 class LLMMappingTest(unittest.TestCase):
     def test_request_params_per_model(self):
         haiku = llm.request_params("claude-haiku-4-5", [{"type": "text", "text": "x"}])

@@ -234,7 +234,10 @@ class Canon:
             "stopped_medications": [{"ingredient": m["ingredient"], "stopped": m["last_changed"]}
                                     for m in rec["medications"] if m["status"] == "stopped"],
             "allergy_status": rec["allergy_status"],
-            "allergies": [{"substance": a["substance"], "reactions": a.get("reactions", [])} for a in rec["allergies"]],
+            "allergies": [{"substance": a["substance"], "reactions": a.get("reactions", [])}
+                          for a in rec["allergies"] if a["status"] == "active"],
+            "resolved_allergies": [{"substance": a["substance"], "status": a["status"], "since": a.get("resolved_on")}
+                                   for a in rec["allergies"] if a["status"] != "active"],
             "latest_labs": sorted(labs, key=lambda x: x["name"]),
             "latest_vitals": sorted(vitals, key=lambda x: x["name"]),
             "immunizations": [{"vaccine": i.get("vaccine"), "date": i.get("date")} for i in rec["immunizations"]],
