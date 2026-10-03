@@ -201,6 +201,7 @@
         <textarea id="paste" aria-label="Document text" placeholder="Patient: Jane Doe  DOB: 01/02/1970&#10;Medications: Lisinopril 10 mg daily&#10;Allergies: Penicillin (hives)"></textarea>
         <button class="btn" id="add-paste" type="button">Add as document</button>
       </details>
+      <div class="sub" id="status" aria-live="polite"></div>
       <div class="error" id="error" role="alert"></div>
     </section>
     <section class="card">
@@ -296,12 +297,58 @@
     for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
     return btoa(s);
   }
+  // Scanned PDFs (no text layer) are OCR'd here in the browser with Tesseract.js, so a scan never needs a
+  // server-side model. The OCR text then goes through Canon's rule engine, which repairs common OCR errors.
+  const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+  const TESSERACT = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+  const scripts = {};
+  const loadScript = (src) => scripts[src] ||= new Promise((resolve, reject) => {
+    const el = document.createElement("script");
+    el.src = src; el.onload = resolve; el.onerror = () => reject(new Error("Could not load " + src));
+    document.head.appendChild(el);
+  });
+
+  async function ocrScannedPdf(buf) {
+    await loadScript(PDFJS + "pdf.min.js");
+    pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js";
+    const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(buf.slice(0)) }).promise;
+    let chars = 0;
+    for (let i = 1; i <= pdf.numPages; i++) {
+      chars += (await (await pdf.getPage(i)).getTextContent()).items.map((t) => t.str).join("").trim().length;
+    }
+    if (chars >= 20) return null;  // has a text layer: Canon reads it directly
+    await loadScript(TESSERACT);
+    const worker = await Tesseract.createWorker("eng");
+    const pages = [];
+    try {
+      for (let i = 1; i <= pdf.numPages; i++) {
+        $("status").textContent = `Reading scanned page ${i} of ${pdf.numPages} on this device…`;
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement("canvas");
+        canvas.width = viewport.width; canvas.height = viewport.height;
+        await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+        pages.push((await worker.recognize(canvas)).data.text);
+      }
+    } finally {
+      await worker.terminate();
+    }
+    return pages.join("\n\f\n");
+  }
+
   async function addFiles(files) {
     for (const f of files) {
       const buf = await f.arrayBuffer();
       const pdf = new TextDecoder().decode(new Uint8Array(buf.slice(0, 5))) === "%PDF-" || /\.pdf$/i.test(f.name);
       state.walkthrough = null; renderWalkthrough();  // its claims only hold for the unmodified sample
-      state.docs.push(pdf ? { filename: f.name, encoding: "base64", content: b64(buf) }
+      let ocr = null;
+      if (pdf) {
+        try { ocr = await ocrScannedPdf(buf); }
+        catch (e) { $("error").textContent = `${f.name}: on-device OCR unavailable (${e.message}); sending the PDF as is.`; }
+        finally { $("status").textContent = ""; }
+      }
+      state.docs.push(ocr !== null ? { filename: f.name.replace(/\.pdf$/i, "") + " (OCR).txt", encoding: "text", content: ocr }
+                    : pdf ? { filename: f.name, encoding: "base64", content: b64(buf) }
                           : { filename: f.name, encoding: "text", content: new TextDecoder().decode(buf) });
     }
     renderDocs();

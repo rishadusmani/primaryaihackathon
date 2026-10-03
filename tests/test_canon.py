@@ -164,6 +164,15 @@ class MatchingTest(unittest.TestCase):
 
 
 class LLMMappingTest(unittest.TestCase):
+    def test_request_params_per_model(self):
+        haiku = llm.request_params("claude-haiku-4-5", [{"type": "text", "text": "x"}])
+        self.assertEqual(set(haiku["output_config"]), {"format"})  # no effort, no fallback beta on Haiku
+        self.assertNotIn("betas", haiku)
+        opus = llm.request_params("claude-opus-5-5", [])
+        self.assertEqual(opus["output_config"]["effort"], "medium")
+        self.assertEqual(opus["fallbacks"], "default")
+        self.assertEqual(llm.MODEL if "CANON_LLM_MODEL" in os.environ else "claude-haiku-4-5", llm.MODEL)
+
     def test_unverified_evidence_is_downgraded(self):
         src = "Pt on metformin 500 mg BID. A1c 7.2%."
         facts = llm.to_facts({"patient": {"given_name": None, "family_name": None, "birth_date": None, "sex": None,

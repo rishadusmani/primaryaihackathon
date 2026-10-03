@@ -300,10 +300,10 @@
     $("app").hidden = false;
     document.querySelectorAll(".seg button").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.days) === days)));
     $("signout").hidden = !key;
-    const plan = { active: "Active subscription", trial: "Free tier", past_due: "Payment past due", canceled: "Subscription canceled", sandbox: "Sandbox" };
+    const plan = { active: "Active subscription", trial: "No subscription yet", past_due: "Payment past due", canceled: "Subscription canceled", sandbox: "Unmetered" };
     const a = u.account || {};
     const parts = [esc(a.name || "Your account"), plan[a.status] || esc(a.status || "")];
-    if (a.status === "trial" && a.usage) parts.push(`${nf.format(a.usage.free_documents_remaining)} free documents left`);
+    if (a.status === "trial" && a.usage && a.usage.free_pages_remaining > 0) parts.push(`${nf.format(a.usage.free_pages_remaining)} free pages left`);
     $("scope").innerHTML = parts.filter(Boolean).join(" · ") + " · " + shortDate(u.period.start) + " – " + shortDate(u.period.end);
 
     const t = u.totals;
@@ -314,7 +314,7 @@
       kpi("Requests", compact(t.requests), `${nf.format(Math.round(t.requests / u.period.days))} per day on average`, true),
       kpi("Error rate", pct(t.error_rate), `${nf.format(t.errors)} failed requests`),
       kpi("Latency p95", ms(t.latency_p95_ms), `median ${ms(t.latency_p50_ms)}`),
-      kpi("Documents ingested", compact(t.documents_ingested), bytes(t.bytes_ingested) + " uploaded"),
+      kpi("Pages processed", compact(t.pages || 0), `${nf.format(t.documents_ingested)} documents · ${bytes(t.bytes_ingested)}`),
       kpi("Patients accessed", compact(t.patients_accessed), "distinct patient records"),
       kpi("LLM tokens", compact(tokens), "scanned-document extraction"),
     ].join("");

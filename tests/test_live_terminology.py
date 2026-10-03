@@ -181,6 +181,11 @@ class DemoWalkthroughTest(LiveTestCase):
         self.assertFalse(self.find(rec, "medications", "rxnorm", "1656339"))
         self.assertTrue(any("Entresto" in str(u.get("raw")) for u in rec.get("unmapped", [])))
 
+    def test_combination_dose_kept_whole(self):
+        rec = self.run_demo()
+        entresto = self.find(rec, "medications", "rxnorm", "1656339")[0]
+        self.assertEqual(entresto["dose"], "49-51 mg")
+
     def test_walkthrough_endpoint_hides_expectations(self):
         self.assertTrue(all("expect" not in w for w in playground.walkthrough()))
         self.assertEqual(len(playground.samples("tricky")), 2)
