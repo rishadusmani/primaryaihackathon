@@ -113,6 +113,8 @@
   .chip { display: inline-block; font: 11.5px/18px var(--font-mono); padding: 0 8px; border-radius: 999px; background: var(--chip); color: var(--text-secondary); white-space: nowrap; }
   .chip.fmt { color: var(--accent); }
   .chip.live { color: var(--good); }
+  .chip.model { color: var(--accent); }
+  .chip.off { color: var(--text-muted); }
   .wt td { vertical-align: top; }
   .wt .naive { color: var(--bad); }
   .wt .canon { color: var(--good); }
@@ -296,7 +298,19 @@
     if (!state.walkthrough) return;
     $("wt-table").innerHTML = `<thead><tr><th>In the documents</th><th>Keyword matcher</th><th>Canon</th></tr></thead><tbody>` +
       state.walkthrough.map((w) => `<tr><td class="mono">“${esc(w.quote)}”</td><td class="naive">${esc(w.naive)}</td>
-        <td class="canon">${esc(w.canon)}${w.live ? ` <span class="chip live">live lookup</span>` : ""}</td></tr>`).join("") + "</tbody>";
+        <td class="canon">${esc(w.canon)}${w.live ? ` <span class="chip live">live lookup</span>` : ""}${w.model ? modelChip(w) : ""}</td></tr>`).join("") + "</tbody>";
+  }
+
+  // Rows decided by assertion review show the model's live label for the matching sentence.
+  const LABELS = { present: "the patient has it", historical: "past, resolved", absent: "not present",
+                   hypothetical: "not established", other_person: "someone else's" };
+  function modelChip(w) {
+    if (!state.result) return "";
+    const decisions = state.result.documents.flatMap((d) => (d.model_review && d.model_review.decisions) || []);
+    const model = (state.result.documents.find((d) => d.model_review) || {}).model_review?.model;
+    const hit = decisions.find((d) => d.sentence.toLowerCase().includes(w.quote.toLowerCase()));
+    if (!hit) return ` <span class="chip off" title="No model key on this server: the rules held this sentence back">model review off</span>`;
+    return ` <span class="chip model" title="Quoted evidence: “${esc(hit.evidence)}”">${esc(model)}: ${esc(LABELS[hit.label] || hit.label)}</span>`;
   }
 
   function b64(buf) {
@@ -373,7 +387,7 @@
       state.patient = 0;
       const errs = state.result.documents.filter((d) => d.error);
       if (errs.length) $("error").textContent = errs.map((d) => `${d.filename}: ${d.error.message}`).join("\n");
-      renderDocs(); renderResult();
+      renderDocs(); renderResult(); renderWalkthrough();
     } catch (e) { $("error").textContent = e.message; }
     finally { btn.textContent = "Normalize"; btn.disabled = !state.docs.length; }
   }

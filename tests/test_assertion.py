@@ -136,6 +136,9 @@ class AssertionModelTest(unittest.TestCase):
 class PipelineWiringTest(unittest.TestCase):
     NOTE = b"Assessment: Patient's mother says she has asthma. Hypertension, not well controlled.\n"
 
+    def setUp(self):
+        assertion._cache.clear()
+
     def test_disabled_without_key(self):
         with mock.patch.dict(os.environ, {"OPENAI_API_KEY": ""}):
             facts, info = parse("text", self.NOTE)
@@ -182,6 +185,75 @@ class PipelineWiringTest(unittest.TestCase):
     def test_kill_switch(self):
         with mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test", "CANON_ASSERTION": "0"}):
             self.assertFalse(assertion.enabled())
+
+
+def fake_luna(body):
+    """Label each sentence the way a correct model would, quoting words from it."""
+    rules = [("Mother had", "other_person", "Mother had"), ("screen negative", "absent", "screen negative"),
+             ("resolved", "historical", "resolved"), ("Possible", "hypothetical", "Possible pneumonia"),
+             ("wife reports", "present", "he was diagnosed with COPD")]
+    items = []
+    for it in json.loads(body["input"])["items"]:
+        label, ev = next((lab, e) for cue, lab, e in rules if cue in it["sentence"])
+        items.append({"id": it["id"], "assertion": label, "evidence": ev})
+    return fake_response(items)
+
+
+class DemoModelReviewTest(unittest.TestCase):
+    """The public demo's tricky note with model review on: the walkthrough's `expect_model` claims hold."""
+
+    def setUp(self):
+        assertion._cache.clear()
+
+    def run_demo(self, edit=None):
+        import glob
+        from canon import playground
+        docs = []
+        for f in sorted(glob.glob(os.path.join(playground.TRICKY_DIR, "*"))):
+            with open(f, encoding="utf-8") as fh:
+                content = fh.read()
+            docs.append({"filename": os.path.basename(f), "encoding": "text", "content": edit(content) if edit else content})
+        calls = []
+        with mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test", "CANON_LIVE_TERMINOLOGY": "0"}), \
+                mock.patch.object(assertion, "_post", lambda body: calls.append(body) or fake_luna(body)):
+            return playground.normalize(docs), calls
+
+    def test_walkthrough_claims_hold_with_model(self):
+        from canon import playground
+        result, calls = self.run_demo()
+        self.assertEqual(len(calls), 1, "one model call for the note")
+        rec = result["patients"][0]["record"]
+        for w in playground.WALKTHROUGH:
+            for state, section, system, code, *field in w.get("expect_model", []):
+                hits = [i for i in rec.get(section, []) if i["codes"].get(system) == code]
+                with self.subTest(quote=w["quote"]):
+                    if state == "absent":
+                        self.assertEqual(hits, [])
+                    else:
+                        self.assertTrue(hits)
+                        if field:
+                            self.assertEqual(hits[0].get(field[0]), field[1])
+        note = next(d for d in result["documents"] if d["filename"].endswith(".txt"))
+        decisions = note["model_review"]["decisions"]
+        self.assertEqual(len(decisions), 5)
+        for w in playground.WALKTHROUGH:
+            if w.get("model"):
+                with self.subTest(quote=w["quote"]):
+                    self.assertTrue(any(w["quote"].lower() in d["sentence"].lower() for d in decisions),
+                                    "the page matches each model row to a decision by its quote")
+
+    def test_repeat_demo_is_served_from_cache(self):
+        _, first = self.run_demo()
+        result, second = self.run_demo()
+        self.assertEqual((len(first), len(second)), (1, 0))
+        note = next(d for d in result["documents"] if d["filename"].endswith(".txt"))
+        self.assertTrue(note["model_review"]["cached"])
+
+    def test_edited_sample_never_reaches_the_model(self):
+        result, calls = self.run_demo(edit=lambda c: c + "\nFather had asthma.\n")
+        self.assertEqual(calls, [])
+        note = next(d for d in result["documents"] if d["filename"].endswith(".txt"))
+        self.assertNotIn("model_review", note)
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ Public
     GET  /about                          why Canon exists (static HTML)
     GET  /connect                        create an API key and connect an MCP client (HTML; calls /v1/signup)
     GET  /v1/playground/samples          the 7-document sample patient (?set=tricky: the tricky-note demo)
-    POST /v1/playground/normalize        {documents: [...]} -> records; stateless, unbilled, no LLM
+    POST /v1/playground/normalize        {documents: [...]} -> records; stateless, unbilled, no model calls on visitor input
     GET  /healthz
     POST /v1/signup                      {name, email} -> account + API key (shown once) + checkout link
     POST /v1/stripe/webhook              Stripe events (signature verified)

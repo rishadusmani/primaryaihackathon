@@ -1,14 +1,17 @@
 """Public, stateless playground behind the web demo page.
 
 Documents are normalized in a throwaway in-memory database for the duration of
-one request: nothing is stored, nothing is billed, and LLM extraction is never
-called (so the endpoint can't be used to run up model costs).
+one request: nothing is stored and nothing is billed. Models are only called for
+the unmodified built-in samples (assertion review, answers cached per server
+instance), never for text a visitor supplies, so the endpoint can't be used to
+run up model costs.
 """
 
 from __future__ import annotations
 
 import base64
 import glob
+import hashlib
 import os
 from collections import Counter
 
@@ -38,8 +41,10 @@ TRICKY_SOURCES = {
 
 # The "tricky note" walkthrough shown next to the record. Each entry is a phrase from
 # the sample, how a context-free keyword matcher would read it, and what Canon does.
-# `expect` is checked by tests/test_demo_walkthrough.py so the demo can't drift from
+# `expect` is checked by tests/test_live_terminology.py so the demo can't drift from
 # the engine: ("absent"|"present", section, code system, code[, field, value]).
+# Rows with `model` are decided by assertion review: `expect` holds without a model,
+# `expect_model` with one (tests/test_assertion.py checks it against canned answers).
 WALKTHROUGH = [
     {"quote": "Influenza vaccine given today", "naive": "Influenza (J11.1) added as a diagnosis",
      "canon": "Recorded as an immunization (CVX 88), not a diagnosis",
@@ -77,8 +82,33 @@ WALKTHROUGH = [
 ]
 
 
+WALKTHROUGH += [
+    {"quote": "Mother had type 2 diabetes", "naive": "Type 2 diabetes (E11.9) added to his problems",
+     "canon": "His mother's diagnosis: kept out of his record", "model": True,
+     "expect": [("absent", "conditions", "icd10", "E11.9")],
+     "expect_model": [("absent", "conditions", "icd10", "E11.9")]},
+    {"quote": "Depression screen negative", "naive": "Depression (F32.A) added as a diagnosis",
+     "canon": "A negative screen: not a diagnosis", "model": True,
+     "expect": [("absent", "conditions", "icd10", "F32.A")],
+     "expect_model": [("absent", "conditions", "icd10", "F32.A")]},
+    {"quote": "Pneumonia in 2019, resolved", "naive": "Active pneumonia (J18.9) added",
+     "canon": "Past and resolved: recorded as history, not an active problem", "model": True,
+     "expect": [("absent", "conditions", "icd10", "J18.9")],
+     "expect_model": [("present", "conditions", "icd10", "J18.9", "status", "resolved")]},
+    {"quote": "Possible pneumonia on last chest x-ray", "naive": "Active pneumonia (J18.9) added",
+     "canon": "Suspected, not diagnosed: not recorded as active", "model": True,
+     "expect": [("absent", "conditions", "icd10", "J18.9")],
+     "expect_model": [("present", "conditions", "icd10", "J18.9", "status", "resolved")]},
+    {"quote": "His wife reports he was diagnosed with COPD", "naive": "COPD added, but only by luck: the same matcher "
+     "also gave him his mother's diabetes", "canon": "The rules hold it back (a relative is mentioned); the model reads "
+     "that it's his diagnosis and restores COPD (J44.9)", "model": True,
+     "expect": [("absent", "conditions", "icd10", "J44.9")],
+     "expect_model": [("present", "conditions", "icd10", "J44.9", "status", "active")]},
+]
+
+
 def walkthrough() -> list[dict]:
-    return [{k: v for k, v in w.items() if k != "expect"} for w in WALKTHROUGH]
+    return [{k: v for k, v in w.items() if k not in ("expect", "expect_model")} for w in WALKTHROUGH]
 
 
 def samples(sample_set: str = "maria_chen") -> list[dict]:
@@ -93,6 +123,15 @@ def samples(sample_set: str = "maria_chen") -> list[dict]:
         out.append({"filename": name, "format": fmt, "source_name": sources.get(name), "size": len(raw),
                     "encoding": "base64" if binary else "text",
                     "content": base64.b64encode(raw).decode() if binary else raw.decode("utf-8", "replace")})
+    return out
+
+
+def _bundled_digests() -> set[str]:
+    """SHA-256 of every built-in sample file: the only documents the playground may send to a model."""
+    out = set()
+    for path in glob.glob(os.path.join(SAMPLE_DIR, "*")) + glob.glob(os.path.join(TRICKY_DIR, "*")):
+        with open(path, "rb") as fh:
+            out.add(hashlib.sha256(fh.read()).hexdigest())
     return out
 
 
@@ -112,6 +151,7 @@ def normalize(documents: list[dict]) -> dict:
         decoded.append((d.get("filename") or "document", d.get("source_name"), data))
 
     canon = Canon(":memory:")
+    bundled = _bundled_digests()
     results = []
     first_pid = None
     # Documents with demographics first, so files without them (e.g. a lab CSV) can attach to that patient.
@@ -119,13 +159,16 @@ def normalize(documents: list[dict]) -> dict:
     for i in order:
         name, source, data = decoded[i]
         entry = {"filename": name}
+        # Unmodified built-in samples may use model review (answers cached per instance); anything a visitor
+        # types or uploads stays rules-only, so the public playground can't spend the operator's model key.
+        use_llm = None if hashlib.sha256(data).hexdigest() in bundled else False
         try:
             try:
-                r = canon.ingest(data, filename=name, source_name=source, use_llm=False, actor="playground")
+                r = canon.ingest(data, filename=name, source_name=source, use_llm=use_llm, actor="playground")
             except CanonError as e:
                 if e.code != "patient_unidentified" or not first_pid:
                     raise
-                r = canon.ingest(data, filename=name, source_name=source, patient_id=first_pid, use_llm=False,
+                r = canon.ingest(data, filename=name, source_name=source, patient_id=first_pid, use_llm=use_llm,
                                  actor="playground")
                 entry["attached_to_patient"] = True
             first_pid = first_pid or r["patient_id"]
@@ -133,6 +176,9 @@ def normalize(documents: list[dict]) -> dict:
             entry.update(format=doc["format"], patient_id=r["patient_id"], match=r["match"]["method"],
                          counts=doc["extraction"]["counts"], warnings=doc["extraction"].get("warnings", []),
                          document_id=doc["id"])
+            review = doc["extraction"].get("assertion_review")
+            if review:
+                entry["model_review"] = {k: review.get(k) for k in ("model", "decisions", "cached")}
         except CanonError as e:
             entry.update(error={"code": e.code, "message": e.message})
         results.append(entry)
