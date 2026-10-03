@@ -76,8 +76,8 @@ Python (standard library only for the core: zero runtime dependencies), Supabase
   - Use it from Claude over MCP: `claude mcp add --transport http canon https://primaryaihackathon.vercel.app/mcp --header "Authorization: Bearer cn_live_primaryaisupabasehackathon"`
 - Your own key: `curl -X POST https://primaryaihackathon.vercel.app/v1/signup -H 'Content-Type: application/json' -d '{"name":"Judge","email":"you@example.com"}'`. New accounts have no free pages: reads work right away, and uploads need a subscription through the returned Checkout link (Stripe test card `4242 4242 4242 4242`).
 - API health: https://primaryaihackathon.vercel.app/healthz
-- Demo video with voice-over (3:20): https://github.com/rishadusmani/primaryaihackathon/blob/main/docs/canon-demo.mp4 (opens with an agent handing Canon Maria Chen's 7 records and summarizing the record it gets back, then the web demo recorded on the live site, connecting an agent over MCP, a REST call and an MCP tool call, and the usage dashboard; ends on a QR code to /connect, the `claude mcp add` command and a prompt to try; upload to YouTube or Loom if the form needs a streaming link)
-- Product images (10): https://github.com/rishadusmani/primaryaihackathon/tree/main/docs/images
+- Demo video with voice-over (2:54): https://github.com/rishadusmani/primaryaihackathon/blob/main/docs/canon-demo.mp4 (opens with an agent handing Canon Maria Chen's 7 records and summarizing the record it gets back, then the web demo recorded on the live site, connecting an agent over MCP, a REST call and an MCP tool call, and the usage dashboard; ends on a QR code to /connect, the `claude mcp add` command and a prompt to try; upload to YouTube or Loom if the form needs a streaming link)
+- Product images (10, one per key feature: agent summary over MCP, seven formats to one patient, conflicts, coded problems, reconciled medications, labs with provenance, clinical language vs keywords, agent view, connecting an agent, usage dashboard): https://github.com/rishadusmani/primaryaihackathon/tree/main/docs/images
 
 ## How to run it
 ```bash
