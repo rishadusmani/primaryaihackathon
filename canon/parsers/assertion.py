@@ -12,7 +12,8 @@ Guardrails:
 * At most MAX_CANDIDATES sentences per document, in one request.
 
 Uses OpenAI's Responses API over plain HTTPS (no SDK dependency). Enabled when OPENAI_API_KEY is set and
-CANON_ASSERTION is not "0". Model: CANON_ASSERTION_MODEL (default gpt-5.6-luna).
+CANON_ASSERTION is not "0", except for ingests with use_llm=False (the public playground), which never call
+a model. Model: CANON_ASSERTION_MODEL (default gpt-5.6-luna).
 """
 
 from __future__ import annotations

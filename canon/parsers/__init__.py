@@ -71,7 +71,7 @@ def _unstructured(fmt: str, data: bytes, use_llm: bool | None, info: dict) -> tu
         facts = text.parse(raw_text, review=review)
         info["extractors"].append("rule_nlp")
         info["text_chars"] = len(raw_text)
-    if review and assertion.enabled():
+    if review and use_llm is not False and assertion.enabled():  # use_llm=False: no model calls at all
         usage: dict = {}
         try:
             restored, report = assertion.resolve(review, usage)
