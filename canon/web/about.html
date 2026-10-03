@@ -53,6 +53,8 @@
   .brandbar .actions { display: inline-flex; align-items: center; gap: 14px; }
   .navlink { color: var(--text-secondary); font-size: 13px; text-decoration: none; white-space: nowrap; }
   .navlink:hover, .navlink[aria-current="page"] { color: var(--text-primary); }
+  @media (max-width: 560px) { .navlink.wide-only { display: none; } }
+  @media (max-width: 360px) { .brandbar .actions { gap: 10px; } .brandbar .in { gap: 8px; } }
   .theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--text-secondary); cursor: pointer; padding: 0; flex: none; }
   .theme-toggle:hover { border-color: var(--text-muted); color: var(--text-primary); }
   .theme-toggle svg { width: 16px; height: 16px; }
@@ -114,8 +116,9 @@
       <span class="product">Canon API</span>
     </a>
     <div class="actions">
-      <a class="navlink" href="/">Live demo</a>
+      <a class="navlink wide-only" href="/">Live demo</a>
       <a class="navlink" href="/about" aria-current="page">About</a>
+      <a class="navlink" href="/connect">Get API key</a>
       <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
         <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
         <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
@@ -132,6 +135,7 @@
     conflicts flagged, every fact cited. Agents use it via API or MCP.</p>
   <div class="cta">
     <a class="btn primary" href="/">See it on a real record</a>
+    <a class="btn" href="/connect">Get an API key</a>
     <a class="btn" href="https://github.com/rishadusmani/primaryaihackathon">Read the source</a>
   </div>
 
@@ -220,7 +224,7 @@
     </ul>
   </section>
 
-  <footer>Canon by Primary AI · <a href="/">Live demo</a> · <a href="/dashboard">Agent usage</a> ·
+  <footer>Canon by Primary AI · <a href="/">Live demo</a> · <a href="/connect">Get API key</a> · <a href="/dashboard">Agent usage</a> ·
     <a href="https://github.com/rishadusmani/primaryaihackathon">Source</a>
     <p class="attrib">This product uses publicly available data from the U.S. National Library of Medicine (NLM), National Institutes of Health, Department of Health and Human Services; NLM is not responsible for the product and does not endorse or recommend this or any other product.</p>
     <p class="attrib">This material contains content from LOINC® (<a href="https://loinc.org">loinc.org</a>). LOINC is copyright © Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under the license at <a href="https://loinc.org/terms-of-use">loinc.org/terms-of-use</a>. LOINC® is a registered United States trademark of Regenstrief Institute, Inc.</p></footer>

@@ -96,6 +96,7 @@ curl localhost:8080/v1/audit/verify               # tamper-evident access log
 | `POST /v1/stripe/webhook`, `GET /v1/billing/sync` | Stripe events; cron retry for usage reporting |
 | `GET /v1/usage?days=30` | This account's agent usage: requests, errors, latency, documents, patients, LLM tokens |
 | `GET /dashboard` | Customer usage dashboard (HTML) |
+| `GET /connect` | Create an API key and connect an MCP client (HTML) |
 
 ### Usage dashboard
 
@@ -131,6 +132,10 @@ two modes:
 
 ### For agents
 
+**Get a key and connect in the browser:** [`/connect`](https://primaryaihackathon.vercel.app/connect)
+creates an API key and gives one-click or copy-paste setup for Claude Code, Claude Desktop,
+Cursor and VS Code, with a button that tests the connection.
+
 **Remote MCP** (hosted, nothing to install). The API serves MCP over Streamable HTTP
 at `POST /mcp`, using the same API key, data, billing and usage metering as the REST API:
 
@@ -139,8 +144,20 @@ claude mcp add --transport http canon https://primaryaihackathon.vercel.app/mcp 
   --header "Authorization: Bearer cn_live_..."
 ```
 
-Any client that speaks Streamable HTTP and can send an `Authorization` header works
-(Claude Code, the Agent SDK, the MCP SDKs). The server is stateless and answers each
+Any client that speaks Streamable HTTP and can send an `Authorization` header works:
+
+```bash
+gemini mcp add --scope user --transport http canon https://primaryaihackathon.vercel.app/mcp \
+  --header "Authorization: Bearer cn_live_..."                        # Gemini CLI
+export CANON_API_KEY=cn_live_...
+codex mcp add canon --url https://primaryaihackathon.vercel.app/mcp \
+  --bearer-token-env-var CANON_API_KEY                                # OpenAI Codex CLI
+```
+
+From code: the Claude API MCP connector (`mcp_servers` + `mcp_toolset`), OpenAI's Responses API
+(`{"type": "mcp", "server_url": ..., "headers": ...}`), the OpenAI Agents SDK
+(`MCPServerStreamableHttp`) and the Google Gen AI SDK (an MCP `ClientSession` passed as a tool).
+[`/connect`](https://primaryaihackathon.vercel.app/connect) has copy-paste versions of each. The server is stateless and answers each
 POST with JSON, with no sessions or SSE stream, so it runs fine on serverless.
 
 **Local MCP** (stdio, your own SQLite file):

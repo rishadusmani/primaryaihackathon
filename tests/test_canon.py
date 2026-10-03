@@ -296,6 +296,16 @@ class UsageTest(unittest.TestCase):
         self.assertEqual(st, 200)
         self.assertIn("Why Canon exists", body)
 
+    def test_connect_page_served_without_key(self):
+        st, body = self.call("GET", "/connect")
+        self.assertEqual(st, 200)
+        self.assertIn("/v1/signup", body)
+        self.assertIn('"/mcp"', body)
+        st, r = self.call("POST", "/v1/signup", body=json.dumps({"name": "From the page"}).encode())
+        self.assertEqual(st, 201)
+        self.assertEqual(self.call("POST", "/mcp", r["api_key"],
+                                   json.dumps({"jsonrpc": "2.0", "id": 1, "method": "tools/list"}).encode())[0], 200)
+
     def test_remote_mcp_over_http(self):
         def rpc(payload, key=self.ka):
             return self.call("POST", "/mcp", key, json.dumps(payload).encode())

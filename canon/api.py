@@ -4,6 +4,7 @@ WSGI app on Vercel (app.py).
 Public
     GET  /                               web demo (normalizes documents in the browser session, stores nothing)
     GET  /about                          why Canon exists (static HTML)
+    GET  /connect                        create an API key and connect an MCP client (HTML; calls /v1/signup)
     GET  /v1/playground/samples          the 7-document sample patient (?set=tricky: the tricky-note demo)
     POST /v1/playground/normalize        {documents: [...]} -> records; stateless, unbilled, no LLM
     GET  /healthz
@@ -169,6 +170,8 @@ class App:
             return Response(200, _web_page("index.html"))
         if method == "GET" and path == "/about":
             return Response(200, _web_page("about.html"))
+        if method == "GET" and path == "/connect":
+            return Response(200, _web_page("connect.html"))
         if method == "GET" and path == "/v1/playground/samples":
             if q.get("set") == "tricky":
                 return Response(200, {"documents": playground.samples("tricky"), "walkthrough": playground.walkthrough()})
