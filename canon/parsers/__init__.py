@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import re
 
-from . import assertion, ccda, csv_portal, fhir, hl7v2, llm, pdf, text, x12
+from . import assertion, ccda, csv_portal, docdate, fhir, hl7v2, llm, pdf, text, x12
 
 FORMATS = ("fhir", "hl7v2", "ccda", "x12_837", "csv", "pdf", "text")
 
@@ -55,7 +55,14 @@ def parse(fmt: str, data: bytes, *, use_llm: bool | None = None) -> tuple[list[d
     else:
         raise ValueError(f"Unsupported format {fmt}; expected one of {FORMATS}")
     info["extractors"].append(f"{fmt}_parser")
+    _generated(info, fmt, data)
     return facts, info
+
+
+def _generated(info: dict, fmt: str, data: bytes, text_: str | None = None) -> None:
+    d = docdate.generated_date(fmt, data, text_)
+    if d:
+        info["generated_at"] = d
 
 
 def _unstructured(fmt: str, data: bytes, use_llm: bool | None, info: dict) -> tuple[list[dict], dict]:
@@ -98,4 +105,5 @@ def _unstructured(fmt: str, data: bytes, use_llm: bool | None, info: dict) -> tu
     elif needs_ocr:
         info.setdefault("warnings", []).append(
             "PDF has no text layer (scanned fax). Enable LLM extraction (ANTHROPIC_API_KEY) to read it.")
+    _generated(info, fmt, data, raw_text)
     return facts, info

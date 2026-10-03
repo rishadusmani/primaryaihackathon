@@ -4,9 +4,11 @@ Principles:
 * One concept, one entry: same condition/drug/allergen/lab reading from N
   sources becomes one item listing N sources (confidence combines).
 * Current state comes from the most recent clinical statement; claims never
-  decide clinical status on their own. A statement with no date of its own, in a
-  document with no date, ranks oldest: an undated fax can't override a dated
-  note, and the document is flagged so a human can date it.
+  decide clinical status on their own. A statement with no date of its own takes
+  its document's date: the clinical date, else when the document was generated
+  (signed, printed, faxed, sent; `date_basis` on the source says which). With
+  neither it ranks oldest, so an undated fax can't override a dated note, and the
+  document is flagged so a human can date it.
 * Disagreements are surfaced as `conflicts`, never silently resolved, so an
   agent can ask a human instead of acting on bad data.
 """
@@ -97,7 +99,7 @@ def _undated(items: list[tuple[str, dict]]) -> list[dict]:
         name = src.get("source_name") or doc_id
         out.append({"type": "undated_source", "severity": "low", "document_id": doc_id,
                     "values": sorted(set(kinds)),
-                    "message": f"{name} has no clinical date, so its {len(kinds)} statement(s) are treated as the "
+                    "message": f"{name} has no clinical or generation date, so its {len(kinds)} statement(s) are treated as the "
                                "oldest and can't override dated sources. Confirm the document date."})
     return out
 

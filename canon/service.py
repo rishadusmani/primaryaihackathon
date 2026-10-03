@@ -107,7 +107,9 @@ class Canon:
         dates = [it.get("date") or it.get("effective") for k, it in items if k in ("encounter", "observation",
                                                                                      "condition", "medication")]
         dates = [d for d in dates if d]
-        doc_date = Counter(dates).most_common(1)[0][0] if dates else None
+        doc_date = Counter(dates).most_common(1)[0][0] if dates else info.get("generated_at")
+        if doc_date:
+            info["date_basis"] = "clinical" if dates else "generated"
         info["pages"] = _pages(fmt, info)
         doc_id = new_id("doc")
         received = _now()
@@ -188,7 +190,8 @@ class Canon:
         sources = []
         for r in rows:
             src = {"id": r["id"], "format": r["format"], "source_name": r["source_name"],
-                   "received_at": r["received_at"], "document_date": r["document_date"]}
+                   "received_at": r["received_at"], "document_date": r["document_date"],
+                   "date_basis": json.loads(r["info"] or "{}").get("date_basis")}
             sources.append({**src, "filename": r["filename"]})
             for kind, it in json.loads(r["items"]):
                 it["_source"] = src

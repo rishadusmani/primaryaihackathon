@@ -186,6 +186,32 @@ class ChronologyTest(unittest.TestCase):
         self.assertEqual([(f["severity"], f["document_id"]) for f in flags], [("low", self.doc_ids[1])])
         self.assertNotIn("medication_discrepancy", {x["type"] for x in rec["conflicts"]})
 
+    def test_generated_date_stands_in_for_a_missing_clinical_date(self):
+        c, pid = self.notes(HEAD + "Date of service: 2026-01-10\nMedications:\nMetformin 1000 mg twice daily\n",
+                            HEAD + "Medications:\nMetformin 500 mg daily\n"
+                                   "Electronically signed by Dr. Ruiz on 04/01/2026 09:12\n")
+        rec = c.record(pid)
+        src = next(s for s in rec["sources"] if s["id"] == self.doc_ids[1])
+        self.assertEqual((src["document_date"], src["date_basis"]), ("2026-04-01", "generated"))
+        met = next(m for m in rec["medications"] if m["ingredient"] == "metformin")
+        self.assertEqual((met["dose"], met["last_changed"]), ("500 mg", "2026-04-01"))
+        self.assertNotIn("undated_source", {x["type"] for x in rec["conflicts"]})
+
+    def test_generated_date_per_format(self):
+        from canon.parsers.docdate import generated_date as g
+        self.assertEqual(g("ccda", b'<ClinicalDocument><title>CCD</title><effectiveTime value="20260215103000"/>'
+                                   b'<component><effectiveTime value="20190101"/></component>'), "2026-02-15")
+        self.assertEqual(g("fhir", json.dumps({"resourceType": "Bundle", "timestamp": "2026-02-20T10:00:00Z",
+                                               "entry": []}).encode()), "2026-02-20")
+        self.assertEqual(g("hl7v2", b"MSH|^~\\&|LAB|QUEST|||20260302101500||ORU^R01|1|P|2.5.1\r"), "2026-03-02")
+        self.assertEqual(g("x12_837", b"ISA*00*~GS*HC*S*R*20260304*1200*1*X*005010X222A1~"
+                                      b"BHT*0019*00*1*20260305*1200*CH~"), "2026-03-05")
+        self.assertEqual(g("pdf", b"%PDF-1.4 << /CreationDate (D:20260320083000Z) >>", ""), "2026-03-20")
+        self.assertEqual(g("text", b"", "FAX 03/01/2026 10:14 From: Clinic\nSigned: 02/27/2026\n"), "2026-02-27")
+        self.assertEqual(g("text", b"", "Fax sent 03/01/2026 10:14\nMeds: metformin\n"), "2026-03-01")
+        self.assertIsNone(g("csv", b"Test,Result\nA1c,7.1\n"))
+        self.assertIsNone(g("text", b"", "Medications: metformin 500 mg\n"))
+
     def test_allergy_resolved_by_negative_challenge(self):
         c, pid = self.notes(
             HEAD + "Date of service: 2025-05-01\nAllergies: Penicillin (hives)\n",
