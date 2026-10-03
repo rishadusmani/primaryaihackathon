@@ -105,7 +105,8 @@ Every authenticated agent request is one row in `api_requests`, keyed by account
 Account, billing and `/v1/usage` calls are not counted. This is observability,
 separate from the billable `usage_events`. MCP tool calls are metered to the MCP
 server's account in its own database. On Postgres, apply
-`migrations/002_api_requests.sql` after `001_init.sql`.
+`migrations/002_api_requests.sql` after `001_init.sql`, and (when the API connects as `canon_app`)
+`migrations/003_app_role_api_requests.sql` after `002_app_role.sql`.
 
 ### Hosting on Vercel
 
