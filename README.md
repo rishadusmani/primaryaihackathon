@@ -89,6 +89,7 @@ curl localhost:8080/v1/audit/verify               # tamper-evident access log
 | `GET /v1/patients/{id}/observations` | Labs/vitals in canonical units (`names=`, `since=`) |
 | `GET /v1/patients/{id}/fhir` | FHIR R4 Bundle export |
 | `GET /v1/tools`, `POST /v1/tools/{name}` | Agent tool schemas and execution |
+| `POST /mcp` | MCP server (Streamable HTTP) exposing the same tools |
 | `GET /v1/audit`, `GET /v1/audit/verify` | Hash-chained log of every ingest and record read (append-only in Postgres) |
 | `POST /v1/signup`, `GET /v1/account` | Create an account + API key; status and usage |
 | `POST /v1/billing/checkout`, `POST /v1/billing/portal` | Stripe Checkout / Billing Portal links |
@@ -130,7 +131,19 @@ two modes:
 
 ### For agents
 
-**MCP** (Claude Code, Claude Desktop, any MCP client):
+**Remote MCP** (hosted, nothing to install). The API serves MCP over Streamable HTTP
+at `POST /mcp`, using the same API key, data, billing and usage metering as the REST API:
+
+```bash
+claude mcp add --transport http canon https://primaryaihackathon.vercel.app/mcp \
+  --header "Authorization: Bearer cn_live_..."
+```
+
+Any client that speaks Streamable HTTP and can send an `Authorization` header works
+(Claude Code, the Agent SDK, the MCP SDKs). The server is stateless and answers each
+POST with JSON, with no sessions or SSE stream, so it runs fine on serverless.
+
+**Local MCP** (stdio, your own SQLite file):
 
 ```bash
 claude mcp add canon -- python -m canon mcp --db canon.db

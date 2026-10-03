@@ -1,6 +1,9 @@
-"""MCP server over stdio (JSON-RPC 2.0, newline-delimited), dependency-free.
+"""MCP server, dependency-free. `handle` is the JSON-RPC 2.0 core shared by both transports:
 
-    claude mcp add canon -- python -m canon.mcp_server --db canon.db
+* stdio (newline-delimited), this module's `main`:
+      claude mcp add canon -- python -m canon mcp --db canon.db
+* Streamable HTTP at POST /mcp on the hosted API (canon/api.py), keyed per customer:
+      claude mcp add --transport http canon https://<host>/mcp --header "Authorization: Bearer cn_live_..."
 """
 
 from __future__ import annotations
@@ -10,6 +13,7 @@ import json
 import os
 import sys
 import time
+from typing import Callable
 
 from . import __version__, usage
 from .service import Canon
@@ -18,7 +22,12 @@ from .tools import TOOLS_BY_NAME, call_tool, mcp_tools
 PROTOCOL_VERSION = "2025-06-18"
 
 
-def handle(canon: Canon, msg: dict) -> dict | None:
+def handle(canon: Canon, msg: dict, actor: str = "mcp",
+           guard: Callable[[str], None] | None = None) -> dict | None:
+    """One JSON-RPC message -> its response (None for notifications). `guard(tool_name)` may raise
+    to refuse a call (e.g. billing); its message comes back as a tool error the agent can read."""
+    if not isinstance(msg, dict):
+        return {"jsonrpc": "2.0", "id": None, "error": {"code": -32600, "message": "Invalid Request"}}
     mid = msg.get("id")
     method = msg.get("method")
     if mid is None:  # notification
@@ -40,8 +49,16 @@ def handle(canon: Canon, msg: dict) -> dict | None:
         if name not in TOOLS_BY_NAME:
             return {"jsonrpc": "2.0", "id": mid, "error": {"code": -32602, "message": f"Unknown tool {name}"}}
         args = p.get("arguments") or {}
+        if not isinstance(args, dict):
+            return {"jsonrpc": "2.0", "id": mid, "error": {"code": -32602, "message": "arguments must be an object"}}
         started = time.perf_counter()
-        out = call_tool(canon, name, args, actor="mcp")
+        try:
+            if guard:
+                guard(name)
+        except Exception as e:
+            out = {"error": {"code": getattr(e, "code", "refused"), "message": getattr(e, "message", str(e))}}
+        else:
+            out = call_tool(canon, name, args, actor=actor)
         try:
             usage.record(canon.store, account_id=canon.account_id, channel="mcp", operation=f"tool.{name}",
                          status=400 if "error" in out else 200, latency_ms=(time.perf_counter() - started) * 1000,

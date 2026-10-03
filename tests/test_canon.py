@@ -296,6 +296,55 @@ class UsageTest(unittest.TestCase):
         self.assertEqual(st, 200)
         self.assertIn("Why Canon exists", body)
 
+    def test_remote_mcp_over_http(self):
+        def rpc(payload, key=self.ka):
+            return self.call("POST", "/mcp", key, json.dumps(payload).encode())
+
+        st, _ = rpc({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}}, key=None)
+        self.assertEqual(st, 401)
+        r = self.app.handle("POST", "/mcp", {}, b"{}")
+        self.assertIn("WWW-Authenticate", r.headers)
+        self.assertEqual(self.call("GET", "/mcp", self.ka)[0], 405)
+
+        st, init = rpc({"jsonrpc": "2.0", "id": 1, "method": "initialize",
+                        "params": {"protocolVersion": "2025-06-18", "capabilities": {},
+                                   "clientInfo": {"name": "test", "version": "0"}}})
+        self.assertEqual((st, init["result"]["serverInfo"]["name"]), (200, "canon"))
+        self.assertEqual(rpc({"jsonrpc": "2.0", "method": "notifications/initialized"})[0], 202)
+        st, lst = rpc({"jsonrpc": "2.0", "id": 2, "method": "tools/list"})
+        self.assertEqual(len(lst["result"]["tools"]), 9)
+
+        # a billing refusal reaches the agent as a readable tool error, not a transport failure
+        from canon.billing import BillingError
+        with open(SAMPLES[1], "rb") as fh:
+            ingest = {"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "ingest_document",
+                      "arguments": {"content": base64.b64encode(fh.read()).decode(), "encoding": "base64"}}}
+        real = self.app.billing.check_can_ingest
+        self.app.billing.check_can_ingest = lambda a: (_ for _ in ()).throw(
+            BillingError("payment_required", "A subscription is required.", 402))
+        st, r = rpc(ingest)
+        self.assertEqual(st, 200)
+        self.assertTrue(r["result"]["isError"])
+        self.assertIn("payment_required", r["result"]["content"][0]["text"])
+        self.app.billing.check_can_ingest = real
+        pid = json.loads(rpc(ingest)[1]["result"]["content"][0]["text"])["patient_id"]
+
+        # the same account reads it over REST; other accounts can't see it over MCP
+        self.assertEqual(self.call("GET", f"/v1/patients/{pid}/summary", self.ka)[0], 200)
+        st, batch = rpc([{"jsonrpc": "2.0", "id": 4, "method": "tools/call",
+                          "params": {"name": "get_conflicts", "arguments": {"patient_id": pid}}},
+                         {"jsonrpc": "2.0", "id": 5, "method": "ping"}])
+        self.assertEqual([m["id"] for m in batch], [4, 5])
+        self.assertFalse(batch[0]["result"]["isError"])
+        st, other = rpc({"jsonrpc": "2.0", "id": 6, "method": "tools/call",
+                         "params": {"name": "get_patient_summary", "arguments": {"patient_id": pid}}}, self.kb)
+        self.assertTrue(other["result"]["isError"])
+        self.assertEqual(self.call("POST", "/mcp", self.ka, b"{nope")[1]["error"]["code"], -32700)
+
+        u = self.call("GET", "/v1/usage", self.ka)[1]
+        self.assertEqual(u["channels"].get("mcp"), 3)  # tool calls only: 2 ingests + get_conflicts
+        self.assertEqual(u["totals"]["errors"], 1)      # the refused ingest
+
     def test_mcp_tool_calls_and_llm_tokens_are_metered(self):
         from canon import usage
         c = Canon(self.make_store())

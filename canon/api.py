@@ -18,6 +18,7 @@ Authenticated (Authorization: Bearer cn_live_...)
     GET  /v1/patients
     GET  /v1/patients/{id}/record | summary | observations | fhir
     GET  /v1/tools?format=anthropic|openai|mcp      POST /v1/tools/{name}
+    POST /mcp                            MCP (Streamable HTTP, stateless, JSON responses)
     GET  /v1/audit[?patient_id=]
     GET  /v1/account                     status + usage
     GET  /v1/usage?days=30               this account's agent requests, errors, latency, LLM tokens
@@ -46,6 +47,7 @@ from . import playground, usage
 from .billing import Billing, BillingError
 from .service import SANDBOX_ACCOUNT, Canon, CanonError
 from .store import Store
+from .mcp_server import handle as mcp_handle
 from .tools import TOOLS_BY_NAME, anthropic_tools, call_tool, mcp_tools, openai_tools
 
 MAX_BODY = 25 * 1024 * 1024
@@ -74,14 +76,18 @@ def _operation(method: str, path: str) -> str | None:
         return path[4:].replace("/", ".")
     if path in ("/v1/account", "/v1/usage") or path.startswith("/v1/billing/"):
         return None
+    if path == "/mcp":  # metered per tool call, channel "mcp", by mcp_server.handle
+        return None
     return "unknown_route"
 
 
 class Response:
-    def __init__(self, status: int, body: dict | str, content_type: str | None = None):
+    def __init__(self, status: int, body: dict | list | str, content_type: str | None = None,
+                 headers: dict[str, str] | None = None):
         self.status = status
         self.data = body if isinstance(body, dict) else None
-        if isinstance(body, dict):
+        self.headers = headers or {}
+        if isinstance(body, (dict, list)):
             self.body = json.dumps(body, indent=2).encode()
             self.content_type = "application/json"
         else:
@@ -200,16 +206,23 @@ class App:
             return _page("Checkout canceled", "No charge was made. You can restart checkout from the API.")
         if method == "GET" and path == "/billing/return":
             return _page("Billing updated", "You can close this tab.")
+        if path == "/mcp" and method != "POST":  # stateless server: no SSE stream, no sessions to delete
+            return Response(405, {"error": {"code": "method_not_allowed", "message": "POST JSON-RPC to /mcp"}},
+                            headers={"Allow": "POST"})
 
         # --- authenticated
         account = self._authenticate(h)
         if account is None:
-            return _err(401, "unauthorized", "Missing or invalid API key (Authorization: Bearer cn_live_...).")
+            r = _err(401, "unauthorized", "Missing or invalid API key (Authorization: Bearer cn_live_...).")
+            r.headers["WWW-Authenticate"] = 'Bearer realm="canon"'
+            return r
         self._metering = {"account_id": account["id"]}
         canon = Canon(self.store, account["id"])
         canon.on_document_ingested = self.billing.record_usage
         actor = "sandbox" if self.sandbox else f"key:{account['id']}"
 
+        if method == "POST" and path == "/mcp":
+            return self._mcp(canon, account, actor, body)
         if method == "GET" and path == "/v1/account":
             return Response(200, self.billing.account(account["id"]))
         if method == "GET" and path == "/v1/usage":
@@ -280,6 +293,26 @@ class App:
             return Response(200, {"valid": v["valid"], "entries_checked": v["entries_checked"]})
         return _err(404, "not_found", f"No route {method} {path}")
 
+    def _mcp(self, canon: Canon, account: dict, actor: str, body: bytes) -> Response:
+        """MCP Streamable HTTP: one JSON-RPC message (or a batch) per POST, answered as JSON.
+        Notifications alone get 202 with no body."""
+        try:
+            msg = json.loads(body or b"")
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return Response(400, {"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": "Parse error"}})
+
+        def guard(name: str) -> None:
+            if name in INGEST_TOOLS:
+                self.billing.check_can_ingest(account)
+
+        if isinstance(msg, list):
+            out = [r for r in (mcp_handle(canon, m, actor, guard) for m in msg) if r is not None]
+        else:
+            out = mcp_handle(canon, msg, actor, guard)
+        if not out:
+            return Response(202, "", "text/plain")
+        return Response(200, out)
+
     def _authenticate(self, h: dict) -> dict | None:
         auth = h.get("authorization", "")
         token = auth[7:].strip() if auth.startswith("Bearer ") else None
@@ -298,10 +331,11 @@ class App:
             headers["content-type"] = environ["CONTENT_TYPE"]
         path = environ.get("PATH_INFO", "/") + (("?" + environ["QUERY_STRING"]) if environ.get("QUERY_STRING") else "")
         r = self.handle(environ["REQUEST_METHOD"], path, headers, body)
-        reason = {200: "OK", 201: "Created", 400: "Bad Request", 401: "Unauthorized", 402: "Payment Required",
-                  404: "Not Found", 409: "Conflict", 413: "Payload Too Large", 422: "Unprocessable Entity",
-                  502: "Bad Gateway", 503: "Service Unavailable"}.get(r.status, "")
-        start_response(f"{r.status} {reason}", [("Content-Type", r.content_type), ("Content-Length", str(len(r.body)))])
+        reason = {200: "OK", 201: "Created", 202: "Accepted", 400: "Bad Request", 401: "Unauthorized",
+                  402: "Payment Required", 404: "Not Found", 405: "Method Not Allowed", 409: "Conflict",
+                  413: "Payload Too Large", 422: "Unprocessable Entity", 502: "Bad Gateway", 503: "Service Unavailable"}.get(r.status, "")
+        start_response(f"{r.status} {reason}", [("Content-Type", r.content_type), ("Content-Length", str(len(r.body))),
+                                                *r.headers.items()])
         return [r.body]
 
     def http_handler(self):
@@ -321,6 +355,8 @@ class App:
                 self.send_response(r.status)
                 self.send_header("Content-Type", r.content_type)
                 self.send_header("Content-Length", str(len(r.body)))
+                for k, v in r.headers.items():
+                    self.send_header(k, v)
                 self.end_headers()
                 self.wfile.write(r.body)
 
@@ -329,6 +365,9 @@ class App:
 
             def do_POST(self):
                 self._do("POST")
+
+            def do_DELETE(self):
+                self._do("DELETE")
 
         return Handler
 
