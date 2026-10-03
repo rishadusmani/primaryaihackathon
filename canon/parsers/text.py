@@ -294,15 +294,18 @@ def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None =
 
         # ---- labs and vitals by name (longest synonym first; skip overlapping shorter matches)
         obs_taken: list[tuple[int, int]] = []
+        squeezed = re.sub(r" +", " ", _plain(low))
         for phrase, loinc in T.observation_synonyms():
             if loinc in ("8480-6", "8462-4"):
                 continue
             short = len(phrase) <= 3
             if short and section not in ("labs", "vitals"):
                 continue
-            if phrase not in low:
+            if phrase not in squeezed:
                 continue
-            rx = (rf"(?<![a-z0-9]){re.escape(phrase)}(?![a-z0-9])\s*(?:\([^)]*\))?\s*(?:level|value|was|of|is|=|:|-)?"
+            # Synonyms are stored without punctuation ("ca 125", "lp a"); allow it back between words ("CA-125", "Lp(a)").
+            name_rx = r"[^a-z0-9]{1,3}".join(re.escape(w) for w in phrase.split())
+            rx = (rf"(?<![a-z0-9]){name_rx}(?![a-z0-9])[)\]]?\s*(?:\([^)]*\))?\s*(?:level|value|was|of|is|=|:|-)?"
                   rf"\s*(?:was|of|is)?\s*([<>]?\d+(?:\.\d+)?)\s*([a-zA-Z%/µ\[\]\d.*^]+(?:/[a-zA-Z0-9.]+)?)?")
             for m in re.finditer(rx, line, re.I):
                 if any(a <= m.start() < b for a, b in obs_taken) or _negated(low, m.start()):

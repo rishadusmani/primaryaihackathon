@@ -140,5 +140,43 @@ class FreeTextSafetyTest(unittest.TestCase):
         self.assertTrue({"apixaban", "furosemide", "potassium chloride"} <= medications)
 
 
+class ExpansionTest(unittest.TestCase):
+    """The October expansion: broader drugs, conditions and labs, all verified by scripts/build_vocab.py."""
+
+    def test_coverage_grew(self):
+        self.assertGreaterEqual(len(T.CONDITIONS), 200)
+        self.assertGreaterEqual(len(T.MEDICATIONS), 300)
+        self.assertGreaterEqual(len(T.OBSERVATIONS), 130)
+
+    def test_conditions(self):
+        for text_, icd in [("angina", "I20.9"), ("shingles", "B02.9"), ("multiple sclerosis", "G35.D"),
+                           ("CKD stage 4", "N18.4"), ("ESRD", "N18.6"), ("diverticulitis", "K57.92"),
+                           ("hepatocellular carcinoma", "C22.0"), ("restless legs syndrome", "G25.81")]:
+            self.assertEqual(T.lookup_condition(text=text_)["icd10"], icd, text_)
+
+    def test_medications_and_brands(self):
+        for text_, ingredient in [("Altace 5 mg", "ramipril"), ("Pradaxa 150 mg", "dabigatran etexilate"),
+                                  ("dabigatran 150 mg", "dabigatran etexilate"), ("Humira 40 mg", "adalimumab"),
+                                  ("torsemide 20 mg", "torsemide"), ("Nexium 40 mg", "esomeprazole")]:
+            self.assertEqual(T.lookup_medication(text=text_)["ingredient"], ingredient, text_)
+
+    def test_punctuated_lab_names_in_free_text(self):
+        note = "Labs:\nCA-125 35 U/mL\nCA 19-9 22 U/mL\nLp(a) 80 mg/dL\nIGF-1 150 ng/mL\nhs-CRP 2.1 mg/L\nCD4 count 420 cells/uL\n"
+        got = {f["code"]: (f["value"], f["unit"]) for f in text.parse(note) if f["kind"] == "observation"}
+        self.assertEqual(got, {"10334-1": ("35", "U/mL"), "24108-3": ("22", "U/mL"), "10835-7": ("80", "mg/dL"),
+                               "2484-4": ("150", "ng/mL"), "30522-7": ("2.1", "mg/L"), "24467-3": ("420", "cells/uL")})
+
+    def test_new_terms_respect_negation_and_relatives(self):
+        review = []
+        facts = text.parse("Assessment: Pregnancy test negative. Mother has multiple sclerosis. Denies tinnitus.",
+                           review=review)
+        self.assertEqual([f for f in facts if f["kind"] == "condition"], [])
+        self.assertEqual(sorted(r["reason"] for r in review), ["negated", "negated", "relative"])
+
+    def test_short_abbreviations_stay_exact_only(self):
+        facts = text.parse("HPI: Seen in the ED last week. MS contin restarted.")
+        self.assertEqual([f for f in facts if f["kind"] == "condition"], [])
+
+
 if __name__ == "__main__":
     unittest.main()
