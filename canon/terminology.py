@@ -1,0 +1,423 @@
+"""Terminology services: map messy names/codes to standard vocabularies
+(ICD-10-CM, SNOMED CT, LOINC, RxNorm, CVX, CPT) and convert units to a
+canonical UCUM unit per observation.
+
+The tables here are a curated starter subset covering common primary-care
+concepts. Production swaps in full vocabularies (UMLS/VSAC, RxNav, LOINC)
+behind the same functions.
+"""
+
+from __future__ import annotations
+
+import re
+
+ICD10 = "http://hl7.org/fhir/sid/icd-10-cm"
+SNOMED = "http://snomed.info/sct"
+LOINC = "http://loinc.org"
+RXNORM = "http://www.nlm.nih.gov/research/umls/rxnorm"
+CPT = "http://www.ama-assn.org/go/cpt"
+CVX = "http://hl7.org/fhir/sid/cvx"
+
+SYSTEM_ALIASES = {
+    "icd10": ICD10, "icd-10": ICD10, "icd-10-cm": ICD10, "i10": ICD10, "icd10cm": ICD10, "abk": ICD10,
+    "2.16.840.1.113883.6.90": ICD10, ICD10: ICD10,
+    "sct": SNOMED, "snomed": SNOMED, "snomedct": SNOMED, "snomed-ct": SNOMED, "2.16.840.1.113883.6.96": SNOMED,
+    SNOMED: SNOMED,
+    "ln": LOINC, "loinc": LOINC, "2.16.840.1.113883.6.1": LOINC, LOINC: LOINC,
+    "rxnorm": RXNORM, "rxn": RXNORM, "2.16.840.1.113883.6.88": RXNORM, RXNORM: RXNORM,
+    "cpt": CPT, "hc": CPT, "cpt4": CPT, "2.16.840.1.113883.6.12": CPT, CPT: CPT,
+    "cvx": CVX, "2.16.840.1.113883.12.292": CVX, CVX: CVX,
+}
+
+
+def norm_system(s: str | None) -> str | None:
+    if not s:
+        return None
+    return SYSTEM_ALIASES.get(s.strip().lower(), SYSTEM_ALIASES.get(s.strip(), s.strip()))
+
+
+def _key(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
+
+
+# --------------------------------------------------------------------------- conditions
+# icd10 -> (display, snomed, synonyms)
+CONDITIONS = {
+    "E11.9": ("Type 2 diabetes mellitus without complications", "44054006",
+              ["type 2 diabetes", "type ii diabetes", "t2dm", "dm2", "dm type 2", "diabetes mellitus type 2",
+               "niddm", "type 2 dm", "diabetes type 2", "diabetes"]),
+    "E11.65": ("Type 2 diabetes mellitus with hyperglycemia", "609569007",
+               ["uncontrolled type 2 diabetes", "type 2 diabetes with hyperglycemia"]),
+    "I10": ("Essential (primary) hypertension", "38341003",
+            ["hypertension", "htn", "high blood pressure", "essential hypertension", "elevated blood pressure"]),
+    "E78.5": ("Hyperlipidemia, unspecified", "55822004",
+              ["hyperlipidemia", "hld", "high cholesterol", "dyslipidemia", "hypercholesterolemia"]),
+    "J45.909": ("Unspecified asthma, uncomplicated", "195967001", ["asthma"]),
+    "L20.9": ("Atopic dermatitis, unspecified", "24079001", ["atopic dermatitis", "eczema"]),
+    "M17.11": ("Unilateral primary osteoarthritis, right knee", "239873007",
+               ["osteoarthritis right knee", "oa right knee", "right knee osteoarthritis"]),
+    "M17.9": ("Osteoarthritis of knee, unspecified", "239873007", ["knee osteoarthritis", "oa knee"]),
+    "F41.1": ("Generalized anxiety disorder", "21897009", ["generalized anxiety disorder", "gad", "anxiety"]),
+    "F32.9": ("Major depressive disorder, single episode, unspecified", "35489007",
+              ["depression", "major depressive disorder", "mdd"]),
+    "E03.9": ("Hypothyroidism, unspecified", "40930008", ["hypothyroidism", "underactive thyroid"]),
+    "N18.30": ("Chronic kidney disease, stage 3 unspecified", "433144002",
+               ["ckd stage 3", "ckd 3", "chronic kidney disease stage 3", "ckd"]),
+    "K21.9": ("Gastro-esophageal reflux disease without esophagitis", "235595009",
+              ["gerd", "gastroesophageal reflux", "acid reflux", "reflux"]),
+    "E66.9": ("Obesity, unspecified", "414916001", ["obesity", "obese"]),
+    "I48.91": ("Unspecified atrial fibrillation", "49436004", ["atrial fibrillation", "afib", "a fib", "af"]),
+    "J44.9": ("Chronic obstructive pulmonary disease, unspecified", "13645005", ["copd"]),
+    "Z00.00": ("Encounter for general adult medical examination without abnormal findings", None,
+               ["annual physical", "wellness visit"]),
+}
+_COND_SYN = {}
+for _code, (_disp, _snomed, _syns) in CONDITIONS.items():
+    for _s in [_disp, *_syns]:
+        _COND_SYN.setdefault(_key(_s), _code)
+_SNOMED_TO_ICD = {v[1]: k for k, v in CONDITIONS.items() if v[1]}
+
+
+def condition_synonyms() -> list[tuple[str, str]]:
+    """(phrase, icd10) pairs, longest first, for free-text scanning."""
+    return sorted(_COND_SYN.items(), key=lambda kv: -len(kv[0]))
+
+
+def lookup_condition(text: str | None = None, code: str | None = None, system: str | None = None) -> dict | None:
+    system = norm_system(system)
+    icd = None
+    if code:
+        c = code.strip().upper()
+        if system in (None, ICD10):
+            c2 = c if "." in c or len(c) <= 3 else c[:3] + "." + c[3:]
+            if c2 in CONDITIONS:
+                icd = c2
+            elif system == ICD10:
+                return {"icd10": c2, "snomed": None, "display": text or c2, "verified": False}
+        if not icd and system in (None, SNOMED) and code in _SNOMED_TO_ICD:
+            icd = _SNOMED_TO_ICD[code]
+    if not icd and text:
+        icd = _COND_SYN.get(_key(text))
+    if not icd:
+        return None
+    disp, snomed, _ = CONDITIONS[icd]
+    return {"icd10": icd, "snomed": snomed, "display": disp, "verified": True}
+
+
+# --------------------------------------------------------------------------- medications
+# ingredient -> (rxnorm ingredient CUI, brand/synonyms, drug class)
+MEDICATIONS = {
+    "metformin": ("6809", ["glucophage", "glumetza", "fortamet"], "biguanide"),
+    "lisinopril": ("29046", ["zestril", "prinivil"], "ACE inhibitor"),
+    "atorvastatin": ("83367", ["lipitor"], "statin"),
+    "rosuvastatin": ("301542", ["crestor"], "statin"),
+    "simvastatin": ("36567", ["zocor"], "statin"),
+    "amlodipine": ("17767", ["norvasc"], "calcium channel blocker"),
+    "losartan": ("52175", ["cozaar"], "ARB"),
+    "hydrochlorothiazide": ("5487", ["hctz", "microzide"], "thiazide diuretic"),
+    "levothyroxine": ("10582", ["synthroid", "levoxyl", "unithroid", "euthyrox"], "thyroid hormone"),
+    "omeprazole": ("7646", ["prilosec"], "PPI"),
+    "pantoprazole": ("40790", ["protonix"], "PPI"),
+    "albuterol": ("435", ["ventolin", "proair", "proventil", "salbutamol"], "SABA"),
+    "fluticasone": ("41126", ["flovent", "flonase"], "inhaled corticosteroid"),
+    "semaglutide": ("1991302", ["ozempic", "wegovy", "rybelsus"], "GLP-1 RA"),
+    "insulin glargine": ("274783", ["lantus", "basaglar", "toujeo", "glargine"], "basal insulin"),
+    "empagliflozin": ("1545653", ["jardiance"], "SGLT2 inhibitor"),
+    "sertraline": ("36437", ["zoloft"], "SSRI"),
+    "escitalopram": ("321988", ["lexapro"], "SSRI"),
+    "aspirin": ("1191", ["asa", "ecotrin", "bayer aspirin"], "antiplatelet"),
+    "apixaban": ("1364430", ["eliquis"], "anticoagulant"),
+    "warfarin": ("11289", ["coumadin", "jantoven"], "anticoagulant"),
+    "metoprolol": ("6918", ["lopressor", "toprol", "toprol xl", "metoprolol succinate", "metoprolol tartrate"],
+                   "beta blocker"),
+    "gabapentin": ("25480", ["neurontin"], "anticonvulsant"),
+    "ibuprofen": ("5640", ["advil", "motrin"], "NSAID"),
+    "acetaminophen": ("161", ["tylenol", "paracetamol", "apap"], "analgesic"),
+    "dupilumab": ("1876376", ["dupixent"], "IL-4R antagonist"),
+    "triamcinolone": ("10759", ["kenalog"], "topical corticosteroid"),
+    "amoxicillin": ("723", ["amoxil"], "penicillin antibiotic"),
+    "prednisone": ("8640", ["deltasone"], "systemic corticosteroid"),
+}
+_MED_SYN = {}
+for _ing, (_rx, _syns, _cls) in MEDICATIONS.items():
+    for _s in [_ing, *_syns]:
+        _MED_SYN.setdefault(_key(_s), _ing)
+_RX_TO_ING = {v[0]: k for k, v in MEDICATIONS.items()}
+
+
+def medication_synonyms() -> list[tuple[str, str]]:
+    return sorted(_MED_SYN.items(), key=lambda kv: -len(kv[0]))
+
+
+def lookup_medication(text: str | None = None, code: str | None = None) -> dict | None:
+    ing = _RX_TO_ING.get((code or "").strip()) if code else None
+    if not ing and text:
+        k = _key(text)
+        ing = _MED_SYN.get(k)
+        if not ing:  # "Metformin HCl 500 mg tablet" -> scan tokens, longest synonym first
+            for syn, i in medication_synonyms():
+                if re.search(rf"\b{re.escape(syn)}\b", k):
+                    ing = i
+                    break
+    if not ing:
+        return None
+    rx, _, cls = MEDICATIONS[ing]
+    return {"ingredient": ing, "rxnorm": rx, "drug_class": cls}
+
+
+FREQUENCIES = [
+    # (regex, code, per_day, display)
+    (r"\b(q\.?d\.?|daily|once (a )?day|once daily|every day|qam|q ?am|every morning|1 ?x ?(a |per )?day)\b",
+     "QD", 1, "once daily"),
+    (r"\b(b\.?i\.?d\.?|twice (a )?day|twice daily|2 ?x ?(a |per )?day|every 12 ?(h|hours|hrs)|q12h)\b",
+     "BID", 2, "twice daily"),
+    (r"\b(t\.?i\.?d\.?|three times (a )?day|three times daily|3 ?x ?(a |per )?day|q8h|every 8 ?(h|hours))\b",
+     "TID", 3, "three times daily"),
+    (r"\b(q\.?i\.?d\.?|four times (a )?day|four times daily|q6h|every 6 ?(h|hours))\b", "QID", 4, "four times daily"),
+    (r"\b(q\.?h\.?s\.?|at bedtime|nightly|every night|qpm|q ?pm|every evening)\b", "QHS", 1, "at bedtime"),
+    (r"\b(weekly|once (a )?week|every week|q ?week|qwk)\b", "QWK", 1 / 7, "once weekly"),
+    (r"\b(every (2|two) weeks|q2 ?weeks|biweekly|q14d)\b", "Q2WK", 1 / 14, "every 2 weeks"),
+    (r"\b(p\.?r\.?n\.?|as needed|when needed)\b", "PRN", None, "as needed"),
+]
+
+
+def parse_frequency(text: str | None) -> dict | None:
+    if not text:
+        return None
+    t = text.lower()
+    found = None
+    prn = False
+    for rx, code, per_day, disp in FREQUENCIES:
+        if re.search(rx, t):
+            if code == "PRN":
+                prn = True
+            elif not found:
+                found = {"code": code, "per_day": per_day, "display": disp}
+    if not found and not prn:
+        return None
+    found = found or {"code": "PRN", "per_day": None, "display": "as needed"}
+    if prn and found["code"] != "PRN":
+        found = {**found, "prn": True, "display": found["display"] + " as needed"}
+    return found
+
+
+ROUTES = {"po": "oral", "by mouth": "oral", "oral": "oral", "orally": "oral", "sq": "subcutaneous",
+          "subq": "subcutaneous", "sc": "subcutaneous", "subcutaneous": "subcutaneous",
+          "subcutaneously": "subcutaneous", "inh": "inhaled", "inhaled": "inhaled", "inhalation": "inhaled",
+          "topical": "topical", "topically": "topical", "iv": "intravenous", "im": "intramuscular",
+          "sl": "sublingual"}
+
+
+def parse_route(text: str | None) -> str | None:
+    if not text:
+        return None
+    t = " " + text.lower() + " "
+    for k in sorted(ROUTES, key=len, reverse=True):
+        if re.search(rf"(?<![a-z]){re.escape(k)}(?![a-z])", t):
+            return ROUTES[k]
+    return None
+
+
+# --------------------------------------------------------------------------- observations
+# loinc -> (display, canonical unit, category, synonyms, {unit: factor or callable}, ref range)
+def _ifcc_to_pct(v: float) -> float:
+    return 0.0915 * v + 2.15
+
+
+def _c_to_f(v: float) -> float:
+    return v * 9 / 5 + 32
+
+
+OBSERVATIONS = {
+    "4548-4": ("Hemoglobin A1c", "%", "lab", ["hba1c", "a1c", "hemoglobin a1c", "haemoglobin a1c", "glycated hemoglobin",
+               "glycohemoglobin", "glyco hgb", "hgb a1c"], {"mmol/mol": _ifcc_to_pct}, (4.0, 5.6)),
+    "2345-7": ("Glucose", "mg/dL", "lab", ["glucose", "glu", "blood glucose", "fasting glucose", "serum glucose",
+               "glucose fasting", "fbg", "fbs"], {"mmol/L": 18.016}, (70, 99)),
+    "2160-0": ("Creatinine", "mg/dL", "lab", ["creatinine", "creat", "cr", "serum creatinine"],
+               {"umol/L": 1 / 88.42, "µmol/L": 1 / 88.42}, (0.6, 1.3)),
+    "33914-3": ("eGFR", "mL/min/1.73m2", "lab", ["egfr", "estimated gfr", "gfr"], {}, (60, None)),
+    "2093-3": ("Total cholesterol", "mg/dL", "lab", ["cholesterol", "total cholesterol", "chol", "tc"],
+               {"mmol/L": 38.67}, (None, 200)),
+    "13457-7": ("LDL cholesterol (calculated)", "mg/dL", "lab", ["ldl", "ldl c", "ldl cholesterol", "ldl calc",
+                "ldl calculated", "ldl-c"], {"mmol/L": 38.67}, (None, 100)),
+    "2085-9": ("HDL cholesterol", "mg/dL", "lab", ["hdl", "hdl c", "hdl cholesterol"], {"mmol/L": 38.67}, (40, None)),
+    "2571-8": ("Triglycerides", "mg/dL", "lab", ["triglycerides", "trig", "trigs", "tg"], {"mmol/L": 88.57},
+              (None, 150)),
+    "2823-3": ("Potassium", "mmol/L", "lab", ["potassium", "k"], {"meq/L": 1.0}, (3.5, 5.1)),
+    "2951-2": ("Sodium", "mmol/L", "lab", ["sodium", "na"], {"meq/L": 1.0}, (135, 145)),
+    "3016-3": ("TSH", "m[IU]/L", "lab", ["tsh", "thyroid stimulating hormone", "thyrotropin"],
+               {"uIU/mL": 1.0, "mIU/L": 1.0, "miu/l": 1.0}, (0.4, 4.0)),
+    "718-7": ("Hemoglobin", "g/dL", "lab", ["hemoglobin", "hgb", "hb", "haemoglobin"], {"g/L": 0.1}, (12.0, 17.5)),
+    "6690-2": ("WBC count", "10*3/uL", "lab", ["wbc", "white blood cell count", "white count", "leukocytes"],
+               {"K/uL": 1.0, "x10^3/uL": 1.0, "10^9/L": 1.0, "x10e3/ul": 1.0}, (4.0, 11.0)),
+    "777-3": ("Platelet count", "10*3/uL", "lab", ["platelets", "plt", "platelet count"],
+              {"K/uL": 1.0, "x10^3/uL": 1.0, "10^9/L": 1.0, "x10e3/ul": 1.0}, (150, 450)),
+    "1742-6": ("ALT", "U/L", "lab", ["alt", "sgpt", "alanine aminotransferase"], {"IU/L": 1.0}, (7, 56)),
+    "14959-1": ("Microalbumin/creatinine ratio", "mg/g", "lab", ["uacr", "microalbumin creatinine ratio",
+                "albumin creatinine ratio", "acr"], {"mg/mmol": 8.84}, (None, 30)),
+    "8480-6": ("Systolic blood pressure", "mm[Hg]", "vital", ["systolic", "sbp", "systolic bp"], {"mmHg": 1.0},
+               (90, 120)),
+    "8462-4": ("Diastolic blood pressure", "mm[Hg]", "vital", ["diastolic", "dbp", "diastolic bp"], {"mmHg": 1.0},
+               (60, 80)),
+    "8867-4": ("Heart rate", "/min", "vital", ["heart rate", "pulse", "hr", "p"], {"bpm": 1.0, "beats/min": 1.0},
+               (60, 100)),
+    "8310-5": ("Body temperature", "[degF]", "vital", ["temperature", "temp", "t"],
+               {"degC": _c_to_f, "C": _c_to_f, "°C": _c_to_f, "F": 1.0, "°F": 1.0, "degF": 1.0}, (97.0, 99.5)),
+    "29463-7": ("Body weight", "[lb_av]", "vital", ["weight", "wt", "body weight"],
+                {"kg": 2.20462, "lb": 1.0, "lbs": 1.0}, (None, None)),
+    "8302-2": ("Body height", "[in_i]", "vital", ["height", "ht"], {"cm": 1 / 2.54, "in": 1.0, "m": 39.3701},
+               (None, None)),
+    "39156-5": ("BMI", "kg/m2", "vital", ["bmi", "body mass index"], {}, (18.5, 25.0)),
+    "59408-5": ("Oxygen saturation", "%", "vital", ["spo2", "o2 sat", "oxygen saturation", "pulse ox", "sao2"], {},
+                (95, 100)),
+    "9279-1": ("Respiratory rate", "/min", "vital", ["respiratory rate", "resp rate", "rr", "resp"],
+               {"breaths/min": 1.0}, (12, 20)),
+}
+_OBS_SYN = {}
+for _loinc, (_disp, _u, _cat, _syns, _conv, _rr) in OBSERVATIONS.items():
+    for _s in [_disp, *_syns]:
+        _OBS_SYN.setdefault(_key(_s), _loinc)
+# Alternate LOINC codes seen in the wild that should collapse to one concept.
+LOINC_ALIASES = {"2089-1": "13457-7", "18262-6": "13457-7", "17856-6": "4548-4", "1558-6": "2345-7",
+                 "2339-0": "2345-7", "48642-3": "33914-3", "62238-1": "33914-3", "9318-7": "14959-1",
+                 "8331-1": "8310-5", "3141-9": "29463-7", "2708-6": "59408-5"}
+
+CANONICAL_UNIT_ALIASES = {"%": "%", "mg/dl": "mg/dL", "mmol/l": "mmol/L", "g/dl": "g/dL", "u/l": "U/L",
+                          "mm[hg]": "mm[Hg]", "mmhg": "mm[Hg]", "/min": "/min", "kg/m2": "kg/m2",
+                          "ml/min/1.73m2": "mL/min/1.73m2", "ml/min/1.73 m2": "mL/min/1.73m2",
+                          "mg/g": "mg/g", "m[iu]/l": "m[IU]/L", "10*3/ul": "10*3/uL", "[degf]": "[degF]",
+                          "[lb_av]": "[lb_av]", "[in_i]": "[in_i]"}
+
+
+def observation_synonyms() -> list[tuple[str, str]]:
+    return sorted(_OBS_SYN.items(), key=lambda kv: -len(kv[0]))
+
+
+def lookup_observation(text: str | None = None, code: str | None = None) -> dict | None:
+    loinc = None
+    if code:
+        c = code.strip()
+        loinc = c if c in OBSERVATIONS else LOINC_ALIASES.get(c)
+    if not loinc and text:
+        loinc = _OBS_SYN.get(_key(text))
+    if not loinc:
+        return None
+    disp, unit, cat, _, _, rr = OBSERVATIONS[loinc]
+    return {"loinc": loinc, "display": disp, "unit": unit, "category": cat, "reference_range": rr}
+
+
+def convert_unit(loinc: str, value: float, unit: str | None) -> tuple[float, str, bool]:
+    """Return (value, canonical_unit, converted?)."""
+    disp, canon, cat, syns, conv, rr = OBSERVATIONS[loinc]
+    if unit is None or unit.strip() == "":
+        return value, canon, False
+    u = unit.strip()
+    if u == canon or CANONICAL_UNIT_ALIASES.get(u.lower()) == canon:
+        return value, canon, False
+    for k, f in conv.items():
+        if k.lower() == u.lower():
+            v = f(value) if callable(f) else value * f
+            return round(v, 2), canon, f != 1.0
+    raise ValueError(f"Cannot convert unit '{unit}' for {disp} (expected {canon})")
+
+
+_KNOWN_UNITS = None
+
+
+def is_unit(token: str | None) -> bool:
+    """True if token looks like a unit we understand (guards free-text extraction)."""
+    global _KNOWN_UNITS
+    if _KNOWN_UNITS is None:
+        _KNOWN_UNITS = {u.lower() for u in CANONICAL_UNIT_ALIASES} | {u.lower() for u in CANONICAL_UNIT_ALIASES.values()}
+        for _d, canon, _c, _s, conv, _r in OBSERVATIONS.values():
+            _KNOWN_UNITS.add(canon.lower())
+            _KNOWN_UNITS |= {k.lower() for k in conv}
+        _KNOWN_UNITS |= {"mg/dl", "mmhg", "bpm", "f", "c", "lb", "lbs", "kg", "in", "cm", "%", "iu/l", "uiu/ml",
+                         "miu/l", "mg/l", "ng/ml", "pg/ml", "g/l", "umol/l", "mmol/mol"}
+    return bool(token) and token.strip().lower().rstrip(".,;") in _KNOWN_UNITS
+
+
+def interpret(loinc: str, value: float) -> str | None:
+    lo, hi = OBSERVATIONS[loinc][5]
+    if lo is None and hi is None:
+        return None
+    if lo is not None and value < lo:
+        return "low"
+    if hi is not None and value > hi:
+        return "high"
+    return "normal"
+
+
+# --------------------------------------------------------------------------- allergies
+ALLERGENS = {
+    "penicillin": ("91936005", "764146007", ["penicillin", "pcn", "penicillins", "amoxicillin", "ampicillin"]),
+    "sulfonamide": ("91939003", "387406002", ["sulfa", "sulfa drugs", "sulfonamide", "sulfamethoxazole", "bactrim"]),
+    "peanut": ("91935009", "762952008", ["peanut", "peanuts"]),
+    "latex": ("300916003", "111088007", ["latex"]),
+    "shellfish": ("300913006", "227208004", ["shellfish", "shrimp"]),
+    "codeine": ("294440003", "387494007", ["codeine"]),
+    "iodinated contrast": ("293637006", "385420005", ["iodine", "contrast", "iv contrast", "iodinated contrast"]),
+    "aspirin": ("293586001", "387458008", ["aspirin", "asa"]),
+    "lisinopril": ("293500009", "386873009", ["lisinopril", "ace inhibitor", "ace inhibitors"]),
+}
+_ALG_SYN = {}
+for _a, (_sct, _sub, _syns) in ALLERGENS.items():
+    for _s in [_a, *_syns]:
+        _ALG_SYN.setdefault(_key(_s), _a)
+
+NKDA_PATTERNS = r"\b(nkda|nka|no known (drug )?allergies|no known allerg\w*|allergies:? none)\b"
+
+
+def lookup_allergen(text: str | None) -> dict | None:
+    if not text:
+        return None
+    a = _ALG_SYN.get(_key(text))
+    if not a:
+        for syn, name in sorted(_ALG_SYN.items(), key=lambda kv: -len(kv[0])):
+            if re.search(rf"\b{re.escape(syn)}\b", _key(text)):
+                a = name
+                break
+    if not a:
+        return None
+    return {"substance": a, "snomed_allergy": ALLERGENS[a][0], "snomed_substance": ALLERGENS[a][1]}
+
+
+def allergen_synonyms() -> list[tuple[str, str]]:
+    return sorted(_ALG_SYN.items(), key=lambda kv: -len(kv[0]))
+
+
+# --------------------------------------------------------------------------- procedures / immunizations
+PROCEDURES = {
+    "99213": "Office visit, established patient, low complexity",
+    "99214": "Office visit, established patient, moderate complexity",
+    "99203": "Office visit, new patient, low complexity",
+    "99204": "Office visit, new patient, moderate complexity",
+    "83036": "Hemoglobin A1c test",
+    "80053": "Comprehensive metabolic panel",
+    "80061": "Lipid panel",
+    "93000": "Electrocardiogram, complete",
+    "73721": "MRI knee without contrast",
+    "73562": "X-ray knee, 3 views",
+    "45378": "Colonoscopy, diagnostic",
+    "11102": "Tangential biopsy of skin, single lesion",
+    "90686": "Influenza vaccine, quadrivalent, IM",
+    "36415": "Routine venipuncture",
+}
+
+VACCINES = {
+    "influenza": ("88", ["flu", "influenza", "flu shot", "fluzone", "flucelvax", "afluria"]),
+    "covid-19": ("213", ["covid", "covid-19", "sars-cov-2", "comirnaty", "spikevax", "covid booster"]),
+    "tdap": ("115", ["tdap", "boostrix", "adacel"]),
+    "pneumococcal": ("109", ["pneumococcal", "pcv20", "prevnar", "prevnar 20", "pneumovax"]),
+    "zoster": ("187", ["shingrix", "zoster", "shingles"]),
+    "hepatitis b": ("45", ["hep b", "hepatitis b", "engerix", "heplisav"]),
+}
+
+
+def lookup_vaccine(text: str | None = None, cvx: str | None = None) -> dict | None:
+    for name, (code, syns) in VACCINES.items():
+        if cvx and cvx.strip() == code:
+            return {"vaccine": name, "cvx": code}
+        if text and any(re.search(rf"\b{re.escape(s)}\b", text.lower()) for s in syns):
+            return {"vaccine": name, "cvx": code}
+    return None
