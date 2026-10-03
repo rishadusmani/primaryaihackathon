@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 from . import parsers
 from .fhir_export import to_fhir_bundle
 from .normalize import normalize
+from . import live_terminology
 from .reconcile import build_record
 from .store import Store, new_id
 
@@ -18,6 +19,19 @@ from .store import Store, new_id
 
 def _now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+TEXT_CHARS_PER_PAGE = 3000  # a typical printed page; used to count pages in text/OCR uploads
+
+
+def _pages(fmt: str, info: dict) -> int:
+    """Billable pages: real pages for PDFs, ~3,000-character pages for text, 1 for structured formats
+    (HL7, FHIR, C-CDA, X12, CSV), which have no pages."""
+    if fmt == "pdf":
+        return max(1, int((info.get("pdf") or {}).get("pages") or 1))
+    if fmt == "text":
+        return max(1, -(-int(info.get("text_chars") or 0) // TEXT_CHARS_PER_PAGE))
+    return 1
 
 
 class CanonError(Exception):
@@ -46,7 +60,7 @@ class Canon:
     def __init__(self, db: str | Store | None = ":memory:", account_id: str = SANDBOX_ACCOUNT):
         self.store = db if isinstance(db, Store) else Store(db)
         self.account_id = account_id
-        self.on_document_ingested = None  # hook: fn(account_id, document_id) for usage metering
+        self.on_document_ingested = None  # hook: fn(account_id, document_id, info) for usage metering
 
     # ------------------------------------------------------------------ ingest
     def ingest(self, data: bytes | str, *, filename: str | None = None, content_type: str | None = None,
@@ -64,8 +78,9 @@ class Canon:
             raise CanonError("parse_error", f"Could not parse as {fmt}: {e}", 422) from e
 
         items: list[tuple[str, dict]] = []
-        for f in facts:
-            items.append(normalize(f))
+        with live_terminology.budget():  # cap time spent on live NLM lookups for this document
+            for f in facts:
+                items.append(normalize(f))
         if not any(k not in ("patient", "encounter") for k, _ in items):
             info.setdefault("warnings", []).append(
                 f"No clinical facts found in this document (parsed as {fmt}). Check the file or format.")
@@ -93,6 +108,7 @@ class Canon:
                                                                                      "condition", "medication")]
         dates = [d for d in dates if d]
         doc_date = Counter(dates).most_common(1)[0][0] if dates else None
+        info["pages"] = _pages(fmt, info)
         doc_id = new_id("doc")
         received = _now()
         self.store.execute("INSERT INTO patients (account_id, id, created_at) VALUES (?,?,?) ON CONFLICT DO NOTHING",
@@ -110,7 +126,7 @@ class Canon:
                          patient_id=pid, document_id=doc_id,
                          detail={"format": fmt, "sha256": digest, "facts": len(facts), "match": match["method"]})
         if self.on_document_ingested:
-            self.on_document_ingested(self.account_id, doc_id)
+            self.on_document_ingested(self.account_id, doc_id, info)
         return {"document": self.get_document(doc_id), "patient_id": pid, "match": match}
 
     def _match_patient(self, patient_id: str | None, demo: dict) -> dict:

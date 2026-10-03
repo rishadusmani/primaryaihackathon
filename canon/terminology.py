@@ -490,6 +490,7 @@ for _o in _load_vocab("observations.json"):
         continue
     if _loinc in OBSERVATIONS or _loinc in LOINC_ALIASES:
         continue
+    _rr = _o.get("reference_range") or {}  # ABIM adult ranges, see scripts/build_vocab.py
     OBSERVATIONS[_loinc] = (_o["display"], _o["unit"], _o["category"], list(_o["synonyms"]),
-                            {u: _conv_rule(r) for u, r in _o["convert"].items()}, (None, None))
+                            {u: _conv_rule(r) for u, r in _o["convert"].items()}, (_rr.get("low"), _rr.get("high")))
     _index([_o["display"], *_o["synonyms"]], _o["exact"], _loinc, _OBS_SYN, _OBS_EXACT)

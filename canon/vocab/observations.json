@@ -87,6 +87,12 @@
    "10^12/L": 1,
    "x10^12/L": 1,
    "x10e12/L": 1
+  },
+  "reference_range": {
+   "low": 4.2,
+   "high": 5.9,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Erythrocyte count 4.2–5.9 million/μL"
   }
  },
  {
@@ -108,6 +114,12 @@
    "percent": 1,
    "pct": 1,
    "L/L": 100
+  },
+  "reference_range": {
+   "low": 37,
+   "high": 50,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Hematocrit, blood: Female 37%–47%; male 42%–50%"
   }
  },
  {
@@ -123,6 +135,12 @@
   "exact": [],
   "convert": {
    "fL": 1
+  },
+  "reference_range": {
+   "low": 80,
+   "high": 98,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Mean corpuscular volume 80–98 fL"
   }
  },
  {
@@ -138,6 +156,12 @@
   "exact": [],
   "convert": {
    "pg": 1
+  },
+  "reference_range": {
+   "low": 28,
+   "high": 32,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Mean corpuscular hemoglobin 28–32 pg"
   }
  },
  {
@@ -155,6 +179,12 @@
    "g/dL": 1,
    "gm/dL": 1,
    "g/L": 0.1
+  },
+  "reference_range": {
+   "low": 33,
+   "high": 36,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Mean corpuscular hemoglobin concentration 33–36 g/dL"
   }
  },
  {
@@ -173,6 +203,12 @@
    "%": 1,
    "percent": 1,
    "pct": 1
+  },
+  "reference_range": {
+   "low": 9.0,
+   "high": 14.5,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Red cell distribution width (RDW) 9.0%–14.5%"
   }
  },
  {
@@ -188,6 +224,12 @@
   "exact": [],
   "convert": {
    "fL": 1
+  },
+  "reference_range": {
+   "low": 7,
+   "high": 9,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Mean platelet volume 7–9 fL"
   }
  },
  {
@@ -210,6 +252,12 @@
    "%": 1,
    "percent": 1,
    "pct": 1
+  },
+  "reference_range": {
+   "low": 50,
+   "high": 70,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Leukocyte count: segmented neutrophils 50%–70%"
   }
  },
  {
@@ -231,6 +279,12 @@
    "%": 1,
    "percent": 1,
    "pct": 1
+  },
+  "reference_range": {
+   "low": 30,
+   "high": 45,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Leukocyte count: lymphocytes 30%–45%"
   }
  },
  {
@@ -252,6 +306,12 @@
    "%": 1,
    "percent": 1,
    "pct": 1
+  },
+  "reference_range": {
+   "low": 0,
+   "high": 6,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Leukocyte count: monocytes 0%–6%"
   }
  },
  {
@@ -272,6 +332,12 @@
    "%": 1,
    "percent": 1,
    "pct": 1
+  },
+  "reference_range": {
+   "low": 0,
+   "high": 3,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Leukocyte count: eosinophils 0%–3%"
   }
  },
  {
@@ -293,6 +359,12 @@
    "%": 1,
    "percent": 1,
    "pct": 1
+  },
+  "reference_range": {
+   "low": 0,
+   "high": 1,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Leukocyte count: basophils 0%–1%"
   }
  },
  {
@@ -320,6 +392,12 @@
    "10^9/L": 1,
    "x10^9/L": 1,
    "x10e9/L": 1
+  },
+  "reference_range": {
+   "low": 2.0,
+   "high": 8.25,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Absolute neutrophil count (ANC) 2000–8250/μL"
   }
  },
  {
@@ -347,6 +425,12 @@
    "10^9/L": 1,
    "x10^9/L": 1,
    "x10e9/L": 1
+  },
+  "reference_range": {
+   "low": 1.2,
+   "high": 4.95,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Absolute lymphocyte count 1200–4950/μL"
   }
  },
  {
@@ -366,6 +450,12 @@
    "%": 1,
    "percent": 1,
    "pct": 1
+  },
+  "reference_range": {
+   "low": 0.5,
+   "high": 1.5,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Reticulocyte count 0.5%–1.5% of red cells"
   }
  },
  {
@@ -385,6 +475,12 @@
    "mm/h": 1,
    "mm/hr": 1,
    "mm/hour": 1
+  },
+  "reference_range": {
+   "low": 0,
+   "high": 20,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Erythrocyte sedimentation rate (Westergren): Female 0–20 mm/hr; male 0–15 mm/hr"
   }
  },
  {
@@ -425,6 +521,12 @@
   "convert": {
    "mmol/L": 1,
    "mEq/L": 1
+  },
+  "reference_range": {
+   "low": 98,
+   "high": 106,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Chloride, serum 98–106 mEq/L"
   }
  },
  {
@@ -445,6 +547,12 @@
   "convert": {
    "mmol/L": 1,
    "mEq/L": 1
+  },
+  "reference_range": {
+   "low": 23,
+   "high": 30,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Carbon dioxide, serum 23–30 mEq/L"
   }
  },
  {
@@ -462,6 +570,12 @@
   "convert": {
    "mmol/L": 1,
    "mEq/L": 1
+  },
+  "reference_range": {
+   "low": 7,
+   "high": 13,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Anion gap, serum 7–13 mEq/L"
   }
  },
  {
@@ -479,6 +593,12 @@
   "convert": {
    "mg/dL": 1,
    "mmol/L": 2.801
+  },
+  "reference_range": {
+   "low": 8,
+   "high": 20,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Blood urea nitrogen (BUN), serum or plasma 8–20 mg/dL"
   }
  },
  {
@@ -500,6 +620,12 @@
    "mg/dL": 1,
    "mmol/L": 4.008,
    "mEq/L": 2.004
+  },
+  "reference_range": {
+   "low": 8.6,
+   "high": 10.2,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Calcium, serum 8.6–10.2 mg/dL"
   }
  },
  {
@@ -519,6 +645,12 @@
   "convert": {
    "mg/dL": 1,
    "mmol/L": 3.097
+  },
+  "reference_range": {
+   "low": 3.0,
+   "high": 4.5,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Phosphorus, serum 3.0–4.5 mg/dL"
   }
  },
  {
@@ -540,6 +672,12 @@
    "mg/dL": 1,
    "mmol/L": 2.431,
    "mEq/L": 1.2153
+  },
+  "reference_range": {
+   "low": 1.6,
+   "high": 2.6,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Magnesium, serum 1.6–2.6 mg/dL"
   }
  },
  {
@@ -559,6 +697,12 @@
    "g/dL": 1,
    "gm/dL": 1,
    "g/L": 0.1
+  },
+  "reference_range": {
+   "low": 5.5,
+   "high": 9.0,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Proteins, serum: total 5.5–9.0 g/dL"
   }
  },
  {
@@ -578,6 +722,12 @@
    "g/dL": 1,
    "gm/dL": 1,
    "g/L": 0.1
+  },
+  "reference_range": {
+   "low": 3.5,
+   "high": 5.5,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Albumin, serum 3.5–5.5 g/dL"
   }
  },
  {
@@ -599,6 +749,12 @@
    "µmol/L": 0.0584795322,
    "μmol/L": 0.0584795322,
    "micromol/L": 0.0584795322
+  },
+  "reference_range": {
+   "low": 0.3,
+   "high": 1.0,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Bilirubin, serum: total 0.3–1.0 mg/dL"
   }
  },
  {
@@ -620,6 +776,12 @@
    "µmol/L": 0.0584795322,
    "μmol/L": 0.0584795322,
    "micromol/L": 0.0584795322
+  },
+  "reference_range": {
+   "low": 0.1,
+   "high": 0.3,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Bilirubin, serum: direct 0.1–0.3 mg/dL"
   }
  },
  {
@@ -638,6 +800,12 @@
    "U/L": 1,
    "IU/L": 1,
    "units/L": 1
+  },
+  "reference_range": {
+   "low": 30,
+   "high": 120,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Alkaline phosphatase, serum 30–120 U/L"
   }
  },
  {
@@ -656,6 +824,12 @@
    "U/L": 1,
    "IU/L": 1,
    "units/L": 1
+  },
+  "reference_range": {
+   "low": 10,
+   "high": 40,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Aminotransferase, serum aspartate (AST, SGOT) 10–40 U/L"
   }
  },
  {
@@ -674,6 +848,12 @@
    "U/L": 1,
    "IU/L": 1,
    "units/L": 1
+  },
+  "reference_range": {
+   "low": 8,
+   "high": 50,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Gamma-glutamyltransferase, serum: Female 8–40 U/L; male 9–50 U/L"
   }
  },
  {
@@ -693,6 +873,12 @@
    "µmol/L": 0.0168123739,
    "μmol/L": 0.0168123739,
    "micromol/L": 0.0168123739
+  },
+  "reference_range": {
+   "low": 3.0,
+   "high": 7.0,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Uric acid, serum 3.0–7.0 mg/dL"
   }
  },
  {
@@ -709,6 +895,12 @@
    "U/L": 1,
    "IU/L": 1,
    "units/L": 1
+  },
+  "reference_range": {
+   "low": 25,
+   "high": 125,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Amylase, serum 25–125 U/L"
   }
  },
  {
@@ -725,6 +917,12 @@
    "U/L": 1,
    "IU/L": 1,
    "units/L": 1
+  },
+  "reference_range": {
+   "low": 10,
+   "high": 140,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Lipase, serum 10–140 U/L"
   }
  },
  {
@@ -744,6 +942,12 @@
    "U/L": 1,
    "IU/L": 1,
    "units/L": 1
+  },
+  "reference_range": {
+   "low": 80,
+   "high": 225,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Lactate dehydrogenase, serum 80–225 U/L"
   }
  },
  {
@@ -762,6 +966,12 @@
    "U/L": 1,
    "IU/L": 1,
    "units/L": 1
+  },
+  "reference_range": {
+   "low": 30,
+   "high": 170,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Creatine kinase, serum, total: Female 30–135 U/L; male 55–170 U/L"
   }
  },
  {
@@ -781,6 +991,12 @@
    "mOsm/kg": 1,
    "mosm/kg": 1,
    "mmol/kg": 1
+  },
+  "reference_range": {
+   "low": 275,
+   "high": 295,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Osmolality, serum 275–295 mOsm/kg H2O"
   }
  },
  {
@@ -797,6 +1013,12 @@
   "convert": {
    "mmol/L": 1,
    "mg/dL": 0.1110124334
+  },
+  "reference_range": {
+   "low": 0.7,
+   "high": 2.1,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Lactate, serum or plasma 0.7–2.1 mmol/L"
   }
  },
  {
@@ -819,6 +1041,12 @@
    "ug/dL": 0.5872,
    "mcg/dL": 0.5872,
    "µg/dL": 0.5872
+  },
+  "reference_range": {
+   "low": 23.5,
+   "high": 41.1,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Ammonia, plasma 40–70 μg/dL (converted to μmol/L at 0.5872)"
   }
  },
  {
@@ -877,6 +1105,12 @@
    "mU/L": 1,
    "m[IU]/L": 1,
    "pmol/L": 0.1666666667
+  },
+  "reference_range": {
+   "low": null,
+   "high": 20,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Insulin, serum (fasting) <20 μU/mL"
   }
  },
  {
@@ -893,6 +1127,12 @@
   "convert": {
    "ng/mL": 1,
    "nmol/L": 3.02
+  },
+  "reference_range": {
+   "low": 0.8,
+   "high": 3.1,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "C peptide, serum 0.8–3.1 ng/mL"
   }
  },
  {
@@ -910,6 +1150,12 @@
   "convert": {
    "ng/dL": 1,
    "pmol/L": 0.0777000777
+  },
+  "reference_range": {
+   "low": 0.8,
+   "high": 1.8,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Thyroxine (T4), serum: free 0.8–1.8 ng/dL"
   }
  },
  {
@@ -927,6 +1173,12 @@
   "convert": {
    "pg/mL": 1,
    "pmol/L": 0.651
+  },
+  "reference_range": {
+   "low": 2.3,
+   "high": 4.2,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Triiodothyronine (T3), serum: free 2.3–4.2 pg/mL"
   }
  },
  {
@@ -948,6 +1200,12 @@
    "mcg/dL": 1,
    "µg/dL": 1,
    "nmol/L": 0.0777000777
+  },
+  "reference_range": {
+   "low": 5,
+   "high": 12,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Thyroxine (T4), serum: total 5–12 μg/dL"
   }
  },
  {
@@ -965,6 +1223,12 @@
   "convert": {
    "pg/mL": 1,
    "pmol/L": 9.43
+  },
+  "reference_range": {
+   "low": 10,
+   "high": 65,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Parathyroid hormone, serum: intact 10–65 pg/mL"
   }
  },
  {
@@ -1066,6 +1330,12 @@
    "µmol/L": 5.585,
    "μmol/L": 5.585,
    "micromol/L": 5.585
+  },
+  "reference_range": {
+   "low": 50,
+   "high": 150,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Iron, serum 50–150 μg/dL"
   }
  },
  {
@@ -1083,6 +1353,12 @@
    "ug/L": 1,
    "mcg/L": 1,
    "µg/L": 1
+  },
+  "reference_range": {
+   "low": 24,
+   "high": 336,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Ferritin, serum: Female 24–307 ng/mL; male 24–336 ng/mL"
   }
  },
  {
@@ -1104,6 +1380,12 @@
    "µmol/L": 5.585,
    "μmol/L": 5.585,
    "micromol/L": 5.585
+  },
+  "reference_range": {
+   "low": 250,
+   "high": 310,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Iron-binding capacity, serum (total) 250–310 μg/dL"
   }
  },
  {
@@ -1122,6 +1404,12 @@
    "%": 1,
    "percent": 1,
    "pct": 1
+  },
+  "reference_range": {
+   "low": 20,
+   "high": 50,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Transferrin saturation 20%–50%"
   }
  },
  {
@@ -1143,6 +1431,12 @@
   "convert": {
    "pg/mL": 1,
    "pmol/L": 1.355
+  },
+  "reference_range": {
+   "low": 200,
+   "high": 800,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Vitamin B12, serum 200–800 pg/mL"
   }
  },
  {
@@ -1161,6 +1455,12 @@
   "convert": {
    "ng/mL": 1,
    "nmol/L": 0.4413062665
+  },
+  "reference_range": {
+   "low": 1.8,
+   "high": 9.0,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Folate, serum 1.8–9.0 ng/mL"
   }
  },
  {
@@ -1183,6 +1483,12 @@
   "convert": {
    "ng/mL": 1,
    "nmol/L": 0.4006410256
+  },
+  "reference_range": {
+   "low": 30,
+   "high": 60,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Vitamin D metabolites, serum: 25-hydroxyvitamin D 30–60 ng/mL"
   }
  },
  {
@@ -1203,6 +1509,12 @@
    "sec": 1,
    "secs": 1,
    "seconds": 1
+  },
+  "reference_range": {
+   "low": 11,
+   "high": 13,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Prothrombin time, plasma 11–13 seconds"
   }
  },
  {
@@ -1238,6 +1550,12 @@
    "sec": 1,
    "secs": 1,
    "seconds": 1
+  },
+  "reference_range": {
+   "low": 25,
+   "high": 35,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Activated partial thromboplastin time 25–35 seconds"
   }
  },
  {
@@ -1253,6 +1571,12 @@
   "convert": {
    "mg/dL": 1,
    "g/L": 100
+  },
+  "reference_range": {
+   "low": 200,
+   "high": 400,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Fibrinogen, plasma 200–400 mg/dL"
   }
  },
  {
@@ -1276,6 +1600,12 @@
    "µg/mL FEU": 1000,
    "mg/L": 1000,
    "mg/L FEU": 1000
+  },
+  "reference_range": {
+   "low": null,
+   "high": 500,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "D-dimer, plasma <0.5 μg/mL"
   }
  },
  {
@@ -1294,6 +1624,12 @@
   "convert": {
    "ng/mL": 1,
    "ng/L": 0.001
+  },
+  "reference_range": {
+   "low": null,
+   "high": 0.04,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Troponin I, cardiac, serum ≤0.04 ng/mL"
   }
  },
  {
@@ -1312,6 +1648,12 @@
   "convert": {
    "ng/L": 1,
    "ng/mL": 1000
+  },
+  "reference_range": {
+   "low": null,
+   "high": 20,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Troponin I, cardiac, high-sensitivity, plasma: Female ≤15 ng/L; male ≤20 ng/L"
   }
  },
  {
@@ -1329,6 +1671,12 @@
   "convert": {
    "pg/mL": 1,
    "ng/L": 1
+  },
+  "reference_range": {
+   "low": null,
+   "high": 100,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "B-type natriuretic peptide, plasma <100 pg/mL"
   }
  },
  {
@@ -1363,6 +1711,12 @@
    "mg/L": 1,
    "mg/L FEU": 1,
    "mg/dL": 10
+  },
+  "reference_range": {
+   "low": null,
+   "high": 8,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "C-reactive protein, serum ≤0.8 mg/dL"
   }
  },
  {
@@ -1401,6 +1755,12 @@
    "ug/L": 1,
    "mcg/L": 1,
    "µg/L": 1
+  },
+  "reference_range": {
+   "low": null,
+   "high": 0.1,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Procalcitonin, serum ≤0.10 ng/mL"
   }
  },
  {
@@ -1419,6 +1779,12 @@
   "convert": {
    "[pH]": 1,
    "pH": 1
+  },
+  "reference_range": {
+   "low": 7.38,
+   "high": 7.44,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Arterial blood gas (room air): pH 7.38–7.44"
   }
  },
  {
@@ -1437,6 +1803,12 @@
    "mm[Hg]": 1,
    "mmHg": 1,
    "kPa": 7.50062
+  },
+  "reference_range": {
+   "low": 38,
+   "high": 42,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Arterial blood gas (room air): PaCO2 38–42 mm Hg"
   }
  },
  {
@@ -1455,6 +1827,12 @@
    "mm[Hg]": 1,
    "mmHg": 1,
    "kPa": 7.50062
+  },
+  "reference_range": {
+   "low": 75,
+   "high": 100,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Arterial blood gas (room air): PaO2 75–100 mm Hg"
   }
  },
  {
@@ -1472,6 +1850,12 @@
   "convert": {
    "mmol/L": 1,
    "mEq/L": 1
+  },
+  "reference_range": {
+   "low": 23,
+   "high": 26,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Arterial blood gas (room air): bicarbonate 23–26 mEq/L"
   }
  },
  {
@@ -1487,6 +1871,12 @@
   "convert": {
    "[pH]": 1,
    "pH": 1
+  },
+  "reference_range": {
+   "low": 4.5,
+   "high": 8.0,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "pH, urine 4.5–8.0"
   }
  },
  {
@@ -1505,6 +1895,12 @@
   ],
   "convert": {
    "1": 1
+  },
+  "reference_range": {
+   "low": 1.002,
+   "high": 1.03,
+   "source": "ABIM Laboratory Test Reference Ranges, January 2026",
+   "source_text": "Specific gravity, urine 1.002–1.030"
   }
  },
  {

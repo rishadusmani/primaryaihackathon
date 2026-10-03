@@ -1,0 +1,30 @@
+CARDIOLOGY CLINIC NOTE
+Patient: James Okafor          DOB: 06/30/1957        MRN: CARD-7781
+Sex: M
+Date of Service: 03/04/2026
+Provider: Priya Raman, MD
+
+HPI: 68 y/o M with heart failure and atrial fibrillation, seen after an ED visit last week where he
+presented with dyspnea and fever, now resolved. Influenza vaccine given today. Hepatitis B vaccine
+series complete. Low sodium diet advised; fluid restriction 1.5 L/day.
+
+Problem List:
+- Heart failure with reduced ejection fraction
+- Atrial fibrillation
+- Hypothyroidism
+
+Medications:
+- Eliquis 5 mg PO BID
+- Lasix 40 mg PO daily
+- Potassium chloride 20 mEq PO daily
+- Calcium 600 mg PO daily
+- Vitamin D 2000 IU PO daily
+- Levothyroxine 88 mcg PO daily
+
+Labs:
+Troponin I 15 ng/L
+NT-proBNP 2150 pg/mL
+Hgb 118 g/L
+Ferritin 22 ng/mL
+
+Assessment/Plan: HFrEF, euvolemic on exam. Continue Lasix. Start iron studies follow-up.

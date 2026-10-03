@@ -30,15 +30,67 @@ SAMPLE_SOURCES = {
 }
 
 
-def samples() -> list[dict]:
+TRICKY_DIR = os.path.join(ROOT, "samples", "tricky_cardiology")
+TRICKY_SOURCES = {
+    "01_cardiology_clinic_note.txt": "Cardiology clinic note",
+    "02_heart_failure_clinic_fhir.json": "Heart failure clinic (FHIR)",
+}
+
+# The "tricky note" walkthrough shown next to the record. Each entry is a phrase from
+# the sample, how a context-free keyword matcher would read it, and what Canon does.
+# `expect` is checked by tests/test_demo_walkthrough.py so the demo can't drift from
+# the engine: ("absent"|"present", section, code system, code[, field, value]).
+WALKTHROUGH = [
+    {"quote": "Influenza vaccine given today", "naive": "Influenza (J11.1) added as a diagnosis",
+     "canon": "Recorded as an immunization (CVX 88), not a diagnosis",
+     "expect": [("absent", "conditions", "icd10", "J11.1"), ("present", "immunizations", "cvx", "88")]},
+    {"quote": "Low sodium diet advised", "naive": "Hyponatremia (E87.1) added as a diagnosis",
+     "canon": "Ignored: it's a diet instruction",
+     "expect": [("absent", "conditions", "icd10", "E87.1")]},
+    {"quote": "presented with dyspnea and fever, now resolved", "naive": "Dyspnea and fever added to the problem list",
+     "canon": "Symptoms in a narrative don't become problems",
+     "expect": [("absent", "conditions", "icd10", "R06.00"), ("absent", "conditions", "icd10", "R50.9")]},
+    {"quote": "Potassium chloride 20 mEq PO daily", "naive": "A chloride lab result of 20",
+     "canon": "A medication: potassium chloride (RxNorm 8591)",
+     "expect": [("present", "medications", "rxnorm", "8591"), ("absent", "observations", "loinc", "2075-0")]},
+    {"quote": "Calcium 600 mg PO daily", "naive": "A calcium lab result of 600 (mg/dL)",
+     "canon": "Not a lab result",
+     "expect": [("absent", "observations", "loinc", "17861-6")]},
+    {"quote": "Vitamin D 2000 IU PO daily", "naive": "A vitamin D level of 2000",
+     "canon": "Not a lab result",
+     "expect": [("absent", "observations", "loinc", "62292-8")]},
+    {"quote": "Troponin I 15 ng/L", "naive": "Troponin 15, read in the usual ng/mL: wildly abnormal",
+     "canon": "Converted to 0.015 ng/mL; normal against the ABIM range (≤0.04)",
+     "expect": [("present", "observations", "loinc", "10839-9", "value", 0.015),
+                ("present", "observations", "loinc", "10839-9", "interpretation", "normal")]},
+    {"quote": "Ferritin 22 ng/mL", "naive": "A number with no context",
+     "canon": "Flagged low against the ABIM adult range (24–336 ng/mL)",
+     "expect": [("present", "observations", "loinc", "2276-4", "interpretation", "low")]},
+    {"quote": "Entresto 49-51 mg tablet", "naive": "Unknown drug: not in a built-in table",
+     "canon": "Looked up live in NLM RxNav: sacubitril / valsartan (RxNorm 1656339)", "live": True,
+     "expect": [("present", "medications", "rxnorm", "1656339", "terminology", "nlm_live")]},
+    {"quote": "I50.22 (FHIR condition code)", "naive": "Kept as an unverified code",
+     "canon": "Verified live against ICD-10-CM: chronic systolic (congestive) heart failure, merged with the note's heart failure",
+     "live": True,
+     "expect": [("present", "conditions", "icd10", "I50.22", "terminology", "nlm_live"),
+                ("absent", "conditions", "icd10", "I50.9")]},
+]
+
+
+def walkthrough() -> list[dict]:
+    return [{k: v for k, v in w.items() if k != "expect"} for w in WALKTHROUGH]
+
+
+def samples(sample_set: str = "maria_chen") -> list[dict]:
+    directory, sources = (TRICKY_DIR, TRICKY_SOURCES) if sample_set == "tricky" else (SAMPLE_DIR, SAMPLE_SOURCES)
     out = []
-    for path in sorted(glob.glob(os.path.join(SAMPLE_DIR, "*"))):
+    for path in sorted(glob.glob(os.path.join(directory, "*"))):
         name = os.path.basename(path)
         with open(path, "rb") as fh:
             raw = fh.read()
         fmt = parsers.detect(raw, name)
         binary = fmt == "pdf"
-        out.append({"filename": name, "format": fmt, "source_name": SAMPLE_SOURCES.get(name), "size": len(raw),
+        out.append({"filename": name, "format": fmt, "source_name": sources.get(name), "size": len(raw),
                     "encoding": "base64" if binary else "text",
                     "content": base64.b64encode(raw).decode() if binary else raw.decode("utf-8", "replace")})
     return out

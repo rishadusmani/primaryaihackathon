@@ -110,6 +110,18 @@
   code, .mono { font: 12px var(--font-mono); }
   .chip { display: inline-block; font: 11.5px/18px var(--font-mono); padding: 0 8px; border-radius: 999px; background: var(--chip); color: var(--text-secondary); white-space: nowrap; }
   .chip.fmt { color: var(--accent); }
+  .chip.live { color: var(--good); }
+  .wt td { vertical-align: top; }
+  .wt .naive { color: var(--bad); }
+  .wt .canon { color: var(--good); }
+  .wt .canon::before { content: "✓ "; }
+  .wt .naive::before { content: "✗ "; }
+  @media (max-width: 640px) {
+    .wt thead { display: none; }
+    .wt tr, .wt td { display: block; }
+    .wt tr { padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .wt td { padding: 2px 0; border: 0; }
+  }
   .status { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
   .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--good); flex: none; }
   .status.warn::before { background: var(--warn); } .status.err::before { background: var(--bad); }
@@ -170,6 +182,7 @@
     </div>
     <div class="controls">
       <button class="btn primary" id="load-sample" type="button">Load sample patient</button>
+      <button class="btn" id="load-tricky" type="button" title="A cardiology note full of phrases that fool keyword matchers">Load tricky note</button>
       <label class="btn" for="file">Add files<input id="file" type="file" multiple class="sr"></label>
     </div>
   </header>
@@ -189,6 +202,7 @@
         <textarea id="paste" aria-label="Document text" placeholder="Patient: Jane Doe  DOB: 01/02/1970&#10;Medications: Lisinopril 10 mg daily&#10;Allergies: Penicillin (hives)"></textarea>
         <button class="btn" id="add-paste" type="button">Add as document</button>
       </details>
+      <div class="sub" id="status" aria-live="polite"></div>
       <div class="error" id="error" role="alert"></div>
     </section>
     <section class="card">
@@ -197,6 +211,14 @@
       <div id="conflicts"><div class="empty">Load documents to see conflicts.</div></div>
     </section>
   </div>
+
+  <section class="card" id="walkthrough" hidden>
+    <div class="card-head">
+      <div><h2>What a keyword matcher gets wrong</h2>
+        <div class="sub">Phrases from the tricky note, how a context-free keyword matcher would code them, and what Canon recorded. Check the record below.</div></div>
+    </div>
+    <div class="scroll"><table class="wt" id="wt-table"></table></div>
+  </section>
 
   <section class="card">
     <div class="card-head">
@@ -221,7 +243,8 @@
   const nf = new Intl.NumberFormat();
   const UNITS = { "[degF]": "°F", "[lb_av]": "lb", "[in_i]": "in", "mm[Hg]": "mmHg", "m[IU]/L": "mIU/L", "10*3/uL": "×10³/µL" };
   const unit = (u) => esc(UNITS[u] ?? u ?? "");
-  const state = { docs: [], result: null, patient: 0, tab: "problems" };
+  const state = { docs: [], result: null, patient: 0, tab: "problems", walkthrough: null };
+  const live = (i) => i?.terminology === "nlm_live" ? ` <span class="chip live" title="Not in Canon's tables: looked up live in the NLM terminology services">NLM live</span>` : "";
 
   // ------------------------------------------------------------ inputs
   function renderDocs() {
@@ -251,13 +274,23 @@
     return body;
   }
 
-  async function loadSample() {
-    const btn = $("load-sample"); btn.disabled = true; btn.textContent = "Loading…";
+  async function loadSample(set) {
+    const btn = $(set === "tricky" ? "load-tricky" : "load-sample"), label = btn.textContent;
+    btn.disabled = true; btn.textContent = "Loading…";
     try {
-      state.docs = (await fetch("/v1/playground/samples").then(ok)).documents;
-      state.result = null; renderDocs(); await run();
+      const body = await fetch("/v1/playground/samples" + (set === "tricky" ? "?set=tricky" : "")).then(ok);
+      state.docs = body.documents; state.walkthrough = body.walkthrough || null;
+      state.result = null; renderDocs(); renderWalkthrough(); await run();
     } catch (e) { $("error").textContent = e.message; }
-    finally { btn.disabled = false; btn.textContent = "Load sample patient"; }
+    finally { btn.disabled = false; btn.textContent = label; }
+  }
+
+  function renderWalkthrough() {
+    $("walkthrough").hidden = !state.walkthrough;
+    if (!state.walkthrough) return;
+    $("wt-table").innerHTML = `<thead><tr><th>In the documents</th><th>Keyword matcher</th><th>Canon</th></tr></thead><tbody>` +
+      state.walkthrough.map((w) => `<tr><td class="mono">“${esc(w.quote)}”</td><td class="naive">${esc(w.naive)}</td>
+        <td class="canon">${esc(w.canon)}${w.live ? ` <span class="chip live">NLM live</span>` : ""}</td></tr>`).join("") + "</tbody>";
   }
 
   function b64(buf) {
@@ -265,11 +298,58 @@
     for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
     return btoa(s);
   }
+  // Scanned PDFs (no text layer) are OCR'd here in the browser with Tesseract.js, so a scan never needs a
+  // server-side model. The OCR text then goes through Canon's rule engine, which repairs common OCR errors.
+  const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+  const TESSERACT = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+  const scripts = {};
+  const loadScript = (src) => scripts[src] ||= new Promise((resolve, reject) => {
+    const el = document.createElement("script");
+    el.src = src; el.onload = resolve; el.onerror = () => reject(new Error("Could not load " + src));
+    document.head.appendChild(el);
+  });
+
+  async function ocrScannedPdf(buf) {
+    await loadScript(PDFJS + "pdf.min.js");
+    pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js";
+    const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(buf.slice(0)) }).promise;
+    let chars = 0;
+    for (let i = 1; i <= pdf.numPages; i++) {
+      chars += (await (await pdf.getPage(i)).getTextContent()).items.map((t) => t.str).join("").trim().length;
+    }
+    if (chars >= 20) return null;  // has a text layer: Canon reads it directly
+    await loadScript(TESSERACT);
+    const worker = await Tesseract.createWorker("eng");
+    const pages = [];
+    try {
+      for (let i = 1; i <= pdf.numPages; i++) {
+        $("status").textContent = `Reading scanned page ${i} of ${pdf.numPages} on this device…`;
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement("canvas");
+        canvas.width = viewport.width; canvas.height = viewport.height;
+        await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+        pages.push((await worker.recognize(canvas)).data.text);
+      }
+    } finally {
+      await worker.terminate();
+    }
+    return pages.join("\n\f\n");
+  }
+
   async function addFiles(files) {
     for (const f of files) {
       const buf = await f.arrayBuffer();
       const pdf = new TextDecoder().decode(new Uint8Array(buf.slice(0, 5))) === "%PDF-" || /\.pdf$/i.test(f.name);
-      state.docs.push(pdf ? { filename: f.name, encoding: "base64", content: b64(buf) }
+      state.walkthrough = null; renderWalkthrough();  // its claims only hold for the unmodified sample
+      let ocr = null;
+      if (pdf) {
+        try { ocr = await ocrScannedPdf(buf); }
+        catch (e) { $("error").textContent = `${f.name}: on-device OCR unavailable (${e.message}); sending the PDF as is.`; }
+        finally { $("status").textContent = ""; }
+      }
+      state.docs.push(ocr !== null ? { filename: f.name.replace(/\.pdf$/i, "") + " (OCR).txt", encoding: "text", content: ocr }
+                    : pdf ? { filename: f.name, encoding: "base64", content: b64(buf) }
                           : { filename: f.name, encoding: "text", content: new TextDecoder().decode(buf) });
     }
     renderDocs();
@@ -278,6 +358,7 @@
   async function run() {
     if (!state.docs.length) return;
     const btn = $("run"); btn.disabled = true; btn.textContent = "Normalizing…"; $("error").textContent = "";
+    $("tab-body").innerHTML = `<div class="empty">Normalizing… (codes missing from Canon's tables are looked up live at NLM)</div>`;
     try {
       state.result = await fetch("/v1/playground/normalize", {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -337,11 +418,11 @@
   // id -> [label, count(rec), header cells, rows(rec) -> [{cells, sources, confidence, extra}]]
   const TABS = {
     problems: ["Problems", (r) => r.conditions.length, ["Problem", "ICD-10", "SNOMED", "Status", "Since"], (r) => r.conditions.map((c) => ({
-      cells: [esc(c.display) + (c.evidence === "claims_only" ? ` <span class="chip" title="Only appears on a billing claim">claims only</span>` : ""),
+      cells: [esc(c.display) + live(c) + (c.evidence === "claims_only" ? ` <span class="chip" title="Only appears on a billing claim">claims only</span>` : ""),
         `<code>${esc(c.codes.icd10 || "")}</code>`, `<code>${esc(c.codes.snomed || "")}</code>`, statusCell(c.status), esc(c.onset || c.first_seen || "")],
       sources: c.sources, confidence: c.confidence })) ],
     medications: ["Medications", (r) => r.medications.length, ["Medication", "Dose", "Route", "Frequency", "Status", "RxNorm"], (r) => r.medications.map((m) => ({
-      cells: [esc(m.ingredient), esc(m.dose || "–"), esc(m.route || "–"), esc(m.frequency?.display || "–"), statusCell(m.status), `<code>${esc(m.codes.rxnorm)}</code>`],
+      cells: [esc(m.ingredient) + live(m), esc(m.dose || "–"), esc(m.route || "–"), esc(m.frequency?.display || "–"), statusCell(m.status), `<code>${esc(m.codes.rxnorm)}</code>`],
       sources: m.sources, confidence: m.confidence,
       extra: m.history?.length > 1 ? `<div class="sub" style="margin-bottom:8px">History: ${m.history.map((x) => `${esc(x.date)} ${esc(x.status)}${x.dose ? " " + esc(x.dose) : ""}`).join(" → ")}</div>` : "" })) ],
     allergies: ["Allergies", (r) => r.allergies.length, ["Substance", "Reactions", "SNOMED"], (r) => r.allergies.map((a) => ({
@@ -350,7 +431,7 @@
       const cur = list[list.length - 1], prev = list[list.length - 2];
       const trend = prev && cur.value != null && prev.value != null
         ? `<span class="trend">${cur.value > prev.value ? "▲" : cur.value < prev.value ? "▼" : "▬"} from ${esc(prev.value)}</span>` : `<span class="muted">–</span>`;
-      return { cells: [esc(cur.display),
+      return { cells: [esc(cur.display) + live(cur),
           `<b>${esc(cur.value ?? cur.value_text)}</b> ${unit(cur.unit)}${cur.original ? `<div class="sub">reported as ${esc(cur.original.value)} ${esc(cur.original.unit)}</div>` : ""}`,
           trend, cur.interpretation ? `<span class="flag-${esc(cur.interpretation)}">${esc(cur.interpretation)}</span>` : "–", esc(cur.effective || ""), `<code>${esc(cur.codes.loinc)}</code>`],
         sources: list.flatMap((o) => o.sources), confidence: cur.confidence,
@@ -408,17 +489,19 @@
   }
 
   // ------------------------------------------------------------ wiring
-  $("load-sample").addEventListener("click", loadSample);
+  $("load-sample").addEventListener("click", () => loadSample("maria_chen"));
+  $("load-tricky").addEventListener("click", () => loadSample("tricky"));
   $("run").addEventListener("click", run);
   $("file").addEventListener("change", (e) => { addFiles(e.target.files); e.target.value = ""; });
   $("add-paste").addEventListener("click", () => {
     const t = $("paste").value.trim(); if (!t) return;
+    state.walkthrough = null; renderWalkthrough();
     state.docs.push({ filename: `pasted-${state.docs.length + 1}.txt`, encoding: "text", content: t });
     $("paste").value = ""; renderDocs();
   });
   $("docs").addEventListener("click", (e) => {
     const i = e.target.closest("[data-remove]")?.dataset.remove;
-    if (i != null) { state.docs.splice(Number(i), 1); renderDocs(); }
+    if (i != null) { state.docs.splice(Number(i), 1); state.walkthrough = null; renderWalkthrough(); renderDocs(); }
   });
   $("tabs").addEventListener("click", (e) => {
     const t = e.target.closest("[data-tab]")?.dataset.tab;

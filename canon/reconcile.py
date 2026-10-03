@@ -125,6 +125,7 @@ def _conditions(items: list[dict], conflicts: list) -> list[dict]:
         dates = [_date_of(i) for i in g]
         out.append({
             "id": _id("condition", key), "display": best["display"], "codes": best["codes"], "status": status,
+            "terminology": best.get("terminology"),
             "onset": min(onsets) if onsets else None, "first_seen": min(dates), "last_seen": max(dates),
             "evidence": "claims_only" if all(i.get("billed_only") for i in g) else "clinical",
             "confidence": _combine([i["confidence"] for i in g]),
@@ -182,6 +183,7 @@ def _medications(items: list[dict], conflicts: list) -> list[dict]:
         out.append({k: v for k, v in {
             "id": _id("medication", key), "ingredient": key, "display": current["display"],
             "codes": current["codes"], "drug_class": current["drug_class"], "status": current["status"],
+            "terminology": current.get("terminology"),
             "dose": dose, "route": route, "frequency": freq, "last_changed": latest_date,
             "first_seen": _date_of(g[0]), "confidence": _combine([i["confidence"] for i in g]),
             "history": history, "sources": [_src(i) for i in g],
@@ -229,7 +231,7 @@ def _observations(items: list[dict], conflicts: list) -> list[dict]:
             "id": _id("observation", f"{key}|{eff}|{best.get('value')}"), "display": best["display"],
             "codes": best["codes"], "category": best["category"], "value": best.get("value"),
             "value_text": best.get("value_text"), "qualifier": best.get("qualifier"), "unit": best.get("unit"),
-            "interpretation": best.get("interpretation"), "effective": eff,
+            "interpretation": best.get("interpretation"), "effective": eff, "terminology": best.get("terminology"),
             "original": best["original"] if best.get("unit_converted") else None,
             "confidence": _combine([i["confidence"] for i in g]), "sources": [_src(i) for i in g],
         }.items() if v is not None})
