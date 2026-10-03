@@ -9,8 +9,9 @@ import argparse
 import json
 import os
 import sys
+import time
 
-from . import __version__
+from . import __version__, usage
 from .service import Canon
 from .tools import TOOLS_BY_NAME, call_tool, mcp_tools
 
@@ -38,7 +39,16 @@ def handle(canon: Canon, msg: dict) -> dict | None:
         name = p.get("name")
         if name not in TOOLS_BY_NAME:
             return {"jsonrpc": "2.0", "id": mid, "error": {"code": -32602, "message": f"Unknown tool {name}"}}
-        out = call_tool(canon, name, p.get("arguments") or {}, actor="mcp")
+        args = p.get("arguments") or {}
+        started = time.perf_counter()
+        out = call_tool(canon, name, args, actor="mcp")
+        try:
+            usage.record(canon.store, account_id=canon.account_id, channel="mcp", operation=f"tool.{name}",
+                         status=400 if "error" in out else 200, latency_ms=(time.perf_counter() - started) * 1000,
+                         bytes_in=len(json.dumps(args)), patient_id=args.get("patient_id") or out.get("patient_id"),
+                         body=out)
+        except Exception:  # metering must never break the call
+            pass
         result = {"content": [{"type": "text", "text": json.dumps(out, indent=1)}], "isError": "error" in out}
     else:
         return {"jsonrpc": "2.0", "id": mid, "error": {"code": -32601, "message": f"Method not found: {method}"}}

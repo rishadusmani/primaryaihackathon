@@ -9,6 +9,7 @@ Public
     POST /v1/signup                      {name, email} -> account + API key (shown once) + checkout link
     POST /v1/stripe/webhook              Stripe events (signature verified)
     GET  /v1/billing/sync                cron: retry unsent usage (Authorization: Bearer $CRON_SECRET)
+    GET  /dashboard                      customer usage dashboard (HTML; signs in with the API key)
 
 Authenticated (Authorization: Bearer cn_live_...)
     POST /v1/documents                   raw body (any format) or JSON {content, encoding, ...}
@@ -18,6 +19,7 @@ Authenticated (Authorization: Bearer cn_live_...)
     GET  /v1/tools?format=anthropic|openai|mcp      POST /v1/tools/{name}
     GET  /v1/audit[?patient_id=]
     GET  /v1/account                     status + usage
+    GET  /v1/usage?days=30               this account's agent requests, errors, latency, LLM tokens
     POST /v1/billing/checkout            -> Stripe Checkout URL
     POST /v1/billing/portal              -> Stripe Billing Portal URL
 
@@ -35,10 +37,11 @@ import json
 import os
 import re
 import threading
+import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
-from . import playground
+from . import playground, usage
 from .billing import Billing, BillingError
 from .service import SANDBOX_ACCOUNT, Canon, CanonError
 from .store import Store
@@ -46,11 +49,37 @@ from .tools import TOOLS_BY_NAME, anthropic_tools, call_tool, mcp_tools, openai_
 
 MAX_BODY = 25 * 1024 * 1024
 INGEST_TOOLS = {"ingest_document"}
+DASHBOARD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dashboard.html")
+
+
+def _operation(method: str, path: str) -> str | None:
+    """Stable operation name for API metering (e.g. patients.summary, tool.get_conflicts);
+    None for account and billing calls, which are not agent work."""
+    if path == "/v1/documents":
+        return "documents.ingest" if method == "POST" else "unknown_route"
+    if re.fullmatch(r"/v1/documents/[\w-]+", path):
+        return "documents.get"
+    if path == "/v1/patients":
+        return "patients.list"
+    m = re.fullmatch(r"/v1/patients/[\w-]+/(record|summary|observations|fhir)", path)
+    if m:
+        return f"patients.{m.group(1)}"
+    if path == "/v1/tools":
+        return "tools.list"
+    m = re.fullmatch(r"/v1/tools/(\w+)", path)
+    if m and method == "POST":
+        return f"tool.{m.group(1)}" if m.group(1) in TOOLS_BY_NAME else "unknown_route"
+    if path in ("/v1/audit", "/v1/audit/verify"):
+        return path[4:].replace("/", ".")
+    if path in ("/v1/account", "/v1/usage") or path.startswith("/v1/billing/"):
+        return None
+    return "unknown_route"
 
 
 class Response:
     def __init__(self, status: int, body: dict | str, content_type: str | None = None):
         self.status = status
+        self.data = body if isinstance(body, dict) else None
         if isinstance(body, dict):
             self.body = json.dumps(body, indent=2).encode()
             self.content_type = "application/json"
@@ -98,15 +127,34 @@ class App:
         q = {k: v[0] for k, v in parse_qs(u.query).items()}
         path = u.path.rstrip("/") or "/"
         h = {k.lower(): v for k, v in headers.items()}
+        if len(body) > MAX_BODY:
+            return _err(413, "too_large", "Request exceeds 25 MB.")
+        with self.lock:
+            self._metering: dict | None = None  # set by _route once the caller is authenticated
+            started = time.perf_counter()
+            try:
+                r = self._route(method, path, q, h, body)
+            except (CanonError, BillingError) as e:
+                r = _err(e.status, e.code, e.message, **getattr(e, "extra", {}))
+            except (ValueError, KeyError, json.JSONDecodeError) as e:
+                r = _err(400, "bad_request", str(e))
+            if self._metering:
+                self._meter(method, path, len(body), r, (time.perf_counter() - started) * 1000)
+            return r
+
+    def _meter(self, method: str, path: str, bytes_in: int, r: Response, latency_ms: float) -> None:
+        op = _operation(method, path)
+        if op is None:
+            return
+        m = re.fullmatch(r"/v1/patients/([\w-]+)/\w+", path)
+        data = r.data or {}
+        pid = m.group(1) if m else self._metering.get("patient_id") or data.get("patient_id")
         try:
-            if len(body) > MAX_BODY:
-                return _err(413, "too_large", "Request exceeds 25 MB.")
-            with self.lock:
-                return self._route(method, path, q, h, body)
-        except (CanonError, BillingError) as e:
-            return _err(e.status, e.code, e.message, **getattr(e, "extra", {}))
-        except (ValueError, KeyError, json.JSONDecodeError) as e:
-            return _err(400, "bad_request", str(e))
+            usage.record(self.store, account_id=self._metering["account_id"], channel="api", operation=op,
+                         status=r.status, latency_ms=latency_ms, bytes_in=bytes_in, bytes_out=len(r.body),
+                         patient_id=pid if isinstance(pid, str) else None, body=data)
+        except Exception:  # metering must never break the request
+            pass
 
     # ------------------------------------------------------------------ routing
     def _route(self, method: str, path: str, q: dict, h: dict, body: bytes) -> Response:
@@ -139,6 +187,9 @@ class App:
             if not secret or h.get("authorization") != f"Bearer {secret}":
                 return _err(401, "unauthorized", "Cron secret required.")
             return Response(200, self.billing.sync_unreported())
+        if method == "GET" and path == "/dashboard":  # static page; its data calls carry the key
+            with open(DASHBOARD, encoding="utf-8") as fh:
+                return Response(200, fh.read(), "text/html; charset=utf-8")
         if method == "GET" and path == "/billing/success":
             return _page("Subscription started", "Your Canon subscription is active. You can close this tab.")
         if method == "GET" and path == "/billing/cancel":
@@ -150,12 +201,22 @@ class App:
         account = self._authenticate(h)
         if account is None:
             return _err(401, "unauthorized", "Missing or invalid API key (Authorization: Bearer cn_live_...).")
+        self._metering = {"account_id": account["id"]}
         canon = Canon(self.store, account["id"])
         canon.on_document_ingested = self.billing.record_usage
         actor = "sandbox" if self.sandbox else f"key:{account['id']}"
 
         if method == "GET" and path == "/v1/account":
             return Response(200, self.billing.account(account["id"]))
+        if method == "GET" and path == "/v1/usage":
+            try:
+                out = usage.summarize(self.store, account["id"], int(q.get("days", 30)))
+            except ValueError:
+                raise
+            except Exception:  # e.g. Postgres without migrations/002_api_requests.sql
+                return _err(503, "usage_unavailable", "Usage metering is not set up on this server.")
+            out["account"] = self.billing.account(account["id"])
+            return Response(200, out)
         if method == "POST" and path == "/v1/billing/checkout":
             return Response(200, {"checkout_url": self.billing.checkout_url(account)})
         if method == "POST" and path == "/v1/billing/portal":
@@ -203,7 +264,10 @@ class App:
                 return _err(404, "unknown_tool", name)
             if name in INGEST_TOOLS:
                 self.billing.check_can_ingest(account)
-            out = call_tool(canon, name, json.loads(body or b"{}"), actor=actor)
+            args = json.loads(body or b"{}")
+            if isinstance(args, dict):
+                self._metering["patient_id"] = args.get("patient_id")
+            out = call_tool(canon, name, args, actor=actor)
             return Response(200 if "error" not in out else 400, out)
         if method == "GET" and path == "/v1/audit":
             return Response(200, {"entries": canon.audit_log(q.get("patient_id"), min(int(q.get("limit", 100)), 1000))})
