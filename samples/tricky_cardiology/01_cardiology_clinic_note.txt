@@ -7,6 +7,9 @@ Provider: Priya Raman, MD
 HPI: 68 y/o M with heart failure and atrial fibrillation, seen after an ED visit last week where he
 presented with dyspnea and fever, now resolved. Influenza vaccine given today. Hepatitis B vaccine
 series complete. Low sodium diet advised; fluid restriction 1.5 L/day.
+Mother had type 2 diabetes. Depression screen negative. Pneumonia in 2019, resolved.
+Possible pneumonia on last chest x-ray, repeat imaging ordered.
+His wife reports he was diagnosed with COPD last year.
 
 Problem List:
 - Heart failure with reduced ejection fraction

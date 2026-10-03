@@ -10,6 +10,8 @@ Guardrails:
 * Strict JSON schema output, one label per candidate.
 * Evidence: the model must quote the sentence; a quote that isn't in the sentence discards the label.
 * At most MAX_CANDIDATES sentences per document, in one request.
+* Identical requests are answered from an in-memory cache (per process, CACHE_SIZE entries), so the
+  same sentences cost one call per server instance, e.g. the public demo's built-in sample.
 
 Uses OpenAI's Responses API over plain HTTPS (no SDK dependency). Enabled when OPENAI_API_KEY is set and
 CANON_ASSERTION is not "0", except for ingests with use_llm=False (the public playground), which never call
@@ -18,8 +20,10 @@ a model. Model: CANON_ASSERTION_MODEL (default gpt-5.6-luna).
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
+from collections import OrderedDict
 import re
 import urllib.error
 import urllib.request
@@ -30,6 +34,8 @@ MODEL = os.environ.get("CANON_ASSERTION_MODEL", "gpt-5.6-luna")
 API_URL = os.environ.get("CANON_ASSERTION_URL", "https://api.openai.com/v1/responses")
 MAX_CANDIDATES = 25
 TIMEOUT_S = 30
+CACHE_SIZE = 256
+_cache: OrderedDict[str, dict] = OrderedDict()
 
 LABELS = ("present", "historical", "absent", "hypothetical", "other_person")
 
@@ -112,8 +118,21 @@ def resolve(candidates: list[dict], usage: dict | None = None, post=None) -> tup
     report = {"model": MODEL, "candidates": len(candidates), "sent": len(todo), "labels": {}, "rejected": 0}
     if not todo:
         return [], report
-    response = (post or _post)(request_body(todo))
-    if usage is not None:
+    body = request_body(todo)
+    key = hashlib.sha256(json.dumps(body, sort_keys=True).encode()).hexdigest()
+    cached = key in _cache and post is None
+    if cached:
+        _cache.move_to_end(key)
+        response = _cache[key]
+    else:
+        response = (post or _post)(body)
+        if post is None:
+            _cache[key] = response
+            while len(_cache) > CACHE_SIZE:
+                _cache.popitem(last=False)
+    report["cached"] = cached
+    report["decisions"] = []
+    if usage is not None and not cached:
         u = response.get("usage") or {}
         for k in ("input_tokens", "output_tokens"):
             usage[k] = usage.get(k, 0) + int(u.get(k) or 0)
@@ -131,6 +150,8 @@ def resolve(candidates: list[dict], usage: dict | None = None, post=None) -> tup
             continue
         label = item["assertion"]
         report["labels"][label] = report["labels"].get(label, 0) + 1
+        report["decisions"].append({"term": c["term"], "sentence": c["sentence"], "reason": c["reason"],
+                                    "label": label, "evidence": evidence})
         if label in ("present", "historical"):
             f = c["fact"]
             added.append(fact("condition", locator=c["locator"], method="llm", snippet=f["snippet"], confidence=0.75,

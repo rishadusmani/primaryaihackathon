@@ -187,7 +187,7 @@ class DemoWalkthroughTest(LiveTestCase):
         self.assertEqual(entresto["dose"], "49-51 mg")
 
     def test_walkthrough_endpoint_hides_expectations(self):
-        self.assertTrue(all("expect" not in w for w in playground.walkthrough()))
+        self.assertTrue(all("expect" not in w and "expect_model" not in w for w in playground.walkthrough()))
         self.assertEqual(len(playground.samples("tricky")), 2)
 
 

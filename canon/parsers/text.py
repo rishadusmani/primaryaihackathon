@@ -238,7 +238,8 @@ def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None =
                     reason = _uncertain(low, m.start(), m.end())
                     if reason:
                         if review is not None:
-                            review.append({"term": phrase, "sentence": line.strip(), "locator": loc, "reason": reason,
+                            review.append({"term": phrase, "sentence": _sentence(line, m.start(), m.end()),
+                                           "locator": loc, "reason": reason,
                                            "fact": {"text": phrase, "mapped_code": icd, "recorded": dos,
                                                     "snippet": line}})
                         continue
@@ -336,6 +337,14 @@ def _clause_before(low: str, pos: int) -> str:
 
 def _negated(low: str, pos: int) -> bool:
     return bool(NEGATION_RX.search(PSEUDO_NEG_RX.sub(" ", _clause_before(low, pos))))
+
+
+def _sentence(line: str, start: int, end: int) -> str:
+    """The sentence of `line` containing line[start:end]; a period only ends a sentence before whitespace."""
+    bounds = [m.end() for m in re.finditer(r"[.;!?](?=\s|$)", line)]
+    begin = max([b for b in bounds if b <= start], default=0)
+    finish = min([b for b in bounds if b >= end], default=len(line))
+    return HEADING_RX.sub(r"\2", line[begin:finish].strip()) if begin == 0 else line[begin:finish].strip()
 
 
 def _clause_after(low: str, end: int) -> str:
