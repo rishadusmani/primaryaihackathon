@@ -96,11 +96,11 @@ def _undated(items: list[tuple[str, dict]]) -> list[dict]:
     out = []
     for doc_id, kinds in docs.items():
         src = next(i["_source"] for _, i in items if i["_source"]["id"] == doc_id)
-        name = src.get("source_name") or doc_id
+        name = src.get("source_name") or src.get("filename") or doc_id
         out.append({"type": "undated_source", "severity": "low", "document_id": doc_id,
                     "values": sorted(set(kinds)),
-                    "message": f"{name} has no clinical or generation date, so its {len(kinds)} statement(s) are treated as the "
-                               "oldest and can't override dated sources. Confirm the document date."})
+                    "message": f"{name} has no clinical or generation date, so its {len(kinds)} statement(s) are "
+                               "treated as the oldest and can't override dated sources. Confirm the document date."})
     return out
 
 
@@ -134,33 +134,62 @@ def _patient(items: list[dict], conflicts: list) -> dict:
     return {k: v for k, v in out.items() if v not in ([], None)}
 
 
-# --------------------------------------------------------------------------- conditions
-def _conditions(items: list[dict], conflicts: list) -> list[dict]:
+# --------------------------------------------------------------------------- timelines
+def _timeline(items: list[dict], explicit=lambda i: False) -> list[dict]:
+    """One concept's statements, oldest to newest; the last one is the current state. On the same date an
+    explicit statement (a dose change, a stop, a resolution) outranks a list entry that may be copied forward."""
+    return sorted(items, key=lambda i: (_rank(i), bool(explicit(i)), i["confidence"]))
+
+
+def _latest_day(timeline: list[dict]) -> tuple[str | None, list[dict]]:
+    """The newest date and every statement made on it (where same-day disagreements live)."""
+    latest = _date_of(timeline[-1])
+    return latest, [i for i in timeline if _date_of(i) == latest]
+
+
+def _span(timeline: list[dict]) -> tuple[str | None, str | None]:
+    dates = [d for d in map(_date_of, timeline) if d]
+    return (dates[0], dates[-1]) if dates else (None, None)
+
+
+def _history(timeline: list[dict], **fields) -> list[dict]:
+    return [{"date": _date_of(i), **{k: get(i) for k, get in fields.items()}, "document_id": i["_source"]["id"]}
+            for i in timeline]
+
+
+def _groups(items: list[dict]) -> dict[str, list[dict]]:
     groups: dict[str, list[dict]] = defaultdict(list)
     for i in items:
         groups[i["key"]].append(i)
+    return groups
+
+
+# --------------------------------------------------------------------------- conditions
+def _conditions(items: list[dict], conflicts: list) -> list[dict]:
     out = []
-    for key, g in groups.items():
+    for key, g in _groups(items).items():
         best = max(g, key=lambda i: (i.get("code_verified", False), len(i["codes"].get("icd10", "")), i["confidence"]))
-        clinical = sorted([i for i in g if i["provenance"]["method"] in CLINICAL_METHODS and i.get("status")],
-                          key=_rank)
+        g = _timeline(g)
+        # claims never decide clinical status
+        clinical = [i for i in g if i["provenance"]["method"] in CLINICAL_METHODS and i.get("status")]
         status = clinical[-1]["status"] if clinical else "unknown"
         if clinical:
-            latest = _date_of(clinical[-1])
-            same_day = {i["status"] for i in clinical if _date_of(i) == latest}
-            if len(same_day) > 1:
+            latest, same_day = _latest_day(clinical)
+            statuses = {i["status"] for i in same_day}
+            if len(statuses) > 1:
                 status = "active"
                 conflicts.append({"type": "condition_status", "item_id": _id("condition", key),
-                                  "display": best["display"], "values": sorted(same_day), "severity": "medium",
+                                  "display": best["display"], "values": sorted(statuses), "severity": "medium",
                                   "message": f"{best['display']}: sources {_when(latest)} disagree on status."})
         onsets = [i["onset"] for i in g if i.get("onset")]
-        dates = [d for d in map(_date_of, g) if d]
+        first_seen, last_seen = _span(g)
         out.append({
             "id": _id("condition", key), "display": best["display"], "codes": best["codes"], "status": status,
             "terminology": best.get("terminology"),
-            "onset": min(onsets) if onsets else None, "first_seen": min(dates, default=None), "last_seen": max(dates, default=None),
+            "onset": min(onsets) if onsets else None, "first_seen": first_seen, "last_seen": last_seen,
             "evidence": "claims_only" if all(i.get("billed_only") for i in g) else "clinical",
             "confidence": _combine([i["confidence"] for i in g]),
+            "history": _history(g, status=lambda i: i.get("status") or ("billed" if i.get("billed_only") else None)),
             "sources": [_src(i) for i in g],
         })
     order = {"active": 0, "unknown": 1, "resolved": 2}
@@ -175,27 +204,18 @@ def _sig(i: dict) -> str:
 
 
 def _medications(items: list[dict], conflicts: list) -> list[dict]:
-    groups: dict[str, list[dict]] = defaultdict(list)
-    for i in items:
-        groups[i["key"]].append(i)
     out = []
-    for key, g in groups.items():
-        # Same date: an explicit change (plan says "increase"/"stop") outranks a list entry.
-        g = sorted(g, key=lambda i: (_rank(i), bool(i.get("change") or i["status"] == "stopped"),
-                                     i["confidence"]))
-        latest = g[-1]
-        latest_date = _date_of(latest)
-        current = latest
+    for key, g in _groups(items).items():
+        g = _timeline(g, explicit=lambda i: i.get("change") or i["status"] == "stopped")
+        current = g[-1]
         # fill missing sig fields from the most recent statement that has them
-        dose = next((i["dose"] for i in reversed(g) if i.get("dose") and i["status"] != "stopped"), None)
-        freq = next((i["frequency"] for i in reversed(g) if i.get("frequency") and i["status"] != "stopped"), None)
+        dose = current.get("dose") or next(
+            (i["dose"] for i in reversed(g) if i.get("dose") and i["status"] != "stopped"), None)
+        freq = current.get("frequency") or next(
+            (i["frequency"] for i in reversed(g) if i.get("frequency") and i["status"] != "stopped"), None)
         route = next((i["route"] for i in reversed(g) if i.get("route")), None)
-        if current.get("dose"):
-            dose = current["dose"]
-        if current.get("frequency"):
-            freq = current["frequency"]
         # discrepancies among statements from the latest date across different documents
-        same_day = [i for i in g if _date_of(i) == latest_date]
+        latest, same_day = _latest_day(g)
         docs = {i["_source"]["id"] for i in same_day}
         if len(docs) > 1:
             statuses = {i["status"] for i in same_day}
@@ -207,19 +227,17 @@ def _medications(items: list[dict], conflicts: list) -> list[dict]:
                     "type": "medication_discrepancy", "item_id": _id("medication", key), "display": key,
                     "values": values, "severity": "high",
                     "documents": sorted(docs),
-                    "message": f"{key}: documents {_when(latest_date)} disagree on {what} ({' vs '.join(values)}). "
+                    "message": f"{key}: documents {_when(latest)} disagree on {what} ({' vs '.join(values)}). "
                                "Reconcile with the patient or prescriber before acting."})
-        history = [{"date": _date_of(i), "status": i["status"], "dose": i.get("dose"),
-                    "frequency": (i.get("frequency") or {}).get("display"), "document_id": i["_source"]["id"]}
-                   for i in g]
         out.append({k: v for k, v in {
             "id": _id("medication", key), "ingredient": key, "display": current["display"],
             "codes": current["codes"], "drug_class": current["drug_class"], "status": current["status"],
             "terminology": current.get("terminology"),
-            "dose": dose, "route": route, "frequency": freq, "last_changed": latest_date,
-            "first_seen": min(filter(None, map(_date_of, g)), default=None),
+            "dose": dose, "route": route, "frequency": freq, "last_changed": latest, "first_seen": _span(g)[0],
             "confidence": _combine([i["confidence"] for i in g]),
-            "history": history, "sources": [_src(i) for i in g],
+            "history": _history(g, status=lambda i: i["status"], dose=lambda i: i.get("dose"),
+                                frequency=lambda i: (i.get("frequency") or {}).get("display")),
+            "sources": [_src(i) for i in g],
         }.items() if v is not None})
     return sorted(out, key=lambda m: (m["status"] != "active", m["ingredient"]))
 
@@ -227,14 +245,9 @@ def _medications(items: list[dict], conflicts: list) -> list[dict]:
 # --------------------------------------------------------------------------- allergies
 def _allergies(items: list[dict], conflicts: list) -> dict:
     nkda = [i for i in items if i.get("no_known_allergies")]
-    real = [i for i in items if not i.get("no_known_allergies")]
-    groups: dict[str, list[dict]] = defaultdict(list)
-    for i in real:
-        groups[i["key"]].append(i)
     allergies = []
-    for key, g in groups.items():
-        # Same date: an explicit resolution (negative challenge, de-labeling) outranks a list entry.
-        g = sorted(g, key=lambda i: (_rank(i), i.get("status", "active") != "active"))
+    for key, g in _groups([i for i in items if not i.get("no_known_allergies")]).items():
+        g = _timeline(g, explicit=lambda i: i.get("status", "active") != "active")
         status = g[-1].get("status", "active")
         resolutions = [i for i in g if i.get("status", "active") != "active"]
         if status == "active" and resolutions:
@@ -254,8 +267,7 @@ def _allergies(items: list[dict], conflicts: list) -> dict:
             "id": _id("allergy", key), "substance": key, "codes": g[0]["codes"],
             "reactions": reactions, "severity": sev, "status": status,
             "resolved_on": _date_of(g[-1]) if status != "active" else None,
-            "history": [{"date": _date_of(i), "status": i.get("status", "active"), "document_id": i["_source"]["id"]}
-                        for i in g] if resolutions else None,
+            "history": _history(g, status=lambda i: i.get("status", "active")),
             "confidence": _combine([i["confidence"] for i in g]), "sources": [_src(i) for i in g],
         }.items() if v not in (None, [])})
     active = [a for a in allergies if a["status"] == "active"]

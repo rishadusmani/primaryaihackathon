@@ -46,6 +46,10 @@ def normalize(f: dict) -> tuple[str, dict]:
     return kind, {**out, **base}
 
 
+def _document(f: dict) -> dict:
+    return {"generated": _d(f.get("generated"))}
+
+
 def _patient(f: dict) -> dict:
     return {k: f.get(k) for k in ("name_given", "name_family", "dob", "sex", "identifiers", "address", "phone")
             if f.get(k)}
@@ -80,7 +84,8 @@ def _condition(f: dict):
     return {"key": c["icd10"].split(".")[0], "display": c["display"],
             "codes": {"icd10": c["icd10"], **({"snomed": c["snomed"]} if c.get("snomed") else {})},
             "code_verified": c["verified"], "status": status, "onset": _d(f.get("onset")),
-            "date": _d(f.get("recorded")) or _d(f.get("onset")), "billed_only": bool(f.get("billed_only")),
+            "date": _d(f.get("recorded")) or _d(f.get("as_of")) or _d(f.get("onset")),
+            "billed_only": bool(f.get("billed_only")),
             "original_text": f.get("text") or f.get("code"), "terminology": c.get("terminology")}
 
 
@@ -108,13 +113,13 @@ def _medication(f: dict):
     return {"key": m["ingredient"], "ingredient": m["ingredient"], "display": f.get("text") or m["ingredient"],
             "codes": {"rxnorm": m["rxnorm"]}, "drug_class": m["drug_class"], "dose": dose,
             "terminology": m.get("terminology"),
-            "route": route, "frequency": freq, "status": status, "date": _d(f.get("start")),
+            "route": route, "frequency": freq, "status": status, "date": _d(f.get("as_of")) or _d(f.get("start")),
             **({"change": f["change"]} if f.get("change") else {})}
 
 
 def _allergy(f: dict):
     if f.get("no_known_allergies"):
-        return {"key": "__nkda__", "no_known_allergies": True, "date": _d(f.get("recorded"))}
+        return {"key": "__nkda__", "no_known_allergies": True, "date": _d(f.get("recorded")) or _d(f.get("as_of"))}
     a = T.lookup_allergen(f.get("text")) or (T.lookup_allergen(f.get("code")) if f.get("code") else None)
     if not a and f.get("code"):
         for name, (sct, sub, _) in T.ALLERGENS.items():
@@ -126,7 +131,7 @@ def _allergy(f: dict):
             "codes": {"snomed": a["snomed_allergy"], "snomed_substance": a["snomed_substance"]},
             "reaction": (f.get("reaction") or "").lower() or None, "severity": f.get("severity"),
             "status": ALLERGY_STATUS.get((f.get("status") or "active").lower(), "active"),
-            "date": _d(f.get("recorded")), "original_text": f.get("text")}
+            "date": _d(f.get("recorded")) or _d(f.get("as_of")), "original_text": f.get("text")}
 
 
 def _observation(f: dict):

@@ -37,8 +37,24 @@ ALLERGY_CHALLENGE_FAILED_RX = re.compile(
     r"\b(?:positive|failed|abnormal|stopped)\b[^.;]{0,30}\bchallenge|challenge\b[^.;]{0,30}\b(?:positive|failed|"
     r"reacted|developed)\b", re.I)
 HYPOTHETICAL_RX = re.compile(r"\b(?:consider(?:ing)?|plan(?:ning)? to|schedul\w*|refer(?:red|ral)? (?:to|for)|"
-                             r"candidate for|will|recommend\w*|eligible for|due for|discuss\w*)\b(?:\s+[\w-]+){0,4}\s*$",
+                             r"candidate for|will|recommend\w*|eligible for|due for|discuss\w*)\b"
+                             r"(?:\s+[\w-]+){0,4}\s*$",
                              re.I)
+
+SERVICE_DATE_RX = re.compile(r"(?:date of service|dos|visit date|date of visit|encounter date|date)\s*:\s*(.{6,20})",
+                             re.I)
+VISIT_HEADING_RX = re.compile(r"\b(visit|follow[- ]?up|seen|progress note|encounter|appointment|consult\w*|"
+                              r"admission|admitted|discharge\w*|telehealth|office)\b", re.I)
+# Dated lines that are not a visit: a lab collection, a signature, a birth date, the next appointment...
+NOT_VISIT_DATE_RX = re.compile(r"\b(collect\w*|report\w*|print\w*|sign\w*|birth|dob|lab|result\w*|fax\w*|sent|"
+                               r"received|due|next|return|follow[- ]?up in|scheduled|recheck)\b", re.I)
+# When the document was produced, strongest first: a signature dates the content, a fax header only dates the
+# transmission. Used only when nothing in the document carries a clinical date.
+GENERATED_LABELS = (
+    r"(?:electronically |e-?)?signed|dictated|transcribed|authenticated",
+    r"report(?:ed)? date|date of report|generated|created|letter date",
+    r"printed|print date|date printed|fax(?:ed)?|sent|received",
+)
 
 SECTION_ALIASES = {
     "medications": ["medications", "current medications", "meds", "medication list", "home medications",
@@ -179,11 +195,36 @@ def _header(text: str) -> dict:
 
 
 def _service_date(text: str) -> str | None:
-    m = re.search(r"(?:date of service|dos|visit date|date of visit|encounter date|date)\s*:\s*(.{6,20})", text, re.I)
+    m = SERVICE_DATE_RX.search(text)
     if m:
         dm = DATE_RX.search(m.group(1))
         if dm:
             return _date(dm)
+    return None
+
+
+def _visit_date(line: str) -> str | None:
+    """The date a line opens a visit with: "Date of service: 03/02/2026", or a short visit heading
+    ("2026-03-02 Follow-up visit", "Office visit 03/02/2026"). Lines below it were written at that visit."""
+    if NOT_VISIT_DATE_RX.search(line):
+        return None
+    if SERVICE_DATE_RX.search(line):
+        return _service_date(line)
+    m = DATE_RX.search(line)
+    if m and m.start() <= 30 and len(line.strip()) <= 60 and VISIT_HEADING_RX.search(line):
+        return _date(m)
+    return None
+
+
+def _generated_date(lines: list[str]) -> tuple[str, str] | None:
+    """(date, locator) of when the document was produced, from a signature, report, print or fax-header line."""
+    for labels in GENERATED_LABELS:
+        rx = re.compile(rf"\b(?:{labels})\b", re.I)
+        for n, line in enumerate(lines, start=1):
+            lm = rx.search(line)
+            dm = lm and DATE_RX.search(line, lm.end())
+            if dm and _date(dm):
+                return _date(dm), f"line {n}"
     return None
 
 
@@ -209,7 +250,7 @@ def _resolved_allergens(line: str) -> list[str]:
 def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None = None) -> list[dict]:
     """Extract facts. Conditions the rules drop as uncertain are appended to `review` when given."""
     raw_lines = content.replace("\r", "\n").split("\n")
-    lines = [l for l in raw_lines if not NOISE_RX.match(l)]
+    lines = ["" if NOISE_RX.match(l) else l for l in raw_lines]  # blank, not dropped: "line N" stays line N
     cleaned, fixes = ocr_clean("\n".join(lines))
     lines = cleaned.split("\n")
     base_conf = 0.80 if fixes == 0 else 0.72
@@ -222,11 +263,24 @@ def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None =
     if dos:
         facts.append(fact("encounter", locator="header", method=method, confidence=base_conf, type="clinic note",
                           date=dos, facility=None))
+    generated = _generated_date(raw_lines)  # fax headers are noise to extraction, but they carry the send date
+    if generated:
+        facts.append(fact("document", locator=generated[1], method=method, generated=generated[0]))
+    visits = {dos}
+    asserted: dict[str, str] = {}  # line locator -> date of the visit the line was written under
 
     seen_meds: set[tuple] = set()
     for section, n, line in _sections(lines):
         loc = f"line {n}"
         low = line.lower()
+        visit = _visit_date(line)
+        if visit and visit not in visits:  # a later visit in the same document
+            visits.add(visit)
+            facts.append(fact("encounter", locator=loc, method=method, snippet=line, confidence=base_conf,
+                              type="clinic note", date=visit))
+        dos = visit or dos
+        if dos:
+            asserted[loc] = dos
         if section in ("family_history", "social_history", "ros"):
             continue
 
@@ -375,6 +429,9 @@ def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None =
                     continue
                 facts.append(fact("immunization", locator=loc, method=method, snippet=line, confidence=base_conf,
                                   text=v["vaccine"], code=v["cvx"], date=_nearby_date(line)))
+    for f in facts:
+        if f["provenance"]["locator"] in asserted and f["kind"] != "document":
+            f["as_of"] = asserted[f["provenance"]["locator"]]
     return facts
 
 

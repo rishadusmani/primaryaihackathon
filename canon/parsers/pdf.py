@@ -136,6 +136,9 @@ def extract_text(pdf: bytes) -> tuple[str, dict]:
     pages = len(re.findall(rb"/Type\s*/Page(?!s)", pdf))
     info = {"pages": pages, "chars": len(text), "image_streams": images,
             "needs_ocr": len(text.strip()) < 20}
+    created = re.search(rb"/CreationDate\s*\(D:(\d{4})(\d{2})(\d{2})", pdf)
+    if created:
+        info["created"] = "-".join(g.decode() for g in created.groups())
     return text, info
 
 

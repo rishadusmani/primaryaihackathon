@@ -10,11 +10,17 @@
 2. **Canonical record**: facts after terminology mapping, unit conversion,
    de-duplication and reconciliation across every source for one patient.
    This is the object agents reason over (see CANONICAL_RECORD_DOC).
+
+Dates on a fact: a kind's own dates (`onset`, `start`, `effective`, `recorded`) say when
+something happened; `as_of` says when the source asserted it (the visit a note line sits
+under, a C-CDA entry's author time, the FHIR encounter a resource belongs to). A
+`document` fact carries `generated`: when the document itself was produced (signed,
+faxed, exported), the fallback when nothing in it is dated.
 """
 
 from __future__ import annotations
 
-KINDS = ("patient", "condition", "medication", "allergy", "observation", "procedure", "immunization",
+KINDS = ("document", "patient", "condition", "medication", "allergy", "observation", "procedure", "immunization",
          "encounter", "coverage")
 
 # Prior confidence by extraction method; parsers may lower it per fact.
@@ -35,11 +41,11 @@ def fact(kind: str, *, locator: str, method: str, snippet: str | None = None,
 
 CANONICAL_RECORD_DOC = {
     "patient": "Demographics merged across sources: name, birth_date, sex, identifiers[], addresses[], phones[]",
-    "conditions[]": "id, display, codes{icd10, snomed}, status (active|resolved|unknown), onset, last_seen, "
-                    "sources[], confidence",
+    "conditions[]": "id, display, codes{icd10, snomed}, status (active|resolved|unknown), onset, first_seen, "
+                    "last_seen, history[] (dated statements, oldest first), sources[], confidence",
     "medications[]": "id, ingredient, display, codes{rxnorm}, drug_class, strength, dose, route, "
-                     "frequency{code, per_day, display}, status (active|stopped|unknown), start, last_seen, "
-                     "sources[], confidence",
+                     "frequency{code, per_day, display}, status (active|stopped|unknown), first_seen, "
+                     "last_changed, history[] (dated statements, oldest first), sources[], confidence",
     "allergies[]": "id, substance, codes{snomed}, reactions[], severity, status (active|resolved|refuted), "
                    "resolved_on, history[], sources[]. Only active allergies count toward allergy_status",
     "observations[]": "id, display, codes{loinc}, category (lab|vital), value, unit (canonical UCUM), "
@@ -48,8 +54,10 @@ CANONICAL_RECORD_DOC = {
     "immunizations[]": "id, vaccine, codes{cvx}, date, sources[]",
     "encounters[]": "id, type, date, provider, facility, reason, sources[]",
     "coverage[]": "payer, member_id, group, sources[]",
-    "conflicts[]": "Disagreements between sources the agent should surface rather than silently resolve",
-    "sources[]": "Every document that contributed: id, format, source name, received_at",
+    "conflicts[]": "Disagreements between sources the agent should surface rather than silently resolve, and "
+                   "undated sources that can't be placed in time",
+    "sources[]": "Every document that contributed: id, format, source name, received_at, document_date, "
+                 "date_basis (clinical: dated by its contents | generated: by when it was signed/exported)",
     "unmapped[]": "Facts we extracted but could not map to a standard code (never silently dropped)",
     "terminology": "On conditions, medications and observations: \"live_lookup\" when the code came from a live "
                    "public-terminology lookup (RxNorm, ICD-10-CM, LOINC) rather than Canon's built-in tables",

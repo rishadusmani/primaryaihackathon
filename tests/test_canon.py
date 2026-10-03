@@ -197,20 +197,67 @@ class ChronologyTest(unittest.TestCase):
         self.assertEqual((met["dose"], met["last_changed"]), ("500 mg", "2026-04-01"))
         self.assertNotIn("undated_source", {x["type"] for x in rec["conflicts"]})
 
-    def test_generated_date_per_format(self):
-        from canon.parsers.docdate import generated_date as g
-        self.assertEqual(g("ccda", b'<ClinicalDocument><title>CCD</title><effectiveTime value="20260215103000"/>'
-                                   b'<component><effectiveTime value="20190101"/></component>'), "2026-02-15")
-        self.assertEqual(g("fhir", json.dumps({"resourceType": "Bundle", "timestamp": "2026-02-20T10:00:00Z",
-                                               "entry": []}).encode()), "2026-02-20")
-        self.assertEqual(g("hl7v2", b"MSH|^~\\&|LAB|QUEST|||20260302101500||ORU^R01|1|P|2.5.1\r"), "2026-03-02")
-        self.assertEqual(g("x12_837", b"ISA*00*~GS*HC*S*R*20260304*1200*1*X*005010X222A1~"
-                                      b"BHT*0019*00*1*20260305*1200*CH~"), "2026-03-05")
-        self.assertEqual(g("pdf", b"%PDF-1.4 << /CreationDate (D:20260320083000Z) >>", ""), "2026-03-20")
-        self.assertEqual(g("text", b"", "FAX 03/01/2026 10:14 From: Clinic\nSigned: 02/27/2026\n"), "2026-02-27")
-        self.assertEqual(g("text", b"", "Fax sent 03/01/2026 10:14\nMeds: metformin\n"), "2026-03-01")
-        self.assertIsNone(g("csv", b"Test,Result\nA1c,7.1\n"))
-        self.assertIsNone(g("text", b"", "Medications: metformin 500 mg\n"))
+    def test_each_parser_reports_when_the_document_was_produced(self):
+        from canon import parsers
+
+        def produced(fmt, data):
+            facts, _ = parsers.parse(fmt, data, use_llm=False)
+            doc = next((f for f in facts if f["kind"] == "document"), None)
+            return doc and (doc["generated"], doc["provenance"]["locator"])
+
+        self.assertEqual(produced("ccda", b'<ClinicalDocument xmlns="urn:hl7-org:v3"><title>CCD</title>'
+                                          b'<effectiveTime value="20260215103000"/></ClinicalDocument>'),
+                         ("2026-02-15", "ClinicalDocument/effectiveTime"))
+        self.assertEqual(produced("fhir", json.dumps({"resourceType": "Bundle", "timestamp": "2026-02-20T10:00:00Z",
+                                                      "entry": []}).encode()), ("2026-02-20", "Bundle.timestamp"))
+        self.assertEqual(produced("hl7v2", b"MSH|^~\\&|LAB|QUEST|||20260302101500||ORU^R01|1|P|2.5.1\r"),
+                         ("2026-03-02", "MSH-7"))
+        self.assertEqual(produced("x12_837", b"ISA*00*~GS*HC*S*R*20260304*1200*1*X*005010X222A1~"
+                                             b"BHT*0019*00*1*20260305*1200*CH~"), ("2026-03-05", "BHT"))
+        pdf_bytes = pdf.make_text_pdf("Medications: metformin 500 mg daily")
+        pdf_bytes = pdf_bytes.replace(b"%%EOF", b"<< /CreationDate (D:20260320083000Z) >>\n%%EOF")
+        self.assertEqual(produced("pdf", pdf_bytes), ("2026-03-20", "PDF /CreationDate"))
+        self.assertEqual(produced("text", b"FAX 03/01/2026 10:14 From: Clinic\nSigned: 02/27/2026\n"),
+                         ("2026-02-27", "line 2"))   # a signature dates the content better than the fax header
+        self.assertEqual(produced("text", b"Fax sent 03/01/2026 10:14\nMeds: metformin\n"), ("2026-03-01", "line 1"))
+        self.assertIsNone(produced("csv", b"Test,Result\nA1c,7.1\n"))
+        self.assertIsNone(produced("text", b"Medications: metformin 500 mg\n"))
+
+    def test_multi_visit_note_dates_each_line_by_its_visit(self):
+        c, pid = self.notes(HEAD + "Date of service: 2026-01-10\nMedications:\nMetformin 500 mg daily\n\n"
+                                   "2026-03-02 Follow-up visit\nPlan: increase metformin to 1000 mg twice daily\n"
+                                   "Allergies: NKDA\n")
+        rec = c.record(pid)
+        met = next(m for m in rec["medications"] if m["ingredient"] == "metformin")
+        self.assertEqual([(h["date"], h["dose"]) for h in met["history"]],
+                         [("2026-01-10", "500 mg"), ("2026-03-02", "1000 mg")])
+        self.assertEqual(sorted(e["date"] for e in rec["encounters"]), ["2026-01-10", "2026-03-02"])
+
+    def test_ccda_entry_author_time_dates_the_statement(self):
+        ccd = (b'<ClinicalDocument xmlns="urn:hl7-org:v3"><effectiveTime value="20260401"/><component><structuredBody>'
+               b'<component><section><code code="10160-0"/><entry><substanceAdministration>'
+               b'<author><time value="20260215"/></author><effectiveTime><low value="20190301"/></effectiveTime>'
+               b'<doseQuantity value="500" unit="mg"/><consumable><manufacturedProduct><manufacturedMaterial>'
+               b'<code code="860975" displayName="metformin 500 MG Oral Tablet"/></manufacturedMaterial>'
+               b'</manufacturedProduct></consumable></substanceAdministration></entry></section></component>'
+               b'</structuredBody></component></ClinicalDocument>')
+        c, pid = self.notes(HEAD + "Date of service: 2026-01-10\nMedications:\nMetformin 1000 mg twice daily\n")
+        c.ingest(ccd, filename="ccd.xml", patient_id=pid)
+        met = next(m for m in c.record(pid)["medications"] if m["ingredient"] == "metformin")
+        # stated 2026-02-15 (author time), not 2019 (when the drug was started): the CCD is the latest word
+        self.assertEqual((met["dose"], met["last_changed"]), ("500 mg", "2026-02-15"))
+
+    def test_fhir_resource_dated_by_its_encounter(self):
+        bundle = {"resourceType": "Bundle", "type": "collection", "entry": [
+            {"fullUrl": "urn:uuid:enc-1", "resource": {"resourceType": "Encounter", "id": "e1",
+                                                        "period": {"start": "2026-02-20"}}},
+            {"resource": {"resourceType": "AllergyIntolerance", "id": "a1", "code": {"text": "Penicillin"},
+                          "encounter": {"reference": "urn:uuid:enc-1"}}}]}
+        c, pid = self.notes(HEAD + "Date of service: 2025-05-01\nAllergies: NKDA\n")
+        c.ingest(json.dumps(bundle), filename="portal.json", patient_id=pid)
+        rec = c.record(pid)
+        self.assertEqual([h["date"] for h in rec["allergies"][0]["history"]], ["2026-02-20"])  # the encounter's date
+        self.assertEqual(rec["allergy_status"], "has_allergies")
 
     def test_allergy_resolved_by_negative_challenge(self):
         c, pid = self.notes(
@@ -261,7 +308,8 @@ class ChronologyTest(unittest.TestCase):
         c.ingest(json.dumps(bundle), filename="portal.json", patient_id=pid)
         rec = c.record(pid)
         self.assertEqual((rec["allergies"][0]["status"], rec["allergy_status"]), ("refuted", "unknown"))
-        fhir = next(e["resource"] for e in c.fhir(pid)["entry"] if e["resource"]["resourceType"] == "AllergyIntolerance")
+        fhir = next(e["resource"] for e in c.fhir(pid)["entry"]
+                    if e["resource"]["resourceType"] == "AllergyIntolerance")
         self.assertNotIn("clinicalStatus", fhir)
         self.assertEqual(fhir["verificationStatus"]["coding"][0]["code"], "refuted")
 

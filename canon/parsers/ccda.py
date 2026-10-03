@@ -73,6 +73,12 @@ def parse(content: str) -> list[dict]:
             phone=(pr.find("telecom").get("value", "").replace("tel:", "") if pr.find("telecom") is not None
                    else None)))
 
+    created = root.find("effectiveTime")
+    if created is not None and _date(created.get("value")):
+        facts.append(fact("document", locator="ClinicalDocument/effectiveTime", method=m,
+                          generated=_date(created.get("value"))))
+
+    asserted: dict[str, str] = {}  # entry locator -> the entry's author time (when it was stated)
     for si, section in enumerate(root.iter("section")):
         code_el = section.find("code")
         kind = SECTIONS.get(code_el.get("code") if code_el is not None else "")
@@ -80,6 +86,9 @@ def parse(content: str) -> list[dict]:
             continue
         for ei, entry in enumerate(section.findall("entry")):
             loc = f"section[{kind}]/entry[{ei + 1}]"
+            author_time = entry.find(".//author/time")
+            if author_time is not None and _date(author_time.get("value")):
+                asserted[loc] = _date(author_time.get("value"))
             if kind == "problems":
                 for obs in entry.iter("observation"):
                     v = obs.find("value")
@@ -162,4 +171,8 @@ def parse(content: str) -> list[dict]:
                 if e is not None:
                     c = _code(e.find("code"))
                     facts.append(fact("encounter", locator=loc, method=m, type=c.get("text"), date=_eff(e)))
+    for f in facts:
+        entry = re.match(r"section\[\w+\]/entry\[\d+\]", f["provenance"]["locator"])
+        if entry and entry.group(0) in asserted:
+            f["as_of"] = asserted[entry.group(0)]
     return facts

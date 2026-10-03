@@ -437,19 +437,22 @@
 
   const statusCell = (s) => `<span class="status ${{ active: "", resolved: "off", stopped: "off", unknown: "warn", on_hold: "warn" }[s] ?? "off"}">${esc(s)}</span>`;
   // id -> [label, count(rec), header cells, rows(rec) -> [{cells, sources, confidence, extra}]]
+  // Dated statements, oldest first; shown only when something changed over time.
+  const historyLine = (h, fmt) => h?.length > 1 && new Set(h.map(fmt)).size > 1
+    ? `<div class="sub" style="margin-bottom:8px">History: ${h.map((x) => `${esc(x.date || "undated")} ${esc(fmt(x))}`).join(" → ")}</div>` : "";
   const TABS = {
     problems: ["Problems", (r) => r.conditions.length, ["Problem", "ICD-10", "SNOMED", "Status", "Since"], (r) => r.conditions.map((c) => ({
       cells: [esc(c.display) + live(c) + (c.evidence === "claims_only" ? ` <span class="chip" title="Only appears on a billing claim">claims only</span>` : ""),
         `<code>${esc(c.codes.icd10 || "")}</code>`, `<code>${esc(c.codes.snomed || "")}</code>`, statusCell(c.status), esc(c.onset || c.first_seen || "")],
-      sources: c.sources, confidence: c.confidence })) ],
+      sources: c.sources, confidence: c.confidence, extra: historyLine(c.history, (x) => x.status || "") })) ],
     medications: ["Medications", (r) => r.medications.length, ["Medication", "Dose", "Route", "Frequency", "Status", "RxNorm"], (r) => r.medications.map((m) => ({
       cells: [esc(m.ingredient) + live(m), esc(m.dose || "–"), esc(m.route || "–"), esc(m.frequency?.display || "–"), statusCell(m.status), `<code>${esc(m.codes.rxnorm)}</code>`],
       sources: m.sources, confidence: m.confidence,
-      extra: m.history?.length > 1 ? `<div class="sub" style="margin-bottom:8px">History: ${m.history.map((x) => `${esc(x.date || "undated")} ${esc(x.status)}${x.dose ? " " + esc(x.dose) : ""}`).join(" → ")}</div>` : "" })) ],
+      extra: historyLine(m.history, (x) => x.status + (x.dose ? " " + x.dose : "")) })) ],
     allergies: ["Allergies", (r) => r.allergies.length, ["Substance", "Reactions", "Status", "SNOMED"], (r) => r.allergies.map((a) => ({
       cells: [esc(a.substance), esc((a.reactions || []).join(", ") || "not stated"), statusCell(a.status) + (a.resolved_on ? `<div class="sub">since ${esc(a.resolved_on)}</div>` : ""), `<code>${esc(a.codes.snomed)}</code>`],
       sources: a.sources, confidence: a.confidence,
-      extra: a.history?.length > 1 ? `<div class="sub" style="margin-bottom:8px">History: ${a.history.map((x) => `${esc(x.date || "undated")} ${esc(x.status)}`).join(" → ")}</div>` : "" })) ],
+      extra: historyLine(a.history, (x) => x.status) })) ],
     labs: ["Labs & vitals", (r) => labGroups(r).length, ["Test", "Latest", "Trend", "Flag", "Date", "LOINC"], (r) => labGroups(r).map((list) => {
       const cur = list[list.length - 1], prev = list[list.length - 2];
       const trend = prev && cur.value != null && prev.value != null

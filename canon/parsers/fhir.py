@@ -78,6 +78,12 @@ def parse(content: str | dict) -> list[dict]:
     else:
         resources = [data]
     facts: list[dict] = []
+    created = (_date(data.get("timestamp")) or
+               next((_date(r.get("date")) for r in resources if r.get("resourceType") == "Composition"), None) or
+               _date((data.get("meta") or {}).get("lastUpdated")))
+    if created:
+        facts.append(fact("document", locator="Bundle.timestamp" if data.get("timestamp") else "Bundle",
+                          method="structured", generated=created))
     for i, r in enumerate(resources):
         rt = r.get("resourceType")
         loc = f"{rt}/{r.get('id', i)}"
@@ -150,7 +156,32 @@ def parse(content: str | dict) -> list[dict]:
                               member_id=r.get("subscriberId"),
                               group=next((c.get("value") for c in r.get("class", []) if
                                           _status(c.get("type")) == "group"), None)))
+    _assert_dates(data, facts)
     return facts
+
+
+def _assert_dates(data: dict, facts: list[dict]) -> None:
+    """A resource recorded during an encounter was asserted on that encounter's date."""
+    entries = (data.get("entry") or []) if data.get("resourceType") == "Bundle" else [{"resource": data}]
+    visits: dict[str, str] = {}
+    for e in entries:
+        r = e.get("resource") or {}
+        if r.get("resourceType") == "Encounter" and _date(r.get("period")):
+            for key in (e.get("fullUrl"), f"Encounter/{r.get('id')}"):
+                if key:
+                    visits[key] = _date(r.get("period"))
+    asserted = {}
+    for i, e in enumerate(entries):
+        r = e.get("resource") or {}
+        ref = (r.get("encounter") or r.get("context") or {}).get("reference") or ""
+        ref = ref.split("/_history")[0]
+        date = visits.get(ref) or visits.get("Encounter/" + ref.rsplit("/", 1)[-1])
+        if date:
+            asserted[f"{r.get('resourceType')}/{r.get('id', i)}"] = date
+    for f in facts:
+        resource = "/".join(f["provenance"]["locator"].split("/")[:2])
+        if resource in asserted:
+            f["as_of"] = asserted[resource]
 
 
 def _observation(r: dict, loc: str) -> list[dict]:

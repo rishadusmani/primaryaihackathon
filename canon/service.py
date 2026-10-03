@@ -81,6 +81,8 @@ class Canon:
         with live_terminology.budget():  # cap time spent on live NLM lookups for this document
             for f in facts:
                 items.append(normalize(f))
+        produced = next((it for k, it in items if k == "document" and it.get("generated")), None)
+        items = [(k, it) for k, it in items if k != "document"]
         if not any(k not in ("patient", "encounter") for k, _ in items):
             info.setdefault("warnings", []).append(
                 f"No clinical facts found in this document (parsed as {fmt}). Check the file or format.")
@@ -107,7 +109,10 @@ class Canon:
         dates = [it.get("date") or it.get("effective") for k, it in items if k in ("encounter", "observation",
                                                                                      "condition", "medication")]
         dates = [d for d in dates if d]
-        doc_date = Counter(dates).most_common(1)[0][0] if dates else info.get("generated_at")
+        # Clinical date first; when nothing in the document is dated, when it was produced (signed, exported...).
+        doc_date = Counter(dates).most_common(1)[0][0] if dates else (produced or {}).get("generated")
+        if produced:
+            info["generated"] = {"date": produced["generated"], "locator": produced["provenance"]["locator"]}
         if doc_date:
             info["date_basis"] = "clinical" if dates else "generated"
         info["pages"] = _pages(fmt, info)
@@ -189,10 +194,10 @@ class Canon:
         unmapped: list[dict] = []
         sources = []
         for r in rows:
-            src = {"id": r["id"], "format": r["format"], "source_name": r["source_name"],
+            src = {"id": r["id"], "format": r["format"], "source_name": r["source_name"], "filename": r["filename"],
                    "received_at": r["received_at"], "document_date": r["document_date"],
                    "date_basis": json.loads(r["info"] or "{}").get("date_basis")}
-            sources.append({**src, "filename": r["filename"]})
+            sources.append(dict(src))
             for kind, it in json.loads(r["items"]):
                 it["_source"] = src
                 (unmapped.append(it) if kind == "unmapped" else items.append((kind, it)))
