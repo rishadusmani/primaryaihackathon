@@ -24,7 +24,7 @@ Healthcare data arrives as faxes, PDFs, HL7 feeds, C-CDA, FHIR, claims and CSVs 
 - **Every fact is cited.** Each item links to the source document, the exact location (`OBX[2]`, `line 31`) and a verbatim snippet, with a confidence score. Nothing is silently dropped: anything that can't be mapped is listed with a reason.
 - **Clinically careful text extraction.** Negation ("denies chest pain"), family history ("father had diabetes"), OCR repair ("5OO mg" → 500 mg) and medication start/stop/increase intent are all handled.
 - **See it in the browser.** The live demo opens on the 7-document sample patient (or drop in your own files). Conflicts come first, then coded problems, reconciled medications with change history, and lab trends. Click any row to see the exact line it came from. Customers get an Agent usage dashboard showing their agents' requests, errors, latency and LLM tokens.
-- **Built for agents.** A token-efficient patient summary, 9 tools in Anthropic/OpenAI/MCP formats, an MCP server, FHIR R4 export, and a Claude agent example. Scanned faxes can go through Claude with structured outputs, and every LLM-extracted fact must quote its evidence. Unverifiable quotes are downgraded.
+- **Built for agents.** A token-efficient patient summary, 9 tools in Anthropic/OpenAI/MCP formats, a hosted MCP server (plus a local stdio one), FHIR R4 export, and a Claude agent example. Scanned faxes can go through Claude with structured outputs, and every LLM-extracted fact must quote its evidence. Unverifiable quotes are downgraded.
 
 **How it's different from FHIR/HL7/SNOMED.** Those standards define the *envelope* and the *dictionary*. They don't make the data inside correct, de-duplicated or consistent. Canon consumes those standards and outputs them (FHIR R4 export). Its job is to make the data trustworthy enough for an agent to act on.
 
@@ -48,6 +48,7 @@ Python (standard library only for the core: zero runtime dependencies), Supabase
   - Try the API: `curl -H "Authorization: Bearer cn_live_primaryaisupabasehackathon" https://primaryaihackathon.vercel.app/v1/patients`
   - Upload a document: `curl -X POST "https://primaryaihackathon.vercel.app/v1/documents?filename=note.txt" -H "Authorization: Bearer cn_live_primaryaisupabasehackathon" --data-binary @note.txt`
   - The key is unmetered: upload as much as you like, it's never billed.
+  - Use it from Claude over MCP: `claude mcp add --transport http canon https://primaryaihackathon.vercel.app/mcp --header "Authorization: Bearer cn_live_primaryaisupabasehackathon"`
 - Your own key: `curl -X POST https://primaryaihackathon.vercel.app/v1/signup -H 'Content-Type: application/json' -d '{"name":"Judge","email":"you@example.com"}'`. New accounts have no free pages: reads work right away, and uploads need a subscription through the returned Checkout link (Stripe test card `4242 4242 4242 4242`).
 - API health: https://primaryaihackathon.vercel.app/healthz
 - Demo video: TODO
@@ -58,7 +59,7 @@ git clone https://github.com/rishadusmani/primaryaihackathon && cd primaryaihack
 python -m canon normalize samples/maria_chen/*        # 7 messy documents → one record (no dependencies)
 python -m unittest discover -s tests                  # 44 tests
 python -m canon serve                                 # local API on :8080
-claude mcp add canon -- python -m canon mcp           # use it from Claude Code
+claude mcp add canon -- python -m canon mcp           # local MCP (stdio) for Claude Code
 ```
 
 ## Demo script (for the video, ~2 minutes)
