@@ -43,8 +43,12 @@ Python (standard library only for the core: zero runtime dependencies), Supabase
 ## Links
 - Repository: https://github.com/rishadusmani/primaryaihackathon
 - Live demo: https://primaryaihackathon.vercel.app (opens with the 7-document sample patient already normalized; no sign-in needed)
-- Agent usage dashboard: https://primaryaihackathon.vercel.app/dashboard (sign in with an API key)
-- Get an API key: `curl -X POST https://primaryaihackathon.vercel.app/v1/signup -H 'Content-Type: application/json' -d '{"name":"Judge","email":"you@example.com"}'`
+- **Judge API key:** `cn_live_primaryaisupabasehackathon`
+  - Dashboard: https://primaryaihackathon.vercel.app/dashboard, sign in with the key above
+  - Try the API: `curl -H "Authorization: Bearer cn_live_primaryaisupabasehackathon" https://primaryaihackathon.vercel.app/v1/patients`
+  - Upload a document: `curl -X POST "https://primaryaihackathon.vercel.app/v1/documents?filename=note.txt" -H "Authorization: Bearer cn_live_primaryaisupabasehackathon" --data-binary @note.txt`
+  - The key is on the free tier (25 documents); the web demo doesn't count toward it.
+- Your own key: `curl -X POST https://primaryaihackathon.vercel.app/v1/signup -H 'Content-Type: application/json' -d '{"name":"Judge","email":"you@example.com"}'`
 - API health: https://primaryaihackathon.vercel.app/healthz
 - Demo video: TODO
 
