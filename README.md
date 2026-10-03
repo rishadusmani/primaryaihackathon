@@ -156,7 +156,7 @@ layer, never trusted from the model.
 The hosted API runs as one Python serverless function on Vercel (`app.py`,
 WSGI) in production mode. Data lives in Supabase Postgres in a private `canon` schema
 (`migrations/001_init.sql`, already applied to the `primaryaihackathon`
-Supabase project). Customers pay per normalized document through Stripe
+Supabase project). Customers pay per normalized page through Stripe
 usage-based billing.
 
 **How customers use it**
@@ -172,17 +172,24 @@ curl -X POST https://<app>/v1/billing/portal -H "Authorization: Bearer cn_live_.
 
 * Every account's patients, documents and audit entries are isolated from every other account.
 * API keys are stored only as SHA-256 hashes.
-* The first `CANON_FREE_DOCUMENTS` (default 25) are free and never billed.
-* After the free tier, ingest returns `402 payment_required` until the customer finishes Stripe Checkout.
+* Billing is per page: real pages for PDFs, ~3,000-character pages for text/OCR uploads, and 1 per
+  structured document (HL7, FHIR, C-CDA, X12, CSV), which have no pages. `CANON_LLM_PAGE_UNITS` (default 1)
+  can make pages read by Claude (scanned faxes) count as more than one unit.
+* There is no free tier by default (`CANON_FREE_PAGES=0`): ingest returns `402 payment_required` until the
+  customer finishes Stripe Checkout. While Stripe isn't configured, ingest isn't gated.
+* Accounts with status `sandbox` (the demo, and deliberately exempted accounts such as the hackathon judges)
+  are never gated or billed; their pages are still recorded for the dashboard.
   Reads are never blocked.
-* Each new document (duplicates are free) sends one Stripe meter event, idempotent by usage id.
+* Each new document (duplicates are free) sends one Stripe meter event with its page count, idempotent by usage id.
   Failed sends are retried by a daily Vercel cron (`/v1/billing/sync`).
 * Stripe webhooks activate accounts (`checkout.session.completed`) and handle `past_due` / `canceled`.
 
 **Deploy checklist** (one time)
 
-1. **Stripe**: create the meter and metered price (default $0.10 per document):
-   `STRIPE_SECRET_KEY=sk_test_... python -m canon.billing setup --price-cents 10` → note `price_id`.
+1. **Stripe**: create the meter and metered price (default $0.05 per page):
+   `STRIPE_SECRET_KEY=sk_test_... python -m canon.billing setup --price-cents 5` → note `price_id`.
+   To create them by hand instead: a meter with event name `canon_document_normalized`, Sum aggregation,
+   customer key `stripe_customer_id` and value key `value`; then a monthly usage-based price on it per unit (page).
    Then add a webhook endpoint `https://<app>/v1/stripe/webhook` for `checkout.session.completed`,
    `customer.subscription.created|updated|deleted` and `invoice.payment_failed` → note its `whsec_` secret.
    Finally, enable the Customer Portal (Settings → Billing → Customer portal).

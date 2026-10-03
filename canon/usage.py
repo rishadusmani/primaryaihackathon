@@ -80,6 +80,8 @@ def summarize(store: Store, account_id: str, days: int = 30, recent: int = 50) -
         tout += r["llm_output_tokens"]
         bytes_in += r["bytes_in"]
 
+    billed = store.one("SELECT COUNT(*) AS d, COALESCE(SUM(quantity),0) AS p FROM usage_events "
+                       "WHERE account_id=? AND created_at>=?", (account_id, since))
     n = len(rows)
     recent_rows = store.all(f"SELECT * FROM api_requests WHERE {where} ORDER BY seq DESC LIMIT ?", (*params, recent))
     out = {
@@ -89,7 +91,8 @@ def summarize(store: Store, account_id: str, days: int = 30, recent: int = 50) -
         "totals": {
             "requests": n, "errors": errors, "error_rate": round(errors / n, 4) if n else 0.0,
             "latency_p50_ms": _pct(latencies, 0.5), "latency_p95_ms": _pct(latencies, 0.95),
-            "documents_ingested": ingests, "patients_accessed": len(patients), "bytes_ingested": bytes_in,
+            "documents_ingested": ingests, "pages": int(billed["p"]), "patients_accessed": len(patients),
+            "bytes_ingested": bytes_in,
             "llm_input_tokens": tin, "llm_output_tokens": tout,
         },
         "daily": [{"date": k, **v} for k, v in daily.items()],
