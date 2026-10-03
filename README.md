@@ -142,11 +142,18 @@ pip install anthropic && export ANTHROPIC_API_KEY=...
 python examples/claude_agent.py "Is it safe to prescribe amoxicillin? How is her diabetes trending?"
 ```
 
-### Scanned faxes (LLM extraction)
+### Scanned faxes (OCR and LLM extraction)
 
-Text-layer PDFs and OCR text go through the deterministic rule engine. Image-only
-PDFs (true scanned faxes) are sent to Claude when `anthropic` is installed and
-credentials are set (`use_llm=1` forces it for any text/PDF). The model must
+Text-layer PDFs and OCR text go through the deterministic rule engine, which also
+repairs common OCR errors. Scanned (image-only) PDFs are handled the cheapest way available:
+
+- **On the device.** The web demo OCRs scanned PDFs in the browser with Tesseract.js
+  and sends the text, so the scan never reaches a model. Agents can do the same: send
+  OCR text instead of the PDF.
+- **On the server.** A scanned PDF uploaded to the API is sent to Claude when `anthropic`
+  is installed and credentials are set (`use_llm=1` forces it for any text/PDF). The default
+  model is Claude Haiku 4.5, the cheapest (`CANON_LLM_MODEL` overrides it). A full OCR engine
+  is too large for a Vercel function, so there is no server-side OCR. The model must
 return schema-valid JSON with a verbatim evidence quote for each fact. Quotes
 are checked against the source, and codes are assigned by Canon's terminology
 layer, never trusted from the model.
