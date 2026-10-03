@@ -3,7 +3,7 @@ WSGI app on Vercel (app.py).
 
 Public
     GET  /                               web demo (normalizes documents in the browser session, stores nothing)
-    GET  /v1/playground/samples          the 7-document sample patient
+    GET  /v1/playground/samples          the 7-document sample patient (?set=tricky: the tricky-note demo)
     POST /v1/playground/normalize        {documents: [...]} -> records; stateless, unbilled, no LLM
     GET  /healthz
     POST /v1/signup                      {name, email} -> account + API key (shown once) + checkout link
@@ -162,6 +162,8 @@ class App:
         if method == "GET" and path in ("/", "/demo"):
             return Response(200, _demo_page())
         if method == "GET" and path == "/v1/playground/samples":
+            if q.get("set") == "tricky":
+                return Response(200, {"documents": playground.samples("tricky"), "walkthrough": playground.walkthrough()})
             return Response(200, {"documents": playground.samples()})
         if method == "POST" and path == "/v1/playground/normalize":
             return Response(200, playground.normalize(json.loads(body or b"{}").get("documents")))

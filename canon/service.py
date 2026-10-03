@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 from . import parsers
 from .fhir_export import to_fhir_bundle
 from .normalize import normalize
+from . import live_terminology
 from .reconcile import build_record
 from .store import Store, new_id
 
@@ -64,8 +65,9 @@ class Canon:
             raise CanonError("parse_error", f"Could not parse as {fmt}: {e}", 422) from e
 
         items: list[tuple[str, dict]] = []
-        for f in facts:
-            items.append(normalize(f))
+        with live_terminology.budget():  # cap time spent on live NLM lookups for this document
+            for f in facts:
+                items.append(normalize(f))
         if not any(k not in ("patient", "encounter") for k, _ in items):
             info.setdefault("warnings", []).append(
                 f"No clinical facts found in this document (parsed as {fmt}). Check the file or format.")
