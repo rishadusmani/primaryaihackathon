@@ -3,6 +3,7 @@ WSGI app on Vercel (app.py).
 
 Public
     GET  /                               web demo (normalizes documents in the browser session, stores nothing)
+    GET  /about                          why Canon exists (static HTML)
     GET  /v1/playground/samples          the 7-document sample patient
     POST /v1/playground/normalize        {documents: [...]} -> records; stateless, unbilled, no LLM
     GET  /healthz
@@ -98,15 +99,14 @@ def _page(title: str, msg: str) -> Response:
                          f"margin:4em auto;padding:0 1em'><h1>{html.escape(title)}</h1><p>{html.escape(msg)}</p>")
 
 
-_PAGE: str | None = None
+_PAGES: dict[str, str] = {}
 
 
-def _demo_page() -> str:
-    global _PAGE
-    if _PAGE is None:
-        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "web", "index.html"), encoding="utf-8") as fh:
-            _PAGE = fh.read()
-    return _PAGE
+def _web_page(name: str) -> str:
+    if name not in _PAGES:
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "web", name), encoding="utf-8") as fh:
+            _PAGES[name] = fh.read()
+    return _PAGES[name]
 
 
 class App:
@@ -160,7 +160,9 @@ class App:
     def _route(self, method: str, path: str, q: dict, h: dict, body: bytes) -> Response:
         # --- public
         if method == "GET" and path in ("/", "/demo"):
-            return Response(200, _demo_page())
+            return Response(200, _web_page("index.html"))
+        if method == "GET" and path == "/about":
+            return Response(200, _web_page("about.html"))
         if method == "GET" and path == "/v1/playground/samples":
             return Response(200, {"documents": playground.samples()})
         if method == "POST" and path == "/v1/playground/normalize":

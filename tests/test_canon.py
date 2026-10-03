@@ -282,6 +282,11 @@ class UsageTest(unittest.TestCase):
         self.assertEqual(st, 200)
         self.assertIn("/v1/usage", body)
 
+    def test_about_page_served_without_key(self):
+        st, body = self.call("GET", "/about")
+        self.assertEqual(st, 200)
+        self.assertIn("Why Canon exists", body)
+
     def test_mcp_tool_calls_and_llm_tokens_are_metered(self):
         from canon import usage
         c = Canon(self.make_store())
