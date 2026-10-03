@@ -40,7 +40,7 @@ Python (standard library only for the core: zero runtime dependencies), Supabase
 
 ## Links
 - Repository: https://github.com/rishadusmani/primaryaihackathon
-- Live API: TODO (your Vercel URL, e.g. https://<project>.vercel.app/healthz)
+- Live API: https://primaryaihackathon.vercel.app (demo deployment; requires `Authorization: Bearer <key>`. TODO: share a judge key, or remove `CANON_API_KEYS` so the demo is open)
 - Demo video: TODO
 
 ## How to run it
