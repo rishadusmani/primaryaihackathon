@@ -37,9 +37,16 @@ def _match_keys(demo: dict) -> list[str]:
     return keys
 
 
+SANDBOX_ACCOUNT = "acct_sandbox"
+
+
 class Canon:
-    def __init__(self, db_path: str = ":memory:"):
-        self.store = Store(db_path)
+    """All reads and writes are scoped to one account (tenant)."""
+
+    def __init__(self, db: str | Store | None = ":memory:", account_id: str = SANDBOX_ACCOUNT):
+        self.store = db if isinstance(db, Store) else Store(db)
+        self.account_id = account_id
+        self.on_document_ingested = None  # hook: fn(account_id, document_id) for usage metering
 
     # ------------------------------------------------------------------ ingest
     def ingest(self, data: bytes | str, *, filename: str | None = None, content_type: str | None = None,
@@ -72,7 +79,8 @@ class Canon:
         pid = match["patient_id"]
 
         digest = hashlib.sha256(raw).hexdigest()
-        existing = self.store.one("SELECT id FROM documents WHERE patient_id=? AND sha256=?", (pid, digest))
+        existing = self.store.one("SELECT id FROM documents WHERE account_id=? AND patient_id=? AND sha256=?",
+                                  (self.account_id, pid, digest))
         if existing:
             doc = self.get_document(existing["id"])
             doc["duplicate"] = True
@@ -84,28 +92,32 @@ class Canon:
         doc_date = Counter(dates).most_common(1)[0][0] if dates else None
         doc_id = new_id("doc")
         received = _now()
+        self.store.execute("INSERT INTO patients (account_id, id, created_at) VALUES (?,?,?) ON CONFLICT DO NOTHING",
+                           (self.account_id, pid, received))
         self.store.execute(
-            "INSERT INTO documents (id, patient_id, format, filename, source_name, received_at, document_date, "
-            "sha256, size, raw, info, items) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
-            (doc_id, pid, fmt, filename, source_name, received, doc_date, digest, len(raw), raw, json.dumps(info),
+            "INSERT INTO documents (id, account_id, patient_id, format, filename, source_name, received_at, "
+            "document_date, sha256, size, raw, info, items) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (doc_id, self.account_id, pid, fmt, filename, source_name, received, doc_date, digest, len(raw), raw, json.dumps(info),
              json.dumps(items)),
         )
-        if match.get("created"):
-            self.store.execute("INSERT INTO patients (id, created_at) VALUES (?,?)", (pid, received))
         for k in _match_keys(demo):
-            self.store.execute("INSERT OR IGNORE INTO patient_keys (key, patient_id) VALUES (?,?)", (k, pid))
-        self.store.audit(ts=received, event="document.ingested", actor=actor, patient_id=pid, document_id=doc_id,
+            self.store.execute("INSERT INTO patient_keys (account_id, key, patient_id) VALUES (?,?,?) "
+                               "ON CONFLICT DO NOTHING", (self.account_id, k, pid))
+        self.store.audit(ts=received, event="document.ingested", actor=actor, account_id=self.account_id,
+                         patient_id=pid, document_id=doc_id,
                          detail={"format": fmt, "sha256": digest, "facts": len(facts), "match": match["method"]})
+        if self.on_document_ingested:
+            self.on_document_ingested(self.account_id, doc_id)
         return {"document": self.get_document(doc_id), "patient_id": pid, "match": match}
 
     def _match_patient(self, patient_id: str | None, demo: dict) -> dict:
         keys = _match_keys(demo)
         if patient_id:
-            exists = self.store.one("SELECT id FROM patients WHERE id=?", (patient_id,))
+            exists = self.store.one("SELECT id FROM patients WHERE id=? AND account_id=?", (patient_id, self.account_id))
             out = {"patient_id": patient_id, "method": "explicit", "confidence": 1.0, "created": not exists}
             if exists and keys:
-                known = {r["key"] for r in self.store.all("SELECT key FROM patient_keys WHERE patient_id=?",
-                                                          (patient_id,))}
+                known = {r["key"] for r in self.store.all(
+                    "SELECT key FROM patient_keys WHERE account_id=? AND patient_id=?", (self.account_id, patient_id))}
                 fam_dob = [k for k in keys if k.startswith("fam_dob:")]
                 known_fd = [k for k in known if k.startswith("fam_dob:")]
                 if fam_dob and known_fd and not set(fam_dob) & set(known_fd):
@@ -113,7 +125,8 @@ class Canon:
                                       f"({fam_dob[0][8:]} vs {known_fd[0][8:]}). Check for a misfiled document.")
             return out
         for k in keys:
-            rows = self.store.all("SELECT DISTINCT patient_id FROM patient_keys WHERE key=?", (k,))
+            rows = self.store.all("SELECT DISTINCT patient_id FROM patient_keys WHERE account_id=? AND key=?",
+                                  (self.account_id, k))
             if len(rows) == 1:
                 return {"patient_id": rows[0]["patient_id"], "created": False,
                         "method": "identifier" if k.startswith("id:") else "name_dob",
@@ -125,7 +138,7 @@ class Canon:
 
     # ------------------------------------------------------------------ reads
     def get_document(self, doc_id: str, include_items: bool = False) -> dict:
-        r = self.store.one("SELECT * FROM documents WHERE id=?", (doc_id,))
+        r = self.store.one("SELECT * FROM documents WHERE id=? AND account_id=?", (doc_id, self.account_id))
         if not r:
             raise CanonError("not_found", f"No document {doc_id}", 404)
         items = json.loads(r["items"])
@@ -140,14 +153,15 @@ class Canon:
 
     def list_patients(self) -> list[dict]:
         out = []
-        for r in self.store.all("SELECT id FROM patients ORDER BY created_at"):
+        for r in self.store.all("SELECT id FROM patients WHERE account_id=? ORDER BY created_at", (self.account_id,)):
             rec = self.record(r["id"], actor=None)
             out.append({"patient_id": r["id"], "name": (rec["patient"].get("names") or [None])[0],
                         "birth_date": rec["patient"].get("birth_date"), "documents": len(rec["sources"])})
         return out
 
     def record(self, patient_id: str, actor: str | None = "api") -> dict:
-        rows = self.store.all("SELECT * FROM documents WHERE patient_id=? ORDER BY received_at", (patient_id,))
+        rows = self.store.all("SELECT * FROM documents WHERE account_id=? AND patient_id=? ORDER BY received_at",
+                              (self.account_id, patient_id))
         if not rows:
             raise CanonError("not_found", f"No patient {patient_id}", 404)
         items: list[tuple[str, dict]] = []
@@ -162,7 +176,8 @@ class Canon:
                 (unmapped.append(it) if kind == "unmapped" else items.append((kind, it)))
         rec = build_record(patient_id, items, sources, unmapped)
         if actor:
-            self.store.audit(ts=_now(), event="record.read", actor=actor, patient_id=patient_id,
+            self.store.audit(ts=_now(), event="record.read", actor=actor, account_id=self.account_id,
+                             patient_id=patient_id,
                              detail={"documents": len(rows)})
         return rec
 
@@ -229,7 +244,7 @@ class Canon:
         return to_fhir_bundle(self.record(patient_id))
 
     def audit_log(self, patient_id: str | None = None, limit: int = 100) -> list[dict]:
-        return self.store.audit_entries([patient_id] if patient_id else None, limit)
+        return self.store.audit_entries(self.account_id, patient_id, limit)
 
 
 def _med_line(m: dict) -> dict:

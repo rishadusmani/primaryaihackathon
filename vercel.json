@@ -3,7 +3,9 @@
   "framework": "python",
   "functions": {
     "app.py": {
-      "excludeFiles": "{tests/**,examples/**,**/*.db}"
+      "maxDuration": 60,
+      "excludeFiles": "{tests/**,examples/**,migrations/**,**/*.db}"
     }
-  }
+  },
+  "crons": [{ "path": "/v1/billing/sync", "schedule": "17 4 * * *" }]
 }
