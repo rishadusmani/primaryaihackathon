@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canon Agent Usage</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f6f6f4;
+    --surface: #fcfcfb;
+    --border: #e4e3df;
+    --grid: #ecebe7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #7a7974;
+    --accent: #2a78d6;
+    --series-ok: #2a78d6;
+    --series-err: #e34948;
+    --bar-track: #e6effa;
+    --good: #0f7a3a;
+    --bad: #b42323;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #121211;
+      --surface: #1a1a19;
+      --border: #2e2e2b;
+      --grid: #272725;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted: #8f8e86;
+      --accent: #3987e5;
+      --series-ok: #3987e5;
+      --series-err: #e66767;
+      --bar-track: #1f2e42;
+      --good: #4cc27a;
+      --bad: #f08080;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #121211;
+    --surface: #1a1a19;
+    --border: #2e2e2b;
+    --grid: #272725;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #8f8e86;
+    --accent: #3987e5;
+    --series-ok: #3987e5;
+    --series-err: #e66767;
+    --bar-track: #1f2e42;
+    --good: #4cc27a;
+    --bad: #f08080;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text-primary);
+    font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 24px 16px 48px; }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  h1 { font-size: 20px; margin: 0; font-weight: 600; }
+  h2 { font-size: 15px; margin: 0 0 2px; font-weight: 600; }
+  .sub { color: var(--text-secondary); font-size: 13px; }
+  .muted { color: var(--text-muted); }
+  .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface); }
+  .seg button { border: 0; background: transparent; color: var(--text-secondary); padding: 6px 12px; font: inherit; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .btn { border: 1px solid var(--border); background: var(--surface); color: var(--text-primary); border-radius: 8px; padding: 6px 12px; font: inherit; cursor: pointer; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .grid { display: grid; gap: 16px; }
+  .kpis { grid-template-columns: repeat(6, 1fr); margin-bottom: 16px; }
+  @media (max-width: 960px) { .kpis { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 560px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+  .kpi .label { color: var(--text-secondary); font-size: 13px; }
+  .kpi .value { font-size: 26px; font-weight: 600; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .kpi .note { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
+  .kpi.hero .value { font-size: 48px; line-height: 1.1; margin-top: 0; }
+  @media (max-width: 560px) { .kpi.hero .value { font-size: 36px; } }
+  .two { grid-template-columns: 2fr 1fr; margin-bottom: 16px; }
+  @media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
+  .chart-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .legend { display: flex; gap: 14px; color: var(--text-secondary); font-size: 12px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .chart { position: relative; }
+  .chart svg { display: block; width: 100%; height: 240px; overflow: visible; }
+  .chart text { fill: var(--text-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .tip {
+    position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; font-size: 12px; box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    white-space: nowrap; display: none; z-index: 2;
+  }
+  .tip b { display: block; margin-bottom: 4px; }
+  .tip .row { display: flex; justify-content: space-between; gap: 16px; color: var(--text-secondary); }
+  .tip .row span:last-child { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: var(--text-secondary); font-weight: 500; padding: 8px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 8px 8px; border-bottom: 1px solid var(--grid); vertical-align: middle; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .scroll { overflow-x: auto; }
+  code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .bar { height: 8px; border-radius: 4px; background: var(--bar-track); min-width: 60px; }
+  .bar > span { display: block; height: 100%; border-radius: 4px; background: var(--series-ok); }
+  .status { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+  .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--good); }
+  .status.err::before { background: var(--bad); }
+  .split { display: flex; flex-direction: column; gap: 14px; }
+  .split .rowline { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .signin { max-width: 420px; margin: 10vh auto; }
+  .signin input { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text-primary); font: inherit; margin: 12px 0; }
+  .error { color: var(--bad); font-size: 13px; min-height: 18px; }
+  details summary { cursor: pointer; color: var(--text-secondary); font-size: 13px; margin-top: 10px; }
+  .empty { color: var(--text-muted); padding: 24px 0; text-align: center; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section id="signin" class="card signin" hidden>
+    <h1>Agent usage</h1>
+    <p class="sub">Sign in with your Canon API key to see how your agents use the API.</p>
+    <form id="signin-form">
+      <label for="key" class="sub">API key</label>
+      <input id="key" type="password" autocomplete="off" placeholder="sk-..." required>
+      <div class="error" id="signin-error"></div>
+      <button class="btn primary" type="submit">View usage</button>
+    </form>
+    <p class="muted" style="font-size:12px;margin-top:16px">Your key stays in this browser and is sent only to this Canon API.</p>
+  </section>
+
+  <main id="app" hidden>
+    <header>
+      <div>
+        <h1>Agent usage</h1>
+        <div class="sub" id="scope"></div>
+      </div>
+      <div class="controls">
+        <div class="seg" role="group" aria-label="Time range">
+          <button data-days="7">7 days</button>
+          <button data-days="30">30 days</button>
+          <button data-days="90">90 days</button>
+        </div>
+        <button class="btn" id="refresh" title="Refresh">Refresh</button>
+        <button class="btn" id="signout">Sign out</button>
+      </div>
+    </header>
+
+    <div class="grid kpis" id="kpis"></div>
+
+    <div class="grid two">
+      <section class="card">
+        <div class="chart-head">
+          <div>
+            <h2>Requests per day</h2>
+            <div class="sub" id="chart-sub"></div>
+          </div>
+          <div class="legend">
+            <span><i style="background:var(--series-ok)"></i>Successful</span>
+            <span><i style="background:var(--series-err)"></i>Errors</span>
+          </div>
+        </div>
+        <div class="chart" id="chart"><div class="tip" id="tip"></div></div>
+        <details>
+          <summary>Show as table</summary>
+          <div class="scroll"><table id="daily-table"></table></div>
+        </details>
+      </section>
+      <section class="card">
+        <h2>Where requests come from</h2>
+        <div class="sub" style="margin-bottom:14px">By channel</div>
+        <div class="split" id="channels"></div>
+        <h2 style="margin-top:22px">LLM extraction</h2>
+        <div class="sub" style="margin-bottom:10px">Tokens used reading scanned documents</div>
+        <div class="split" id="tokens"></div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-bottom:16px">
+      <h2>Operations</h2>
+      <div class="sub" style="margin-bottom:8px">Endpoints and agent tools your agents called</div>
+      <div class="scroll"><table id="ops"></table></div>
+    </section>
+
+    <section class="card">
+      <h2>Recent requests</h2>
+      <div class="sub" style="margin-bottom:8px">Latest 50</div>
+      <div class="scroll"><table id="recent"></table></div>
+    </section>
+  </main>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} },
+  };
+  let key = store.get("canon_key");
+  let days = Number(store.get("canon_days")) || 30;
+  let last = null;
+
+  const nf = new Intl.NumberFormat();
+  const compact = (n) => n >= 10000 ? new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 }).format(n) : nf.format(n);
+  const ms = (v) => v == null ? "–" : v >= 1000 ? (v / 1000).toFixed(2) + " s" : Math.round(v) + " ms";
+  const pct = (v) => (v * 100).toFixed(v > 0 && v < 0.01 ? 2 : 1) + "%";
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const bytes = (b) => b < 1024 ? b + " B" : b < 1048576 ? (b / 1024).toFixed(1) + " KB" : (b / 1048576).toFixed(1) + " MB";
+  const shortDate = (iso) => new Date(iso + "T00:00:00Z").toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC" });
+  const when = (ts) => new Date(ts).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+
+  async function load() {
+    const headers = key ? { Authorization: "Bearer " + key } : {};
+    let res;
+    try {
+      res = await fetch("/v1/usage?days=" + days, { headers });
+    } catch (e) {
+      return showSignin("Could not reach the API.");
+    }
+    if (res.status === 401) return showSignin(key ? "That API key was not accepted." : "");
+    if (!res.ok) return showSignin("The API returned " + res.status + ".");
+    render(await res.json());
+  }
+
+  function showSignin(msg) {
+    $("app").hidden = true;
+    $("signin").hidden = false;
+    $("signin-error").textContent = msg || "";
+    $("key").focus();
+  }
+
+  function render(u) {
+    last = u;
+    $("signin").hidden = true;
+    $("app").hidden = false;
+    document.querySelectorAll(".seg button").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.days) === days)));
+    $("signout").hidden = !key;
+    const who = u.client_id ? "API client " + esc(u.client_id) : "Sandbox (all clients)";
+    $("scope").innerHTML = who + " · " + shortDate(u.period.start) + " – " + shortDate(u.period.end);
+
+    const t = u.totals;
+    const tokens = t.llm_input_tokens + t.llm_output_tokens;
+    const kpi = (label, value, note, hero) =>
+      `<div class="card kpi${hero ? " hero" : ""}"><div class="label">${label}</div><div class="value">${value}</div>${note ? `<div class="note">${note}</div>` : ""}</div>`;
+    $("kpis").innerHTML = [
+      kpi("Requests", compact(t.requests), `${nf.format(Math.round(t.requests / u.period.days))} per day on average`, true),
+      kpi("Error rate", pct(t.error_rate), `${nf.format(t.errors)} failed requests`),
+      kpi("Latency p95", ms(t.latency_p95_ms), `median ${ms(t.latency_p50_ms)}`),
+      kpi("Documents ingested", compact(t.documents_ingested), bytes(t.bytes_ingested) + " uploaded"),
+      kpi("Patients accessed", compact(t.patients_accessed), "distinct patient records"),
+      kpi("LLM tokens", compact(tokens), "scanned-document extraction"),
+    ].join("");
+
+    drawChart(u.daily);
+    $("chart-sub").textContent = `${nf.format(t.requests)} requests in the last ${u.period.days} days`;
+    $("daily-table").innerHTML = `<tr><th>Date</th><th class="num">Requests</th><th class="num">Errors</th><th class="num">LLM tokens</th></tr>` +
+      u.daily.slice().reverse().map((d) => `<tr><td>${shortDate(d.date)}</td><td class="num">${nf.format(d.requests)}</td><td class="num">${nf.format(d.errors)}</td><td class="num">${nf.format(d.llm_tokens)}</td></tr>`).join("");
+
+    const chanLabels = { api: "HTTP API & tool calls", mcp: "MCP server" };
+    const chans = Object.entries(u.channels).sort((a, b) => b[1] - a[1]);
+    $("channels").innerHTML = chans.length ? chans.map(([c, n]) => meter(chanLabels[c] || c, n, t.requests)).join("")
+      : `<div class="muted">No requests yet.</div>`;
+    $("tokens").innerHTML = tokens
+      ? meter("Input tokens", t.llm_input_tokens, tokens) + meter("Output tokens", t.llm_output_tokens, tokens)
+      : `<div class="muted">No LLM extraction in this period. Structured formats and text PDFs are parsed without a model.</div>`;
+
+    const maxOp = Math.max(1, ...u.operations.map((o) => o.requests));
+    $("ops").innerHTML = u.operations.length
+      ? `<tr><th>Operation</th><th style="width:30%">Requests</th><th class="num"></th><th class="num">Errors</th><th class="num">p50</th><th class="num">p95</th></tr>` +
+        u.operations.map((o) => `<tr><td><code>${esc(o.operation)}</code></td>
+          <td><div class="bar" title="${nf.format(o.requests)} requests"><span style="width:${(o.requests / maxOp) * 100}%"></span></div></td>
+          <td class="num">${nf.format(o.requests)}</td>
+          <td class="num">${o.errors ? `${nf.format(o.errors)} <span class="muted">(${pct(o.errors / o.requests)})</span>` : "0"}</td>
+          <td class="num">${ms(o.latency_p50_ms)}</td><td class="num">${ms(o.latency_p95_ms)}</td></tr>`).join("")
+      : `<tr><td class="empty">No requests in this period. Point your agent at this API and calls will appear here.</td></tr>`;
+
+    const showClient = u.recent.some((r) => r.client_id);
+    $("recent").innerHTML = u.recent.length
+      ? `<tr><th>Time</th>${showClient ? "<th>Client</th>" : ""}<th>Operation</th><th>Status</th><th>Patient</th><th class="num">Latency</th><th class="num">LLM tokens</th></tr>` +
+        u.recent.map((r) => `<tr><td class="muted" style="white-space:nowrap">${when(r.ts)}</td>${showClient ? `<td>${esc(r.client_id)}</td>` : ""}
+          <td><code>${esc(r.operation)}</code> <span class="muted">${r.channel === "mcp" ? "MCP" : ""}</span></td>
+          <td><span class="status${r.status >= 400 ? " err" : ""}">${r.status}</span></td>
+          <td>${r.patient_id ? `<code>${esc(r.patient_id)}</code>` : '<span class="muted">–</span>'}</td>
+          <td class="num">${ms(r.latency_ms)}</td><td class="num">${r.llm_tokens ? nf.format(r.llm_tokens) : '<span class="muted">–</span>'}</td></tr>`).join("")
+      : `<tr><td class="empty">Nothing yet.</td></tr>`;
+  }
+
+  function meter(label, n, total) {
+    const share = total ? n / total : 0;
+    return `<div><div class="rowline"><span>${esc(label)}</span><span class="num">${nf.format(n)} <span class="muted">${pct(share)}</span></span></div>
+      <div class="bar"><span style="width:${share * 100}%"></span></div></div>`;
+  }
+
+  // Round tick step (1/2/5 x 10^n) for about 4 gridlines; never 62.5
+  function niceScale(v) {
+    const raw = Math.max(1, v / 4);
+    const p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const step = [1, 2, 5, 10].map((m) => m * p).find((s) => s >= raw);
+    return { step, max: Math.max(step, Math.ceil(v / step) * step) };
+  }
+
+  function drawChart(daily) {
+    const el = $("chart");
+    const tip = $("tip");
+    el.querySelector("svg")?.remove();
+    const W = Math.max(280, el.clientWidth), H = 240, L = 40, R = 8, T = 10, B = 26;
+    const { step, max } = niceScale(Math.max(0, ...daily.map((d) => d.requests)));
+    const n = daily.length, band = (W - L - R) / n;
+    const bw = Math.max(2, Math.min(24, band - 2));
+    const y = (v) => T + (H - T - B) * (1 - v / max);
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", "Requests per day, successful and errors");
+    let s = "";
+    for (let v = 0; v <= max; v += step) {
+      const yy = y(v);
+      s += `<line x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}" stroke="var(--grid)" stroke-width="1"/>`;
+      s += `<text x="${L - 6}" y="${yy + 3.5}" text-anchor="end">${compact(v)}</text>`;
+    }
+    const every = Math.ceil(n / Math.max(2, Math.floor((W - L - R) / 64)));
+    // 4px rounded data-end, square at the baseline
+    const col = (x, top, bottom, r) => {
+      const h = bottom - top;
+      if (h <= 0) return "";
+      r = Math.min(r, h, bw / 2);
+      return `M${x},${bottom}V${top + r}Q${x},${top} ${x + r},${top}H${x + bw - r}Q${x + bw},${top} ${x + bw},${top + r}V${bottom}Z`;
+    };
+    daily.forEach((d, i) => {
+      const x = L + i * band + (band - bw) / 2;
+      const ok = d.requests - d.errors;
+      const base = y(0);
+      const okTop = y(ok);
+      if (d.errors > 0) {
+        // errors stack on top; 2px surface gap between segments
+        if (ok > 0) s += `<path d="M${x},${base}V${okTop}H${x + bw}V${base}Z" fill="var(--series-ok)"/>`;
+        const errBottom = ok > 0 ? okTop - 2 : base;
+        s += `<path d="${col(x, Math.min(y(d.requests), errBottom - 1), errBottom, 4)}" fill="var(--series-err)"/>`;
+      } else if (ok > 0) {
+        s += `<path d="${col(x, okTop, base, 4)}" fill="var(--series-ok)"/>`;
+      }
+      if (i % every === 0 || i === n - 1) {
+        if (i === n - 1 || n - 1 - i >= every / 2) s += `<text x="${x + bw / 2}" y="${H - 8}" text-anchor="middle">${shortDate(d.date)}</text>`;
+      }
+      s += `<rect class="hit" data-i="${i}" x="${L + i * band}" y="${T}" width="${band}" height="${H - T - B}" fill="transparent"/>`;
+    });
+    s += `<line x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}" stroke="var(--border)" stroke-width="1"/>`;
+    s += `<rect id="hover-band" x="0" y="${T}" width="${band}" height="${H - T - B}" fill="var(--text-primary)" opacity="0" pointer-events="none"/>`;
+    svg.innerHTML = s;
+    el.insertBefore(svg, tip);
+    const hb = svg.querySelector("#hover-band");
+    svg.addEventListener("pointermove", (e) => {
+      const r = e.target.closest?.(".hit");
+      if (!r) return;
+      const i = Number(r.dataset.i), d = daily[i];
+      hb.setAttribute("x", L + i * band);
+      hb.setAttribute("opacity", "0.05");
+      tip.innerHTML = `<b>${shortDate(d.date)}</b>
+        <div class="row"><span>Successful</span><span>${nf.format(d.requests - d.errors)}</span></div>
+        <div class="row"><span>Errors</span><span>${nf.format(d.errors)}</span></div>
+        <div class="row"><span>LLM tokens</span><span>${nf.format(d.llm_tokens)}</span></div>`;
+      tip.style.display = "block";
+      const box = el.getBoundingClientRect();
+      const px = (L + (i + 0.5) * band) * (box.width / W);
+      const left = Math.min(Math.max(0, px - tip.offsetWidth / 2), box.width - tip.offsetWidth);
+      tip.style.left = left + "px";
+      tip.style.top = "-8px";
+    });
+    svg.addEventListener("pointerleave", () => { tip.style.display = "none"; hb.setAttribute("opacity", "0"); });
+  }
+
+  $("signin-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    key = $("key").value.trim();
+    store.set("canon_key", key);
+    load();
+  });
+  $("signout").addEventListener("click", () => { key = null; store.set("canon_key", null); $("key").value = ""; load(); });
+  $("refresh").addEventListener("click", load);
+  document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
+    days = Number(b.dataset.days);
+    store.set("canon_days", String(days));
+    load();
+  }));
+  let resizeTimer;
+  window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => last && drawChart(last.daily), 150); });
+  load();
+})();
+</script>
+</body>
+</html>

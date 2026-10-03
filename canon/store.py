@@ -1,5 +1,6 @@
 """SQLite persistence: patients, ingested documents (raw bytes kept for
-re-processing) and a hash-chained, tamper-evident audit log of every read and write."""
+re-processing), a hash-chained, tamper-evident audit log of every read and write,
+and per-request usage metering for the customer dashboard."""
 
 from __future__ import annotations
 
@@ -49,6 +50,21 @@ CREATE TABLE IF NOT EXISTS audit (
     prev_hash TEXT NOT NULL,
     hash TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS usage (
+    seq INTEGER PRIMARY KEY AUTOINCREMENT,
+    ts TEXT NOT NULL,
+    client_id TEXT NOT NULL,
+    channel TEXT NOT NULL,
+    operation TEXT NOT NULL,
+    status INTEGER NOT NULL,
+    latency_ms REAL NOT NULL,
+    bytes_in INTEGER NOT NULL DEFAULT 0,
+    bytes_out INTEGER NOT NULL DEFAULT 0,
+    patient_id TEXT,
+    llm_input_tokens INTEGER NOT NULL DEFAULT 0,
+    llm_output_tokens INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS usage_client_ts ON usage(client_id, ts);
 """
 
 GENESIS = "0" * 64

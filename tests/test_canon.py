@@ -4,6 +4,7 @@ import json
 import os
 import threading
 import unittest
+import urllib.error
 import urllib.request
 
 from canon import terminology as T
@@ -227,6 +228,81 @@ class InterfacesTest(unittest.TestCase):
             self.assertTrue(v["valid"])
         finally:
             srv.shutdown()
+
+
+
+class UsageTest(unittest.TestCase):
+    def _serve(self, canon):
+        from canon.api import make_handler
+        from http.server import ThreadingHTTPServer
+        srv = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(canon))
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        self.addCleanup(srv.server_close)
+        self.addCleanup(srv.shutdown)
+        return f"http://127.0.0.1:{srv.server_port}"
+
+    @staticmethod
+    def _get(url, key=None, data=None):
+        req = urllib.request.Request(url, data=data, method="POST" if data is not None else "GET")
+        if key:
+            req.add_header("Authorization", f"Bearer {key}")
+        try:
+            with urllib.request.urlopen(req) as r:
+                return r.status, r.read()
+        except urllib.error.HTTPError as e:
+            return e.code, e.read()
+
+    def test_usage_is_metered_per_api_key(self):
+        os.environ["CANON_API_KEYS"] = "ka:acme,kb:globex"
+        self.addCleanup(os.environ.pop, "CANON_API_KEYS")
+        base = self._serve(Canon())
+        with open(SAMPLES[1], "rb") as fh:
+            st, body = self._get(base + "/v1/documents?filename=labs.hl7", "ka", fh.read())
+        self.assertEqual(st, 201)
+        pid = json.loads(body)["patient_id"]
+        self._get(f"{base}/v1/patients/{pid}/summary", "ka")
+        self._get(f"{base}/v1/patients/nope/summary", "ka")
+        self._get(base + "/v1/tools/get_conflicts", "ka", json.dumps({"patient_id": pid}).encode())
+        self._get(base + "/v1/patients", "kb")
+        self.assertEqual(self._get(base + "/v1/usage", "bad")[0], 401)
+
+        u = json.loads(self._get(base + "/v1/usage?days=7", "ka")[1])
+        self.assertEqual(u["client_id"], "acme")
+        self.assertEqual(u["totals"]["requests"], 4)          # /v1/usage itself is not metered
+        self.assertEqual(u["totals"]["errors"], 1)
+        self.assertEqual(u["totals"]["documents_ingested"], 1)
+        self.assertEqual(u["totals"]["patients_accessed"], 1)
+        ops = {o["operation"]: o["requests"] for o in u["operations"]}
+        self.assertEqual(ops, {"documents.ingest": 1, "patients.summary": 2, "tool.get_conflicts": 1})
+        self.assertEqual(len(u["daily"]), 7)
+        self.assertEqual(sum(d["requests"] for d in u["daily"]), 4)
+        self.assertNotIn("clients", u)
+        self.assertEqual(u["recent"][0]["patient_id"], pid)   # tool call attributed via its arguments
+
+        g = json.loads(self._get(base + "/v1/usage", "kb")[1])
+        self.assertEqual(g["totals"]["requests"], 1)          # tenants never see each other's usage
+
+    def test_dashboard_served_without_key(self):
+        os.environ["CANON_API_KEYS"] = "ka:acme"
+        self.addCleanup(os.environ.pop, "CANON_API_KEYS")
+        st, body = self._get(self._serve(Canon()) + "/dashboard")
+        self.assertEqual(st, 200)
+        self.assertIn(b"/v1/usage", body)
+
+    def test_mcp_tool_calls_and_llm_tokens_are_metered(self):
+        from canon import usage
+        c = Canon()
+        pid = load_all(c)
+        handle(c, {"jsonrpc": "2.0", "id": 1, "method": "tools/call",
+                   "params": {"name": "get_patient_summary", "arguments": {"patient_id": pid}}})
+        usage.record(c.store, client_id="local", channel="api", operation="documents.ingest", status=201,
+                     latency_ms=900, body={"document": {"extraction": {"llm_usage": {"input_tokens": 1200,
+                                                                                     "output_tokens": 300}}}})
+        u = usage.summarize(c.store, None)
+        self.assertEqual(u["channels"], {"mcp": 1, "api": 1})
+        self.assertEqual(u["totals"]["llm_input_tokens"], 1200)
+        self.assertEqual(u["daily"][-1]["llm_tokens"], 1500)
+        self.assertEqual(u["recent"][-1]["operation"], "tool.get_patient_summary")
 
 
 if __name__ == "__main__":

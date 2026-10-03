@@ -76,6 +76,24 @@ curl localhost:8080/v1/audit/verify               # tamper-evident access log
 | `GET /v1/patients/{id}/fhir` | FHIR R4 Bundle export |
 | `GET /v1/tools`, `POST /v1/tools/{name}` | Agent tool schemas and execution |
 | `GET /v1/audit`, `GET /v1/audit/verify` | Hash-chained log of every ingest and record read |
+| `GET /v1/usage?days=30` | This API key's agent usage: requests, errors, latency, documents, patients, LLM tokens |
+| `GET /dashboard` | Customer usage dashboard (HTML) |
+
+### Usage dashboard
+
+Open `http://localhost:8080/dashboard` and sign in with your API key. You see
+only your own key's usage over the last 7, 30 or 90 days:
+
+- requests, error rate, p50/p95 latency, documents ingested, distinct patients
+  accessed, and LLM tokens spent reading scanned documents
+- requests per day (successful vs. errors), with a table view
+- a breakdown by endpoint and agent tool (`patients.summary`, `tool.get_conflicts`, ...)
+- HTTP API vs. MCP traffic, and the 50 most recent requests
+
+Every metered request is one row in the `usage` table, keyed by the client name
+from `CANON_API_KEYS`. Calls to `/v1/usage` itself are not counted. In sandbox
+mode (no keys) the dashboard shows all traffic. MCP tool calls are metered to
+`CANON_CLIENT_ID` (default `local`) in the MCP server's own database.
 
 ### Hosting on Vercel
 
@@ -84,7 +102,7 @@ curl localhost:8080/v1/audit/verify               # tamper-evident access log
 
 - Set `CANON_API_KEYS` in the Vercel project; without it the API is open.
 - The SQLite database lives in `/tmp`, which is per instance and wiped on cold
-  starts. Each new instance reloads `samples/maria_chen`, so patient IDs change
+  starts. Usage history (and so the dashboard) resets with it. Each new instance reloads `samples/maria_chen`, so patient IDs change
   between instances and uploaded documents are not kept. Use a hosted database
   for anything durable. Set `CANON_SEED_SAMPLES=0` to skip the sample load.
 
@@ -142,6 +160,8 @@ canon/
   tools.py         agent tool definitions + dispatcher
   api.py           HTTP API      mcp_server.py   MCP over stdio
   store.py         SQLite + hash-chained audit log
+  usage.py         per-request metering + aggregates for /v1/usage
+  dashboard.html   customer usage dashboard served at /dashboard
 samples/maria_chen/  one patient across 7 messy sources
 tests/               end-to-end and unit tests
 ```

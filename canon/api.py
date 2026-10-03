@@ -11,6 +11,8 @@
     POST /v1/tools/{name}               JSON args -> tool result
     GET  /v1/audit[?patient_id=]        hash-chained access log
     GET  /v1/audit/verify
+    GET  /v1/usage?days=30              this API key's request volume, errors, latency, LLM tokens
+    GET  /dashboard                     customer usage dashboard (HTML; signs in with the API key)
 
 Auth: set CANON_API_KEYS="key1:client-a,key2:client-b" and send
 `Authorization: Bearer key1`. Unset = local sandbox mode (no auth).
@@ -24,13 +26,42 @@ import json
 import os
 import re
 import threading
+import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
+from . import usage
 from .service import Canon, CanonError
 from .tools import TOOLS_BY_NAME, anthropic_tools, call_tool, mcp_tools, openai_tools
 
 MAX_BODY = 25 * 1024 * 1024
+DASHBOARD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dashboard.html")
+UNMETERED = {"health", "usage"}  # requests about the account, not agent work
+
+
+def _operation(method: str, path: str) -> str:
+    """Stable operation name for metering, e.g. patients.summary or tool.get_conflicts."""
+    if path in ("", "/healthz"):
+        return "health"
+    if path == "/v1/usage":
+        return "usage"
+    if path == "/v1/documents":
+        return "documents.ingest" if method == "POST" else "unknown_route"
+    if re.fullmatch(r"/v1/documents/[\w-]+", path):
+        return "documents.get"
+    if path == "/v1/patients":
+        return "patients.list"
+    m = re.fullmatch(r"/v1/patients/[\w-]+/(record|summary|observations|fhir)", path)
+    if m:
+        return f"patients.{m.group(1)}"
+    if path == "/v1/tools":
+        return "tools.list"
+    m = re.fullmatch(r"/v1/tools/(\w+)", path)
+    if m and method == "POST":
+        return f"tool.{m.group(1)}" if m.group(1) in TOOLS_BY_NAME else "unknown_route"
+    if path in ("/v1/audit", "/v1/audit/verify"):
+        return path[4:].replace("/", ".")
+    return "unknown_route"
 
 
 def _keys() -> dict[str, str]:
@@ -52,6 +83,7 @@ def make_handler(canon: Canon):
         # ---------------------------------------------------------- helpers
         def _send(self, status: int, body: dict) -> None:
             data = json.dumps(body, indent=2).encode()
+            self._status, self._bytes_out, self._resp = status, len(data), body
             self.send_response(status)
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", str(len(data)))
@@ -74,23 +106,52 @@ def make_handler(canon: Canon):
                 raise CanonError("too_large", "Document exceeds 25 MB.", 413)
             return self.rfile.read(n) if n else b""
 
+        def _dashboard(self) -> None:
+            with open(DASHBOARD, "rb") as fh:
+                data = fh.read()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+
         def _route(self, method: str):
+            u = urlparse(self.path)
+            path = u.path.rstrip("/")
+            if method == "GET" and path == "/dashboard":  # static page; its data calls carry the key
+                return self._dashboard()
             client = self._client()
             if client is None:
                 return self._err(401, "unauthorized", "Missing or invalid API key.")
-            u = urlparse(self.path)
             q = {k: v[0] for k, v in parse_qs(u.query).items()}
-            path = u.path.rstrip("/")
             actor = f"client:{client}"
+            self._status, self._bytes_out, self._resp, self._pid = 500, 0, None, None
+            started = time.perf_counter()
             try:
                 with lock:
-                    return self._dispatch(method, path, q, actor)
+                    return self._dispatch(method, path, q, actor, client)
             except CanonError as e:
                 return self._err(e.status, e.code, e.message)
             except (ValueError, KeyError) as e:
                 return self._err(400, "bad_request", str(e))
+            finally:
+                self._meter(method, path, client, (time.perf_counter() - started) * 1000)
 
-        def _dispatch(self, method: str, path: str, q: dict, actor: str):
+        def _meter(self, method: str, path: str, client: str, latency_ms: float) -> None:
+            op = _operation(method, path)
+            if op in UNMETERED:
+                return
+            m = re.fullmatch(r"/v1/patients/([\w-]+)/\w+", path)
+            resp = self._resp if isinstance(self._resp, dict) else {}
+            pid = m.group(1) if m else self._pid or resp.get("patient_id")
+            try:
+                usage.record(canon.store, client_id=client, channel="api", operation=op, status=self._status,
+                             latency_ms=latency_ms, bytes_in=int(self.headers.get("Content-Length") or 0),
+                             bytes_out=self._bytes_out, patient_id=pid, body=resp)
+            except Exception:  # metering must never break the request
+                pass
+
+        def _dispatch(self, method: str, path: str, q: dict, actor: str, client: str):
             if method == "GET" and path in ("", "/healthz"):
                 return self._send(200, {"ok": True, "service": "canon", "docs": "/v1/tools"})
             if method == "POST" and path == "/v1/documents":
@@ -134,12 +195,16 @@ def make_handler(canon: Canon):
                 if m.group(1) not in TOOLS_BY_NAME:
                     return self._err(404, "unknown_tool", m.group(1))
                 args = json.loads(self._body() or b"{}")
+                self._pid = args.get("patient_id") if isinstance(args, dict) else None
                 out = call_tool(canon, m.group(1), args, actor=actor)
                 return self._send(200 if "error" not in out else 400, out)
             if method == "GET" and path == "/v1/audit":
                 return self._send(200, {"entries": canon.audit_log(q.get("patient_id"), int(q.get("limit", 100)))})
             if method == "GET" and path == "/v1/audit/verify":
                 return self._send(200, canon.store.verify_audit_chain())
+            if method == "GET" and path == "/v1/usage":
+                scope = None if not keys else client  # sandbox: one tenant, show everything
+                return self._send(200, usage.summarize(canon.store, scope, int(q.get("days", 30))))
             return self._err(404, "not_found", f"No route {method} {path}")
 
         def do_GET(self):
