@@ -50,6 +50,6 @@ CANONICAL_RECORD_DOC = {
     "conflicts[]": "Disagreements between sources the agent should surface rather than silently resolve",
     "sources[]": "Every document that contributed: id, format, source name, received_at",
     "unmapped[]": "Facts we extracted but could not map to a standard code (never silently dropped)",
-    "terminology": "On conditions, medications and observations: \"nlm_live\" when the code came from a live "
-                   "NLM lookup (RxNav / Clinical Tables) rather than Canon's built-in tables",
+    "terminology": "On conditions, medications and observations: \"live_lookup\" when the code came from a live "
+                   "public-terminology lookup (RxNorm, ICD-10-CM, LOINC) rather than Canon's built-in tables",
 }

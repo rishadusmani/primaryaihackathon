@@ -8,7 +8,7 @@ National Library of Medicine before giving up.
 Only exact or verifiably-equivalent matches are accepted. A fuzzy RxNav match is
 kept only if every ingredient it resolves to is named in the original text, so
 "Entresto" or "sacubitril/valsartan" resolve, but a near-miss spelling of some
-other drug never does. Everything returned carries `terminology: "nlm_live"` so
+other drug never does. Everything returned carries `terminology: "live_lookup"` so
 an agent can tell a table hit from a live one.
 
 Calls are bounded: short timeouts, an in-process cache (misses included), and a
@@ -32,7 +32,9 @@ import urllib.request
 
 CLINICAL_TABLES = "https://clinicaltables.nlm.nih.gov/api"
 RXNAV = "https://rxnav.nlm.nih.gov/REST"
-SOURCE = "nlm_live"
+# NLM's terms of service bar using the NLM name in applications, so the marker is generic;
+# the required attribution statement is in README.md and the demo page footer.
+SOURCE = "live_lookup"
 log = logging.getLogger(__name__)
 
 _cache: dict[tuple, dict | None] = {}

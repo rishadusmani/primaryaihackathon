@@ -149,6 +149,7 @@
   input:focus-visible, button:focus-visible, tr.row:focus-visible, textarea:focus-visible, label.btn:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
   a { color: var(--accent); }
   footer { color: var(--text-muted); font-size: 12px; margin-top: 24px; }
+  footer .attrib { font-size: 11px; margin: 8px 0 0; max-width: 900px; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   [hidden] { display: none !important; }
 </style>
@@ -232,7 +233,9 @@
 
   <footer>Playground: documents are processed in memory for this request only. Nothing is stored or billed, and LLM extraction is off.
     Use synthetic data. Agents use the same engine via the API and MCP server ·
-    <a href="https://github.com/rishadusmani/primaryaihackathon">source</a></footer>
+    <a href="https://github.com/rishadusmani/primaryaihackathon">source</a>
+    <p class="attrib">This product uses publicly available data from the U.S. National Library of Medicine (NLM), National Institutes of Health, Department of Health and Human Services; NLM is not responsible for the product and does not endorse or recommend this or any other product.</p>
+    <p class="attrib">This material contains content from LOINC® (<a href="https://loinc.org">loinc.org</a>). LOINC is copyright © Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under the license at <a href="https://loinc.org/terms-of-use">loinc.org/terms-of-use</a>. LOINC® is a registered United States trademark of Regenstrief Institute, Inc.</p></footer>
 </div>
 
 <script>
@@ -244,7 +247,7 @@
   const UNITS = { "[degF]": "°F", "[lb_av]": "lb", "[in_i]": "in", "mm[Hg]": "mmHg", "m[IU]/L": "mIU/L", "10*3/uL": "×10³/µL" };
   const unit = (u) => esc(UNITS[u] ?? u ?? "");
   const state = { docs: [], result: null, patient: 0, tab: "problems", walkthrough: null };
-  const live = (i) => i?.terminology === "nlm_live" ? ` <span class="chip live" title="Not in Canon's tables: looked up live in the NLM terminology services">NLM live</span>` : "";
+  const live = (i) => i?.terminology === "live_lookup" ? ` <span class="chip live" title="Not in Canon's tables: looked up live in public RxNorm, ICD-10-CM and LOINC data">live lookup</span>` : "";
 
   // ------------------------------------------------------------ inputs
   function renderDocs() {
@@ -290,7 +293,7 @@
     if (!state.walkthrough) return;
     $("wt-table").innerHTML = `<thead><tr><th>In the documents</th><th>Keyword matcher</th><th>Canon</th></tr></thead><tbody>` +
       state.walkthrough.map((w) => `<tr><td class="mono">“${esc(w.quote)}”</td><td class="naive">${esc(w.naive)}</td>
-        <td class="canon">${esc(w.canon)}${w.live ? ` <span class="chip live">NLM live</span>` : ""}</td></tr>`).join("") + "</tbody>";
+        <td class="canon">${esc(w.canon)}${w.live ? ` <span class="chip live">live lookup</span>` : ""}</td></tr>`).join("") + "</tbody>";
   }
 
   function b64(buf) {
@@ -358,7 +361,7 @@
   async function run() {
     if (!state.docs.length) return;
     const btn = $("run"); btn.disabled = true; btn.textContent = "Normalizing…"; $("error").textContent = "";
-    $("tab-body").innerHTML = `<div class="empty">Normalizing… (codes missing from Canon's tables are looked up live at NLM)</div>`;
+    $("tab-body").innerHTML = `<div class="empty">Normalizing… (codes missing from Canon's tables are looked up live)</div>`;
     try {
       state.result = await fetch("/v1/playground/normalize", {
         method: "POST", headers: { "Content-Type": "application/json" },
