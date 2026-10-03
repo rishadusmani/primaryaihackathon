@@ -214,5 +214,40 @@ class ExpansionRound2Test(unittest.TestCase):
         self.assertEqual([(x["text"], x["status"]) for x in f], [("chickenpox", "resolved")])
 
 
+class VaccineTest(unittest.TestCase):
+    def imms(self, note):
+        return [(f["text"], f["code"]) for f in text.parse(note) if f["kind"] == "immunization"]
+
+    def test_vaccines_are_verified_and_loaded(self):
+        self.assertGreaterEqual(len(T.VACCINES), 29)
+        for v in load("vaccines.json"):
+            self.assertEqual(T.lookup_vaccine(cvx=v["cvx"])["cvx"], v["cvx"], v["vaccine"])
+
+    def test_every_vaccine_in_a_line_is_recorded(self):
+        self.assertEqual(self.imms("HPI: MMR and varicella vaccines given today."), [("mmr", "03"), ("varicella", "21")])
+        self.assertEqual(self.imms("Immunizations: Pediarix, IPV, Hib, rotavirus given at 4 month visit."),
+                         [("dtap-hepb-ipv", "110"), ("ipv", "10"), ("hib", "17"), ("rotavirus", "122")])
+
+    def test_specific_products_win_over_generic_names(self):
+        self.assertEqual(self.imms("Immunizations:\n- MMRV (ProQuad) 06/2020"), [("mmrv", "94")])
+        self.assertEqual(self.imms("HPI: Beyfortus given for RSV prevention."), [("rsv monoclonal antibody", "315")])
+
+    def test_declined_or_recommended_is_not_given(self):
+        for note in ["HPI: Patient declined flu vaccine.", "HPI: Flu vaccine declined.",
+                     "HPI: Shingles vaccine recommended after recovery."]:
+            with self.subTest(note=note):
+                self.assertEqual(self.imms(note), [])
+        self.assertEqual(self.imms("HPI: Flu vaccine declined. Shingrix given."), [("zoster", "187")])
+
+    def test_products_given_without_the_word_vaccine(self):
+        self.assertEqual(self.imms("HPI: Tdap and Menveo given today."), [("tdap", "115"), ("meningococcal acwy", "108")])
+        self.assertEqual(self.imms("HPI: Patient received MMR at 12 months."), [("mmr", "03")])
+
+    def test_disease_names_need_a_vaccine_context(self):
+        self.assertEqual(self.imms("HPI: Given his RSV infection last month, start albuterol."), [])
+        self.assertEqual(self.imms("HPI: Polio as a child, now with post-polio syndrome."), [])
+        self.assertEqual(self.imms("HPI: Rabies exposure from dog bite, rabies vaccine given."), [("rabies", "90")])
+
+
 if __name__ == "__main__":
     unittest.main()
