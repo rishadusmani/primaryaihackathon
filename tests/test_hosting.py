@@ -246,3 +246,53 @@ class VercelEntryTest(unittest.TestCase):
         self.assertTrue(self.run_app({"CANON_API_KEYS": "k1:demo"}, "/v1/patients")["status"].startswith("401"))
         r = self.run_app({"CANON_API_KEYS": "k1:demo", "CANON_SEED_SAMPLES": "0"}, "/v1/patients", "Bearer k1")
         self.assertEqual(r["body"]["patients"], [])
+
+
+class PlaygroundTest(unittest.TestCase):
+    """The public demo page and its stateless playground API (works in production mode, no key)."""
+
+    def setUp(self):
+        self.store = Store(":memory:")
+        self.app = App(self.store, Billing(self.store, Stripe("")), sandbox=False)
+
+    def call(self, method, path, body=b""):
+        r = self.app.handle(method, path, {}, body if isinstance(body, bytes) else json.dumps(body).encode())
+        return r.status, r
+
+    def test_page_is_public(self):
+        st, r = self.call("GET", "/")
+        self.assertEqual(st, 200)
+        self.assertIn("text/html", r.content_type)
+        self.assertIn(b"/v1/playground/normalize", r.body)
+
+    def test_sample_patient_normalizes_without_storing(self):
+        st, r = self.call("GET", "/v1/playground/samples")
+        docs = json.loads(r.body)["documents"]
+        self.assertEqual(len(docs), 7)
+        st, r = self.call("POST", "/v1/playground/normalize", {"documents": docs})
+        self.assertEqual(st, 200)
+        out = json.loads(r.body)
+        self.assertEqual(len(out["patients"]), 1)
+        p = out["patients"][0]
+        self.assertEqual(p["stats"]["documents"], 7)
+        self.assertEqual({c["type"] for c in p["record"]["conflicts"]}, {"allergy_vs_nkda", "medication_discrepancy"})
+        self.assertTrue(all("error" not in d for d in out["documents"]))
+        # nothing persisted, nothing billed
+        self.assertIsNone(self.store.one("SELECT id FROM documents"))
+        self.assertIsNone(self.store.one("SELECT id FROM usage_events"))
+
+    def test_limits(self):
+        st, _ = self.call("POST", "/v1/playground/normalize", {"documents": [{"content": "x"}] * 13})
+        self.assertEqual(st, 413)
+        st, _ = self.call("POST", "/v1/playground/normalize", {"documents": []})
+        self.assertEqual(st, 400)
+
+    def test_bad_document_reported_not_fatal(self):
+        st, r = self.call("POST", "/v1/playground/normalize", {"documents": [
+            {"filename": "a.txt", "content": "Patient: Ann Lee DOB: 01/01/1960\nAllergies: Latex (hives)"},
+            {"filename": "bad.json", "content": "{\"resourceType\": \"Bundle\", \"entry\": [ broken"}]})
+        out = json.loads(r.body)
+        self.assertEqual(st, 200)
+        self.assertEqual(out["patients"][0]["record"]["allergies"][0]["substance"], "latex")
+        bad = next(d for d in out["documents"] if d["filename"] == "bad.json")
+        self.assertTrue(any("No clinical facts" in w for w in bad["warnings"]))

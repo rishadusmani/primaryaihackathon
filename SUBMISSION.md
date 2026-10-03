@@ -23,6 +23,7 @@ Healthcare data arrives as faxes, PDFs, HL7 feeds, C-CDA, FHIR, claims and CSVs 
 - **Conflicts surfaced, never hidden.** Examples: "Hospital says no known allergies, the fax says penicillin." "The portal still shows 500 mg." A diagnosis that appears only on a billing claim is flagged as such. Agents are told to check before acting.
 - **Every fact is cited.** Each item links to the source document, the exact location (`OBX[2]`, `line 31`) and a verbatim snippet, with a confidence score. Nothing is silently dropped: anything that can't be mapped is listed with a reason.
 - **Clinically careful text extraction.** Negation ("denies chest pain"), family history ("father had diabetes"), OCR repair ("5OO mg" → 500 mg) and medication start/stop/increase intent are all handled.
+- **See it in the browser.** A one-page demo: load the 7-document sample patient (or drop in your own files), see conflicts first, then coded problems, reconciled medications with change history, and lab trends. Click any item to see the exact line it came from.
 - **Built for agents.** A token-efficient patient summary, 9 tools in Anthropic/OpenAI/MCP formats, an MCP server, FHIR R4 export, and a Claude agent example. Scanned faxes can go through Claude with structured outputs, and every LLM-extracted fact must quote its evidence. Unverifiable quotes are downgraded.
 
 **How it's different from FHIR/HL7/SNOMED.** Those standards define the *envelope* and the *dictionary*. They don't make the data inside correct, de-duplicated or consistent. Canon consumes those standards and outputs them (FHIR R4 export). Its job is to make the data trustworthy enough for an agent to act on.
@@ -40,6 +41,7 @@ Python (standard library only for the core: zero runtime dependencies), Supabase
 
 ## Links
 - Repository: https://github.com/rishadusmani/primaryaihackathon
+- Live demo (web): https://primaryaihackathon.vercel.app → "Load sample patient" (no key needed once the latest `main` is deployed)
 - Live API: https://primaryaihackathon.vercel.app (demo deployment; requires `Authorization: Bearer <key>`. TODO: share a judge key, or remove `CANON_API_KEYS` so the demo is open)
 - Demo video: TODO
 
@@ -47,12 +49,13 @@ Python (standard library only for the core: zero runtime dependencies), Supabase
 ```bash
 git clone https://github.com/rishadusmani/primaryaihackathon && cd primaryaihackathon
 python -m canon normalize samples/maria_chen/*        # 7 messy documents → one record (no dependencies)
-python -m unittest discover -s tests                  # 37 tests
+python -m unittest discover -s tests                  # 41 tests
 python -m canon serve                                 # local API on :8080
 claude mcp add canon -- python -m canon mcp           # use it from Claude Code
 ```
 
 ## Demo script (for the video, ~2 minutes)
+0. **Tip:** the web demo (https://primaryaihackathon.vercel.app) is the easiest thing to screen-record. Steps 1–3 work there with one click.
 1. **Problem (15s).** Show the 7 sample files for one patient: a fax with OCR typos, an HL7 lab feed, a hospital C-CDA, a FHIR bundle, an insurance claim, a CSV and a PDF letter.
 2. **Normalize (30s).** Run `python -m canon normalize samples/maria_chen/*`. Point out that all seven are matched to one patient.
 3. **The catches (45s).** In the summary, show:

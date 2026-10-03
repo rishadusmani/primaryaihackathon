@@ -38,6 +38,14 @@ Every item carries `sources[]` (document, format, locator such as `OBX[2]` or
 `line 31`, the verbatim snippet) and a `confidence` score. Nothing that can't
 be mapped is dropped: it lands in `unmapped[]` with a reason.
 
+## Try it in the browser
+
+Open **https://primaryaihackathon.vercel.app** (or `python -m canon serve` → http://localhost:8080), click
+**Load sample patient**, and explore conflicts, coded problems, reconciled medications and lab trends. Click any
+item to see the exact source line it came from. The page uses the public playground API
+(`POST /v1/playground/normalize`), which processes documents in memory only: nothing is stored or billed, and
+LLM extraction is off.
+
 ## Quickstart (Python 3.10+, no dependencies)
 
 ```bash

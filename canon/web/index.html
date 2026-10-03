@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canon · Clinical data normalization</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%227%22 fill=%22%232554d8%22/%3E%3Cpath d=%22M21 11.5a7 7 0 1 0 0 9%22 stroke=%22white%22 stroke-width=%223.2%22 fill=%22none%22 stroke-linecap=%22round%22/%3E%3C/svg%3E">
+<meta name="description" content="Turn messy faxes, PDFs, HL7, FHIR, claims and portal exports into one coded, cited patient record that AI agents can act on.">
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --ink: #14171c; --muted: #5d6673; --line: #e3e6eb; --soft: #f0f2f5;
+  --accent: #2554d8; --accent-ink: #ffffff; --ok: #1e7f4f; --ok-bg: #e6f4ec; --warn: #9a5b00; --warn-bg: #fff3dc;
+  --bad: #b42318; --bad-bg: #fde9e7; --info-bg: #e9efff; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --radius: 10px; --shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0e1116; --panel: #161a21; --ink: #e8ebf0; --muted: #9aa4b2; --line: #272d37; --soft: #1d222b;
+    --accent: #6b8cff; --accent-ink: #0e1116; --ok: #5fd39a; --ok-bg: #12301f; --warn: #f2b54a; --warn-bg: #33270f;
+    --bad: #ff8a80; --bad-bg: #3a1714; --info-bg: #1b2440; --shadow: none; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--accent); }
+header { padding: 28px 16px 8px; max-width: 1240px; margin: 0 auto; }
+header h1 { margin: 0; font-size: 28px; letter-spacing: -.01em; }
+header h1 span { color: var(--accent); }
+header p { margin: 6px 0 0; color: var(--muted); max-width: 760px; }
+main { max-width: 1240px; margin: 0 auto; padding: 16px; display: grid; grid-template-columns: 340px 1fr; gap: 16px; align-items: start; }
+main > * { min-width: 0; }
+@media (max-width: 900px) { main { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.pad { padding: 16px; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 10px; }
+h3 { font-size: 16px; margin: 0; }
+button { font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--line); background: var(--soft); color: var(--ink); padding: 8px 12px; }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; width: 100%; padding: 11px; }
+button:disabled { opacity: .55; cursor: default; }
+button.link { background: none; border: none; color: var(--accent); padding: 0; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.drop { border: 1.5px dashed var(--line); border-radius: var(--radius); padding: 14px; text-align: center; color: var(--muted); margin: 10px 0; }
+.drop.over { border-color: var(--accent); background: var(--info-bg); }
+.docs { list-style: none; margin: 8px 0 12px; padding: 0; }
+.docs li { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.docs li:last-child { border-bottom: none; }
+.docs .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.docs .src { color: var(--muted); font-size: 12px; display: block; }
+.chip { display: inline-block; font-size: 11.5px; line-height: 18px; padding: 0 7px; border-radius: 999px; background: var(--soft); color: var(--muted); border: 1px solid var(--line); white-space: nowrap; font-family: var(--mono); }
+.chip.fmt { color: var(--accent); background: var(--info-bg); border-color: transparent; }
+.badge { font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.b-ok { background: var(--ok-bg); color: var(--ok); } .b-warn { background: var(--warn-bg); color: var(--warn); }
+.b-bad { background: var(--bad-bg); color: var(--bad); } .b-muted { background: var(--soft); color: var(--muted); }
+textarea { width: 100%; min-height: 90px; font: 13px/1.4 var(--mono); border: 1px solid var(--line); border-radius: 8px; background: var(--soft); color: var(--ink); padding: 8px; }
+.note { font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+.empty { padding: 48px 24px; text-align: center; color: var(--muted); }
+.empty strong { color: var(--ink); display: block; font-size: 18px; margin-bottom: 6px; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
+@media (max-width: 560px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+.stat { background: var(--panel); padding: 12px 14px; }
+.stat b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: 12.5px; }
+.patient { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; margin-bottom: 14px; }
+.patient h3 { font-size: 22px; }
+.conflict { display: grid; grid-template-columns: auto 1fr; gap: 10px; padding: 12px 14px; border-radius: var(--radius); margin-bottom: 8px; }
+.conflict.high { background: var(--bad-bg); } .conflict.medium { background: var(--warn-bg); }
+.conflict .ico { font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; color: #fff; }
+.conflict.high .ico { background: var(--bad); } .conflict.medium .ico { background: var(--warn); }
+.conflict .t { font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.conflict.high .t { color: var(--bad); } .conflict.medium .t { color: var(--warn); }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: 18px 0 0; overflow-x: auto; }
+.tab { border: none; background: none; border-bottom: 2px solid transparent; border-radius: 0; padding: 9px 12px; color: var(--muted); white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--ink); border-color: var(--accent); font-weight: 600; }
+.tab .n { font-size: 12px; color: var(--muted); margin-left: 4px; font-variant-numeric: tabular-nums; }
+.items { list-style: none; margin: 0; padding: 0; }
+.item { border-bottom: 1px solid var(--line); }
+.item > button { all: unset; box-sizing: border-box; width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 12px 4px; cursor: pointer; }
+.item > button:focus-visible { outline: 2px solid var(--accent); border-radius: 6px; }
+.item .title { font-weight: 600; }
+.item .sub { color: var(--muted); font-size: 13.5px; grid-column: 1; }
+.item .right { grid-row: 1 / span 2; grid-column: 2; display: flex; gap: 6px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
+.codes { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; grid-column: 1; }
+.prov { display: none; padding: 0 4px 14px; }
+.item.open .prov { display: block; }
+.src-row { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 10px; padding: 8px 10px; background: var(--soft); border-radius: 8px; margin-top: 6px; font-size: 13px; }
+.src-row .loc { font-family: var(--mono); color: var(--muted); }
+.src-row .snip { grid-column: 1 / -1; font-family: var(--mono); font-size: 12.5px; white-space: pre-wrap; word-break: break-word; border-left: 3px solid var(--accent); padding-left: 8px; }
+.conf { display: inline-block; width: 46px; height: 6px; background: var(--line); border-radius: 3px; vertical-align: middle; overflow: hidden; }
+.conf i { display: block; height: 100%; background: var(--ok); }
+.val { font-variant-numeric: tabular-nums; font-weight: 600; }
+.trend { color: var(--muted); font-size: 12px; }
+.hist { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.hist span { margin-right: 12px; white-space: nowrap; }
+pre.json { background: var(--soft); border-radius: 8px; padding: 12px; overflow: auto; max-height: 520px; font: 12.5px/1.45 var(--mono); margin: 12px 0 0; }
+.err { background: var(--bad-bg); color: var(--bad); padding: 10px 12px; border-radius: 8px; margin-top: 10px; font-size: 14px; }
+footer { max-width: 1240px; margin: 0 auto; padding: 8px 16px 40px; color: var(--muted); font-size: 13px; }
+.spinner { width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; display: inline-block; animation: spin .7s linear infinite; vertical-align: -3px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+</head>
+<body>
+<header>
+  <h1><span>Canon</span> · clinical data an agent can trust</h1>
+  <p>Drop in faxes, PDFs, HL7 v2, C-CDA, FHIR, X12 claims or portal CSVs. Canon matches the patient, maps everything to
+    ICD-10 / SNOMED / LOINC / RxNorm, converts units, merges duplicates, flags contradictions, and cites the source of every fact.</p>
+</header>
+
+<main>
+  <section class="panel pad" aria-labelledby="src-h">
+    <h2 id="src-h">Source documents</h2>
+    <button id="load-sample" type="button" style="width:100%">Load sample patient (7 messy documents)</button>
+    <div class="drop" id="drop">
+      <label for="file" style="cursor:pointer">Drop files here or <span style="color:var(--accent)">browse</span></label>
+      <input id="file" type="file" multiple class="sr">
+    </div>
+    <details>
+      <summary style="cursor:pointer;color:var(--muted);font-size:14px">Paste text (e.g. a faxed note)</summary>
+      <textarea id="paste" placeholder="Patient: Jane Doe  DOB: 01/02/1970&#10;Medications: Lisinopril 10 mg daily&#10;Allergies: Penicillin (hives)"></textarea>
+      <button id="add-paste" type="button">Add as document</button>
+    </details>
+    <ul class="docs" id="docs" aria-live="polite"></ul>
+    <button class="primary" id="run" type="button" disabled>Normalize</button>
+    <div id="error" role="alert"></div>
+    <p class="note">Playground: documents are processed in memory for this request and not stored. Use synthetic data only.
+      Agents use the same engine via the <a href="https://github.com/rishadusmani/primaryaihackathon#for-agents">API and MCP server</a>.</p>
+  </section>
+
+  <section class="panel pad" id="out" aria-live="polite">
+    <div class="empty"><strong>No record yet</strong>Load the sample patient or add documents, then press Normalize.</div>
+  </section>
+</main>
+<footer>Canon · built at Supabase Select 2026 · <a href="https://github.com/rishadusmani/primaryaihackathon">source</a> · <a href="/healthz">status</a></footer>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const state = { docs: [], result: null, patient: 0, tab: "conflicts" };
+
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === "class") el.className = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat()) if (kid != null && kid !== false) el.append(kid.nodeType ? kid : String(kid));
+  return el;
+}
+
+// ---------------------------------------------------------------- inputs
+function renderDocs() {
+  const ul = $("#docs"); ul.replaceChildren();
+  const byName = {};
+  for (const d of state.result?.documents || []) byName[d.filename] = d;
+  state.docs.forEach((d, i) => {
+    const r = byName[d.filename];
+    ul.append(h("li", {},
+      h("div", { class: "name", title: d.filename }, d.filename, d.source_name ? h("span", { class: "src" }, d.source_name) : null),
+      r?.error ? h("span", { class: "badge b-bad", title: r.error.message }, "error")
+        : r?.warnings?.length ? h("span", { class: "badge b-warn", title: r.warnings.join("\n") }, "check")
+        : (r?.format || d.format) ? h("span", { class: "chip fmt" }, r?.format || d.format) : null,
+      h("button", { class: "link", type: "button", "aria-label": "Remove " + d.filename, onclick: () => { state.docs.splice(i, 1); renderDocs(); } }, "✕")));
+  });
+  $("#run").disabled = !state.docs.length;
+}
+
+async function loadSample() {
+  const btn = $("#load-sample"); btn.disabled = true; btn.textContent = "Loading…";
+  try {
+    const r = await fetch("/v1/playground/samples").then(ok);
+    state.docs = r.documents; state.result = null; renderDocs(); run();
+  } catch (e) { showError(e); }
+  finally { btn.disabled = false; btn.textContent = "Load sample patient (7 messy documents)"; }
+}
+
+function b64(buf) {
+  let s = ""; const bytes = new Uint8Array(buf);
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+async function addFiles(files) {
+  for (const f of files) {
+    const buf = await f.arrayBuffer();
+    const head = new TextDecoder().decode(new Uint8Array(buf.slice(0, 5)));
+    const binary = head === "%PDF-" || /\.pdf$/i.test(f.name);
+    state.docs.push(binary ? { filename: f.name, encoding: "base64", content: b64(buf) }
+                           : { filename: f.name, encoding: "text", content: new TextDecoder().decode(buf) });
+  }
+  renderDocs();
+}
+
+async function ok(res) {
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body?.error?.message || res.statusText);
+  return body;
+}
+function showError(e) { $("#error").replaceChildren(h("div", { class: "err" }, e.message || String(e))); }
+
+async function run() {
+  if (!state.docs.length) return;
+  const btn = $("#run"); btn.disabled = true; btn.replaceChildren(h("span", { class: "spinner" }), " Normalizing…");
+  $("#error").replaceChildren();
+  try {
+    state.result = await fetch("/v1/playground/normalize", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ documents: state.docs.map(({ filename, content, encoding, source_name }) => ({ filename, content, encoding, source_name })) }),
+    }).then(ok);
+    state.patient = 0; state.tab = "conflicts";
+    const errs = state.result.documents.filter((d) => d.error);
+    if (errs.length) showError(new Error(errs.map((d) => `${d.filename}: ${d.error.message}`).join("\n")));
+    renderDocs(); renderResult();
+  } catch (e) { showError(e); }
+  finally { btn.disabled = !state.docs.length; btn.textContent = "Normalize"; }
+}
+
+// ---------------------------------------------------------------- output
+const statusBadge = (s) => h("span", { class: "badge " + ({ active: "b-ok", resolved: "b-muted", stopped: "b-muted", unknown: "b-warn", on_hold: "b-warn" }[s] || "b-muted") }, s);
+const UNITS = { "[degF]": "°F", "[lb_av]": "lb", "[in_i]": "in", "mm[Hg]": "mmHg", "m[IU]/L": "mIU/L", "10*3/uL": "×10³/µL", "/min": "/min" };
+const unit = (u) => UNITS[u] ?? u ?? "";
+const code = (sys, c) => c ? h("span", { class: "chip", title: sys }, `${sys} ${c}`) : null;
+const confBar = (c) => h("span", { title: `confidence ${Math.round(c * 100)}%` }, h("span", { class: "conf" }, h("i", { style: `width:${Math.round(c * 100)}%` })));
+
+function provenance(item, rec) {
+  const names = Object.fromEntries(rec.sources.map((s) => [s.id, s.filename || s.id]));
+  return h("div", { class: "prov" },
+    h("div", { class: "hist" }, `Seen in ${item.sources.length} source${item.sources.length > 1 ? "s" : ""}`,
+      item.confidence != null ? [" · confidence ", confBar(item.confidence), ` ${Math.round(item.confidence * 100)}%`] : null),
+    item.sources.map((s) => h("div", { class: "src-row" },
+      h("span", { class: "chip fmt" }, s.format),
+      h("span", {}, names[s.document_id] || s.document_id, " ", h("span", { class: "loc" }, s.locator)),
+      h("span", { class: "loc" }, s.method + (s.evidence_verified === false ? " · unverified" : "")),
+      s.snippet ? h("div", { class: "snip" }, s.snippet) : null)));
+}
+
+function itemRow(title, sub, right, codes, extra, item, rec) {
+  const li = h("li", { class: "item" });
+  const btn = h("button", { type: "button", "aria-expanded": "false", onclick: () => {
+    li.classList.toggle("open"); btn.setAttribute("aria-expanded", li.classList.contains("open"));
+  } }, h("span", { class: "title" }, title), h("span", { class: "right" }, right), sub ? h("span", { class: "sub" }, sub) : null,
+    codes?.length ? h("span", { class: "codes" }, codes) : null);
+  li.append(btn, h("div", {}, extra), provenance(item, rec));
+  return li;
+}
+
+function labGroups(rec) {
+  const g = {};
+  for (const o of rec.observations) (g[o.codes.loinc] ||= []).push(o);
+  return Object.values(g).map((list) => list.sort((a, b) => (a.effective || "").localeCompare(b.effective || "")))
+    .sort((a, b) => a[0].category.localeCompare(b[0].category) || a[0].display.localeCompare(b[0].display));
+}
+
+function tabContent(rec, tab) {
+  const ul = h("ul", { class: "items" });
+  if (tab === "conflicts") {
+    if (!rec.conflicts.length) return h("p", { class: "note" }, "No disagreements between sources.");
+    return h("div", { style: "margin-top:12px" }, rec.conflicts.map((c) => h("div", { class: "conflict " + c.severity },
+      h("span", { class: "ico", "aria-hidden": "true" }, "!"),
+      h("div", {}, h("div", { class: "t" }, c.type.replaceAll("_", " ")), h("div", {}, c.message),
+        c.values?.length ? h("div", { class: "codes" }, c.values.map((v) => h("span", { class: "chip" }, v))) : null))));
+  }
+  if (tab === "problems") rec.conditions.forEach((c) => ul.append(itemRow(c.display,
+    [c.onset ? `since ${c.onset}` : `first seen ${c.first_seen}`, c.evidence === "claims_only" ? " · only on a billing claim" : ""].join(""),
+    [c.evidence === "claims_only" ? h("span", { class: "badge b-warn" }, "claims only") : null, statusBadge(c.status)],
+    [code("ICD-10", c.codes.icd10), code("SNOMED", c.codes.snomed)], null, c, rec)));
+  if (tab === "medications") rec.medications.forEach((m) => ul.append(itemRow(m.ingredient,
+    [m.dose, m.route, m.frequency?.display].filter(Boolean).join(" · ") || "dose not stated",
+    statusBadge(m.status), [code("RxNorm", m.codes.rxnorm), m.drug_class ? h("span", { class: "chip" }, m.drug_class) : null],
+    m.history?.length > 1 ? h("div", { class: "hist", style: "padding:0 4px" }, "History: ",
+      m.history.map((x) => h("span", {}, `${x.date} ${x.status}${x.dose ? " " + x.dose : ""}`))) : null, m, rec)));
+  if (tab === "allergies") {
+    if (!rec.allergies.length) return h("p", { class: "note" }, rec.allergy_status === "no_known_allergies" ? "No known allergies." : "No allergy information.");
+    rec.allergies.forEach((a) => ul.append(itemRow(a.substance, (a.reactions || []).join(", ") || "reaction not stated",
+      h("span", { class: "badge b-bad" }, "allergy"), [code("SNOMED", a.codes.snomed)], null, a, rec)));
+  }
+  if (tab === "labs") labGroups(rec).forEach((list) => {
+    const cur = list[list.length - 1], prev = list[list.length - 2];
+    const arrow = prev && cur.value != null && prev.value != null ? (cur.value > prev.value ? "▲" : cur.value < prev.value ? "▼" : "▬") : "";
+    const interp = cur.interpretation;
+    ul.append(itemRow(cur.display,
+      `${cur.effective || "date unknown"}${cur.original ? ` · reported as ${cur.original.value} ${cur.original.unit}` : ""}`,
+      [h("span", { class: "val" }, cur.value ?? cur.value_text, " ", h("span", { style: "font-weight:400;color:var(--muted)" }, unit(cur.unit))),
+       arrow ? h("span", { class: "trend", title: prev ? `previous ${prev.value} ${unit(prev.unit)} on ${prev.effective}` : "" }, arrow) : null,
+       interp ? h("span", { class: "badge " + (interp === "normal" ? "b-ok" : "b-bad") }, interp) : null],
+      [code("LOINC", cur.codes.loinc), h("span", { class: "chip" }, cur.category)],
+      list.length > 1 ? h("div", { class: "hist", style: "padding:0 4px" }, "Readings: ",
+        list.map((o) => h("span", {}, `${o.effective} ${o.value ?? o.value_text} ${unit(o.unit)}`))) : null,
+      { ...cur, sources: list.flatMap((o) => o.sources), confidence: cur.confidence }, rec));
+  });
+  if (tab === "other") {
+    [...rec.immunizations.map((i) => ["Immunization", i.vaccine, i.date, i]), ...rec.procedures.map((p) => ["Procedure", p.display, p.date, p]),
+     ...rec.coverage.map((c) => ["Coverage", c.payer, c.member_id, c]), ...rec.encounters.map((e) => ["Encounter", e.type, e.date, e])]
+      .forEach(([kind, title, sub, it]) => ul.append(itemRow(title || kind, sub || "", h("span", { class: "chip" }, kind), [], null, it, rec)));
+  }
+  if (tab === "agent") return h("div", {}, h("p", { class: "note" }, "This is exactly what an agent receives from get_patient_summary (token-efficient), alongside the full coded record and a FHIR R4 export."),
+    h("pre", { class: "json" }, JSON.stringify(state.result.patients[state.patient].summary, null, 2)));
+  return ul.childElementCount ? ul : h("p", { class: "note" }, "Nothing here.");
+}
+
+function renderResult() {
+  const out = $("#out"); out.replaceChildren();
+  const pts = state.result.patients;
+  if (!pts.length) { out.append(h("div", { class: "empty" }, h("strong", {}, "No patient found"), "Add a document with patient demographics.")); return; }
+  const p = pts[state.patient], rec = p.record, pt = rec.patient;
+  if (pts.length > 1) out.append(h("div", { class: "row", style: "margin-bottom:12px" }, h("span", { class: "note", style: "margin:0" }, "Patients:"),
+    pts.map((x, i) => h("button", { type: "button", "aria-pressed": i === state.patient, onclick: () => { state.patient = i; renderResult(); } }, x.summary.patient.name || x.patient_id))));
+  out.append(h("div", { class: "patient" },
+    h("div", {}, h("h3", {}, pt.names?.[0] || "Unnamed patient"),
+      h("div", { class: "note", style: "margin:2px 0 0" }, [pt.birth_date && `DOB ${pt.birth_date}`, pt.sex, (pt.identifiers || []).length && `${pt.identifiers.length} identifiers`].filter(Boolean).join(" · "))),
+    h("div", { class: "row" }, Object.keys(p.stats.formats).map((f) => h("span", { class: "chip fmt" }, f)))));
+  out.append(h("div", { class: "stats" },
+    [[p.stats.documents, "source documents"], [p.stats.facts_extracted, "facts extracted"], [p.stats.canonical_items, "canonical items"], [p.stats.conflicts, "conflicts to review"]]
+      .map(([n, l]) => h("div", { class: "stat" }, h("b", {}, n), h("span", {}, l)))));
+  const tabs = [["conflicts", "Conflicts", rec.conflicts.length], ["problems", "Problems", rec.conditions.length], ["medications", "Medications", rec.medications.length],
+    ["allergies", "Allergies", rec.allergies.length], ["labs", "Labs & vitals", labGroups(rec).length],
+    ["other", "Other", rec.immunizations.length + rec.procedures.length + rec.coverage.length + rec.encounters.length], ["agent", "Agent view", null]];
+  out.append(h("div", { class: "tabs", role: "tablist" }, tabs.map(([id, label, n]) => h("button", { class: "tab", role: "tab", type: "button",
+    "aria-selected": state.tab === id, onclick: () => { state.tab = id; renderResult(); } }, label, n != null ? h("span", { class: "n" }, n) : null))));
+  out.append(h("div", { role: "tabpanel" }, tabContent(rec, state.tab)));
+  out.append(h("p", { class: "note" }, "Click any item to see where it came from. ",
+    h("button", { class: "link", type: "button", onclick: () => download(p) }, "Download canonical record (JSON)")));
+}
+
+function download(p) {
+  const blob = new Blob([JSON.stringify(p.record, null, 2)], { type: "application/json" });
+  const a = h("a", { href: URL.createObjectURL(blob), download: `canon-${p.patient_id}.json` }); document.body.append(a); a.click(); a.remove();
+}
+
+// ---------------------------------------------------------------- wiring
+$("#load-sample").addEventListener("click", loadSample);
+$("#run").addEventListener("click", run);
+$("#file").addEventListener("change", (e) => { addFiles(e.target.files); e.target.value = ""; });
+$("#add-paste").addEventListener("click", () => {
+  const t = $("#paste").value.trim(); if (!t) return;
+  state.docs.push({ filename: `pasted-${state.docs.length + 1}.txt`, encoding: "text", content: t }); $("#paste").value = ""; renderDocs();
+});
+const drop = $("#drop");
+["dragenter", "dragover"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", (e) => addFiles(e.dataTransfer.files));
+renderDocs();
+</script>
+</body>
+</html>
