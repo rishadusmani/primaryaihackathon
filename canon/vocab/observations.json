@@ -2523,6 +2523,255 @@
   }
  },
  {
+  "loinc": "6598-7",
+  "display": "Troponin T",
+  "loinc_name": "Troponin T.cardiac [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "troponin t",
+   "cardiac troponin t"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "67151-1",
+  "display": "Troponin T (high sensitivity)",
+  "loinc_name": "Troponin T.cardiac [Mass/volume] in Serum or Plasma by High sensitivity method",
+  "category": "lab",
+  "unit": "ng/L",
+  "synonyms": [
+   "hs troponin t",
+   "high sensitivity troponin t",
+   "hs-tnt"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/L": 1
+  }
+ },
+ {
+  "loinc": "13969-1",
+  "display": "CK-MB",
+  "loinc_name": "Creatine kinase.MB [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "ck-mb",
+   "ckmb",
+   "creatine kinase mb"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "2639-3",
+  "display": "Myoglobin",
+  "loinc_name": "Myoglobin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "myoglobin"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "2141-0",
+  "display": "ACTH",
+  "loinc_name": "Corticotropin [Mass/volume] in Plasma",
+  "category": "lab",
+  "unit": "pg/mL",
+  "synonyms": [
+   "acth",
+   "adrenocorticotropic hormone",
+   "corticotropin"
+  ],
+  "exact": [],
+  "convert": {
+   "pg/mL": 1,
+   "ng/L": 1
+  }
+ },
+ {
+  "loinc": "1763-2",
+  "display": "Aldosterone",
+  "loinc_name": "Aldosterone [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/dL",
+  "synonyms": [
+   "aldosterone",
+   "serum aldosterone"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/dL": 1
+  }
+ },
+ {
+  "loinc": "15069-8",
+  "display": "Fructosamine",
+  "loinc_name": "Fructosamine [Moles/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "umol/L",
+  "synonyms": [
+   "fructosamine"
+  ],
+  "exact": [],
+  "convert": {
+   "umol/L": 1,
+   "µmol/L": 1,
+   "μmol/L": 1,
+   "micromol/L": 1
+  }
+ },
+ {
+  "loinc": "3013-0",
+  "display": "Thyroglobulin",
+  "loinc_name": "Thyroglobulin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "thyroglobulin"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "2064-4",
+  "display": "Ceruloplasmin",
+  "loinc_name": "Ceruloplasmin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "ceruloplasmin"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1,
+   "g/L": 100
+  }
+ },
+ {
+  "loinc": "5763-8",
+  "display": "Zinc",
+  "loinc_name": "Zinc [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ug/dL",
+  "synonyms": [
+   "zinc level",
+   "serum zinc"
+  ],
+  "exact": [],
+  "convert": {
+   "ug/dL": 1,
+   "mcg/dL": 1,
+   "µg/dL": 1
+  }
+ },
+ {
+  "loinc": "5631-7",
+  "display": "Copper",
+  "loinc_name": "Copper [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ug/dL",
+  "synonyms": [
+   "copper level",
+   "serum copper"
+  ],
+  "exact": [],
+  "convert": {
+   "ug/dL": 1,
+   "mcg/dL": 1,
+   "µg/dL": 1
+  }
+ },
+ {
+  "loinc": "2955-3",
+  "display": "Sodium, urine",
+  "loinc_name": "Sodium [Moles/volume] in Urine",
+  "category": "lab",
+  "unit": "mmol/L",
+  "synonyms": [
+   "urine sodium",
+   "sodium urine"
+  ],
+  "exact": [],
+  "convert": {
+   "mmol/L": 1,
+   "mEq/L": 1
+  }
+ },
+ {
+  "loinc": "2828-2",
+  "display": "Potassium, urine",
+  "loinc_name": "Potassium [Moles/volume] in Urine",
+  "category": "lab",
+  "unit": "mmol/L",
+  "synonyms": [
+   "urine potassium",
+   "potassium urine"
+  ],
+  "exact": [],
+  "convert": {
+   "mmol/L": 1,
+   "mEq/L": 1
+  }
+ },
+ {
+  "loinc": "5640-8",
+  "display": "Ethanol",
+  "loinc_name": "Ethanol [Mass/volume] in Blood",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "blood alcohol",
+   "serum ethanol",
+   "ethanol level",
+   "alcohol level"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1
+  }
+ },
+ {
+  "loinc": "4024-6",
+  "display": "Salicylate level",
+  "loinc_name": "Salicylates [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "salicylate level",
+   "aspirin level"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1
+  }
+ },
+ {
   "loinc": "9279-1",
   "loinc_name": "Respiratory rate",
   "synonyms": [

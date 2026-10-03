@@ -178,5 +178,41 @@ class ExpansionTest(unittest.TestCase):
         self.assertEqual([f for f in facts if f["kind"] == "condition"], [])
 
 
+class ExpansionRound2Test(unittest.TestCase):
+    def test_coverage(self):
+        self.assertGreaterEqual(len(T.CONDITIONS), 290)
+        self.assertGreaterEqual(len(T.MEDICATIONS), 400)
+        self.assertGreaterEqual(len(T.OBSERVATIONS), 150)
+
+    def test_conditions(self):
+        for text_, icd in [("scabies", "B86"), ("bulimia nervosa", "F50.20"), ("binge eating disorder", "F50.819"),
+                           ("HFrEF", "I50.20"), ("Cushing's syndrome", "E24.9"), ("gestational diabetes", "O24.419"),
+                           ("primary biliary cholangitis", "K74.3"), ("supraventricular tachycardia", "I47.10")]:
+            self.assertEqual(T.lookup_condition(text=text_)["icd10"], icd, text_)
+
+    def test_medications(self):
+        for text_, ingredient in [("Keytruda 200 mg IV", "pembrolizumab"), ("Narcan 4 mg nasal", "naloxone"),
+                                  ("Ocrevus 600 mg", "ocrelizumab"), ("Lokelma 10 g", "sodium zirconium cyclosilicate")]:
+            self.assertEqual(T.lookup_medication(text=text_)["ingredient"], ingredient, text_)
+
+    def test_labs(self):
+        got = {f["code"] for f in text.parse("Labs:\nhs-TnT 12 ng/L\nCK-MB 3.1 ng/mL\nACTH 25 pg/mL\nUrine sodium 40 mmol/L\n")
+               if f["kind"] == "observation"}
+        self.assertEqual(got, {"67151-1", "13969-1", "2141-0", "2955-3"})
+
+    def test_vaccine_mentions_are_not_diagnoses(self):
+        for note in ["HPI: Measles vaccine given today.", "HPI: Varicella vaccine given.",
+                     "HPI: Hepatitis A vaccine series complete.", "HPI: Tdap booster for pertussis given."]:
+            with self.subTest(note=note):
+                self.assertEqual([f for f in text.parse(note) if f["kind"] == "condition"], [])
+        conds = [f["text"] for f in text.parse("Assessment: Measles, isolate patient. Shingles vaccine recommended.")
+                 if f["kind"] == "condition"]
+        self.assertEqual(conds, ["measles"])
+
+    def test_childhood_history_is_resolved(self):
+        f = [x for x in text.parse("HPI: Had chickenpox as a child.") if x["kind"] == "condition"]
+        self.assertEqual([(x["text"], x["status"]) for x in f], [("chickenpox", "resolved")])
+
+
 if __name__ == "__main__":
     unittest.main()

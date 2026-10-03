@@ -2396,5 +2396,920 @@
    "hodgkin disease"
   ],
   "exact": []
+ },
+ {
+  "icd10": "B01.9",
+  "display": "Varicella without complication",
+  "snomed": "38907003",
+  "snomed_display": "Varicella",
+  "synonyms": [
+   "chickenpox",
+   "varicella"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B05.9",
+  "display": "Measles without complication",
+  "snomed": "14189004",
+  "snomed_display": "Measles",
+  "synonyms": [
+   "measles"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B26.9",
+  "display": "Mumps without complication",
+  "snomed": "36989005",
+  "snomed_display": "Mumps",
+  "synonyms": [
+   "mumps"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "A37.90",
+  "display": "Whooping cough, unspecified species without pneumonia",
+  "snomed": "27836007",
+  "snomed_display": "Pertussis",
+  "synonyms": [
+   "pertussis",
+   "whooping cough"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "J21.9",
+  "display": "Acute bronchiolitis, unspecified",
+  "snomed": "4120002",
+  "snomed_display": "Bronchiolitis",
+  "synonyms": [
+   "bronchiolitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "J05.0",
+  "display": "Acute obstructive laryngitis [croup]",
+  "snomed": "71186008",
+  "snomed_display": "Croup",
+  "synonyms": [
+   "croup"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B86",
+  "display": "Scabies",
+  "snomed": "128869009",
+  "snomed_display": "Infestation by Sarcoptes scabiei var hominis",
+  "synonyms": [
+   "scabies"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B85.0",
+  "display": "Pediculosis due to Pediculus humanus capitis",
+  "snomed": "81000006",
+  "snomed_display": "Pediculosis capitis",
+  "synonyms": [
+   "head lice",
+   "pediculosis capitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "P59.9",
+  "display": "Neonatal jaundice, unspecified",
+  "snomed": "387712008",
+  "snomed_display": "Neonatal jaundice",
+  "synonyms": [
+   "neonatal jaundice"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "O24.419",
+  "display": "Gestational diabetes mellitus in pregnancy, unspecified control",
+  "snomed": "11687002",
+  "snomed_display": "Gestational diabetes mellitus",
+  "synonyms": [
+   "gestational diabetes"
+  ],
+  "exact": [
+   "gdm"
+  ]
+ },
+ {
+  "icd10": "O14.90",
+  "display": "Unspecified pre-eclampsia, unspecified trimester",
+  "snomed": "398254007",
+  "snomed_display": "Pre-eclampsia",
+  "synonyms": [
+   "preeclampsia",
+   "pre-eclampsia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N94.6",
+  "display": "Dysmenorrhea, unspecified",
+  "snomed": "266599000",
+  "snomed_display": "Dysmenorrhea",
+  "synonyms": [
+   "dysmenorrhea",
+   "dysmenorrhoea"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N92.0",
+  "display": "Excessive and frequent menstruation with regular cycle",
+  "snomed": "386692008",
+  "snomed_display": "Menorrhagia",
+  "synonyms": [
+   "menorrhagia",
+   "heavy menstrual bleeding"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N91.2",
+  "display": "Amenorrhea, unspecified",
+  "snomed": "14302001",
+  "snomed_display": "Amenorrhea",
+  "synonyms": [
+   "amenorrhea",
+   "amenorrhoea"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N83.209",
+  "display": "Unspecified ovarian cyst, unspecified side",
+  "snomed": "79883001",
+  "snomed_display": "Cyst of ovary",
+  "synonyms": [
+   "ovarian cyst"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N97.9",
+  "display": "Female infertility, unspecified",
+  "snomed": "6738008",
+  "snomed_display": "Female infertility",
+  "synonyms": [
+   "female infertility"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N76.0",
+  "display": "Acute vaginitis",
+  "snomed": "30800001",
+  "snomed_display": "Vaginitis",
+  "synonyms": [
+   "vaginitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F50.00",
+  "display": "Anorexia nervosa, unspecified",
+  "snomed": "56882008",
+  "snomed_display": "Anorexia nervosa",
+  "synonyms": [
+   "anorexia nervosa"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F50.20",
+  "display": "Bulimia nervosa, unspecified",
+  "snomed": "78004001",
+  "snomed_display": "Bulimia nervosa",
+  "synonyms": [
+   "bulimia nervosa",
+   "bulimia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F50.819",
+  "display": "Binge eating disorder, unspecified",
+  "snomed": "439960005",
+  "snomed_display": "Binge eating disorder",
+  "synonyms": [
+   "binge eating disorder"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F43.20",
+  "display": "Adjustment disorder, unspecified",
+  "snomed": "17226007",
+  "snomed_display": "Adjustment disorder",
+  "synonyms": [
+   "adjustment disorder"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F10.10",
+  "display": "Alcohol abuse, uncomplicated",
+  "snomed": "15167005",
+  "snomed_display": "Harmful pattern of use of alcohol",
+  "synonyms": [
+   "alcohol abuse"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F43.0",
+  "display": "Acute stress reaction",
+  "snomed": "67195008",
+  "snomed_display": "Acute stress disorder",
+  "synonyms": [
+   "acute stress reaction",
+   "acute stress disorder"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "A53.9",
+  "display": "Syphilis, unspecified",
+  "snomed": "76272004",
+  "snomed_display": "Syphilis",
+  "synonyms": [
+   "syphilis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "A54.9",
+  "display": "Gonococcal infection, unspecified",
+  "snomed": "15628003",
+  "snomed_display": "Gonorrhea",
+  "synonyms": [
+   "gonorrhea",
+   "gonorrhoea"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "A74.9",
+  "display": "Chlamydial infection, unspecified",
+  "snomed": "105629000",
+  "snomed_display": "Chlamydial infection",
+  "synonyms": [
+   "chlamydia infection",
+   "chlamydial infection"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "A69.20",
+  "display": "Lyme disease, unspecified",
+  "snomed": "23502006",
+  "snomed_display": "Lyme disease",
+  "synonyms": [
+   "lyme disease"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B15.9",
+  "display": "Hepatitis A without hepatic coma",
+  "snomed": "40468003",
+  "snomed_display": "Viral hepatitis, type A",
+  "synonyms": [
+   "hepatitis a"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B27.90",
+  "display": "Infectious mononucleosis, unspecified without complication",
+  "snomed": "271558008",
+  "snomed_display": "Infectious mononucleosis",
+  "synonyms": [
+   "infectious mononucleosis",
+   "mononucleosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B07.9",
+  "display": "Viral wart, unspecified",
+  "snomed": "1296960002",
+  "snomed_display": "Viral wart",
+  "synonyms": [
+   "viral warts",
+   "common wart",
+   "verruca"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B35.3",
+  "display": "Tinea pedis",
+  "snomed": "6020002",
+  "snomed_display": "Tinea pedis",
+  "synonyms": [
+   "tinea pedis",
+   "athlete's foot"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N10",
+  "display": "Acute pyelonephritis",
+  "snomed": "36689008",
+  "snomed_display": "Acute pyelonephritis",
+  "synonyms": [
+   "acute pyelonephritis",
+   "pyelonephritis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N04.9",
+  "display": "Nephrotic syndrome with unspecified morphologic changes",
+  "snomed": "52254009",
+  "snomed_display": "Nephrotic syndrome",
+  "synonyms": [
+   "nephrotic syndrome"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N05.9",
+  "display": "Unspecified nephritic syndrome with unspecified morphologic changes",
+  "snomed": "36171008",
+  "snomed_display": "Glomerulonephritis",
+  "synonyms": [
+   "glomerulonephritis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N28.1",
+  "display": "Cyst of kidney, acquired",
+  "snomed": "722223000",
+  "snomed_display": "Cyst of kidney",
+  "synonyms": [
+   "renal cyst",
+   "kidney cyst"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K70.30",
+  "display": "Alcoholic cirrhosis of liver without ascites",
+  "snomed": "420054005",
+  "snomed_display": "Alcoholic cirrhosis",
+  "synonyms": [
+   "alcoholic cirrhosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K75.4",
+  "display": "Autoimmune hepatitis",
+  "snomed": "408335007",
+  "snomed_display": "Autoimmune hepatitis",
+  "synonyms": [
+   "autoimmune hepatitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K74.3",
+  "display": "Primary biliary cirrhosis",
+  "snomed": "31712002",
+  "snomed_display": "Primary biliary cholangitis",
+  "synonyms": [
+   "primary biliary cholangitis",
+   "primary biliary cirrhosis"
+  ],
+  "exact": [
+   "pbc"
+  ]
+ },
+ {
+  "icd10": "K83.01",
+  "display": "Primary sclerosing cholangitis",
+  "snomed": "197441003",
+  "snomed_display": "Primary sclerosing cholangitis",
+  "synonyms": [
+   "primary sclerosing cholangitis"
+  ],
+  "exact": [
+   "psc"
+  ]
+ },
+ {
+  "icd10": "E83.110",
+  "display": "Hereditary hemochromatosis",
+  "snomed": "35400008",
+  "snomed_display": "Hereditary hemochromatosis",
+  "synonyms": [
+   "hereditary hemochromatosis",
+   "hemochromatosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E83.01",
+  "display": "Wilson's disease",
+  "snomed": "88518009",
+  "snomed_display": "Wilson's disease",
+  "synonyms": [
+   "wilson disease",
+   "wilson's disease"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "H60.90",
+  "display": "Unspecified otitis externa, unspecified ear",
+  "snomed": "3135009",
+  "snomed_display": "Otitis externa",
+  "synonyms": [
+   "otitis externa",
+   "swimmer's ear"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "H04.129",
+  "display": "Dry eye syndrome of unspecified lacrimal gland",
+  "snomed": "46152009",
+  "snomed_display": "Tear film insufficiency",
+  "synonyms": [
+   "dry eye syndrome",
+   "dry eye"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "H33.009",
+  "display": "Unspecified retinal detachment with retinal break, unspecified eye",
+  "snomed": "42059000",
+  "snomed_display": "Retinal detachment",
+  "synonyms": [
+   "retinal detachment"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "J34.2",
+  "display": "Deviated nasal septum",
+  "snomed": "126660000",
+  "snomed_display": "Deviated nasal septum",
+  "synonyms": [
+   "deviated nasal septum",
+   "deviated septum"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "J35.01",
+  "display": "Chronic tonsillitis",
+  "snomed": "90979004",
+  "snomed_display": "Chronic tonsillitis",
+  "synonyms": [
+   "chronic tonsillitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I47.10",
+  "display": "Supraventricular tachycardia, unspecified",
+  "snomed": "6456007",
+  "snomed_display": "Supraventricular tachycardia",
+  "synonyms": [
+   "supraventricular tachycardia"
+  ],
+  "exact": [
+   "svt"
+  ]
+ },
+ {
+  "icd10": "I47.20",
+  "display": "Ventricular tachycardia, unspecified",
+  "snomed": "25569003",
+  "snomed_display": "Ventricular tachycardia",
+  "synonyms": [
+   "ventricular tachycardia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I49.01",
+  "display": "Ventricular fibrillation",
+  "snomed": "71908006",
+  "snomed_display": "Ventricular fibrillation",
+  "synonyms": [
+   "ventricular fibrillation"
+  ],
+  "exact": [
+   "vfib"
+  ]
+ },
+ {
+  "icd10": "I44.1",
+  "display": "Atrioventricular block, second degree",
+  "snomed": "195042002",
+  "snomed_display": "Second degree atrioventricular block",
+  "synonyms": [
+   "second degree heart block",
+   "second degree av block"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I48.20",
+  "display": "Chronic atrial fibrillation, unspecified",
+  "snomed": "426749004",
+  "snomed_display": "Chronic atrial fibrillation",
+  "synonyms": [
+   "chronic atrial fibrillation",
+   "permanent atrial fibrillation"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I30.9",
+  "display": "Acute pericarditis, unspecified",
+  "snomed": "3238004",
+  "snomed_display": "Pericarditis",
+  "synonyms": [
+   "pericarditis",
+   "acute pericarditis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I40.9",
+  "display": "Acute myocarditis, unspecified",
+  "snomed": "50920009",
+  "snomed_display": "Myocarditis",
+  "synonyms": [
+   "myocarditis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I05.0",
+  "display": "Rheumatic mitral stenosis",
+  "snomed": "79619009",
+  "snomed_display": "Mitral valve stenosis",
+  "synonyms": [
+   "mitral stenosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I35.1",
+  "display": "Nonrheumatic aortic (valve) insufficiency",
+  "snomed": "60234000",
+  "snomed_display": "Aortic valve regurgitation",
+  "synonyms": [
+   "aortic regurgitation",
+   "aortic insufficiency"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I73.00",
+  "display": "Raynaud's syndrome without gangrene",
+  "snomed": "266261006",
+  "snomed_display": "Raynaud's phenomenon",
+  "synonyms": [
+   "raynaud phenomenon",
+   "raynaud's phenomenon",
+   "raynauds"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I67.1",
+  "display": "Cerebral aneurysm, nonruptured",
+  "snomed": "128609009",
+  "snomed_display": "Intracranial aneurysm",
+  "synonyms": [
+   "cerebral aneurysm",
+   "brain aneurysm"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I61.9",
+  "display": "Nontraumatic intracerebral hemorrhage, unspecified",
+  "snomed": "274100004",
+  "snomed_display": "Cerebral hemorrhage",
+  "synonyms": [
+   "intracerebral hemorrhage",
+   "hemorrhagic stroke",
+   "brain bleed"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I60.9",
+  "display": "Nontraumatic subarachnoid hemorrhage, unspecified",
+  "snomed": "21454007",
+  "snomed_display": "Subarachnoid hemorrhage",
+  "synonyms": [
+   "subarachnoid hemorrhage"
+  ],
+  "exact": [
+   "sah"
+  ]
+ },
+ {
+  "icd10": "I50.20",
+  "display": "Unspecified systolic (congestive) heart failure",
+  "snomed": "417996009",
+  "snomed_display": "Systolic heart failure",
+  "synonyms": [
+   "systolic heart failure",
+   "heart failure with reduced ejection fraction",
+   "hfref"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I50.30",
+  "display": "Unspecified diastolic (congestive) heart failure",
+  "snomed": "418304008",
+  "snomed_display": "Diastolic heart failure",
+  "synonyms": [
+   "diastolic heart failure",
+   "heart failure with preserved ejection fraction",
+   "hfpef"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C71.9",
+  "display": "Malignant neoplasm of brain, unspecified",
+  "snomed": "428061005",
+  "snomed_display": "Malignant neoplasm of brain",
+  "synonyms": [
+   "brain cancer",
+   "glioblastoma"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C15.9",
+  "display": "Malignant neoplasm of esophagus, unspecified",
+  "snomed": "363402007",
+  "snomed_display": "Malignant neoplasm of esophagus",
+  "synonyms": [
+   "esophageal cancer",
+   "oesophageal cancer"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C23",
+  "display": "Malignant neoplasm of gallbladder",
+  "snomed": "363353009",
+  "snomed_display": "Malignant neoplasm of gallbladder",
+  "synonyms": [
+   "gallbladder cancer"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C54.1",
+  "display": "Malignant neoplasm of endometrium",
+  "snomed": "254878006",
+  "snomed_display": "Endometrial carcinoma",
+  "synonyms": [
+   "endometrial cancer"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C62.90",
+  "display": "Malignant neoplasm of unspecified testis, unspecified whether descended or undescended",
+  "snomed": "363449006",
+  "snomed_display": "Malignant neoplasm of testis",
+  "synonyms": [
+   "testicular cancer"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C91.10",
+  "display": "Chronic lymphocytic leukemia of B-cell type not having achieved remission",
+  "snomed": "92814006",
+  "snomed_display": "Chronic lymphoid leukemia, disease",
+  "synonyms": [
+   "chronic lymphocytic leukemia"
+  ],
+  "exact": [
+   "cll"
+  ]
+ },
+ {
+  "icd10": "C92.00",
+  "display": "Acute myeloblastic leukemia, not having achieved remission",
+  "snomed": "91861009",
+  "snomed_display": "Acute myeloid leukemia, disease",
+  "synonyms": [
+   "acute myeloid leukemia"
+  ],
+  "exact": [
+   "aml"
+  ]
+ },
+ {
+  "icd10": "C92.10",
+  "display": "Chronic myeloid leukemia, BCR/ABL-positive, not having achieved remission",
+  "snomed": "92818009",
+  "snomed_display": "Chronic myeloid leukemia",
+  "synonyms": [
+   "chronic myeloid leukemia"
+  ],
+  "exact": [
+   "cml"
+  ]
+ },
+ {
+  "icd10": "C91.00",
+  "display": "Acute lymphoblastic leukemia not having achieved remission",
+  "snomed": "91857003",
+  "snomed_display": "Acute lymphoid leukemia",
+  "synonyms": [
+   "acute lymphoblastic leukemia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C44.92",
+  "display": "Squamous cell carcinoma of skin, unspecified",
+  "snomed": "254651007",
+  "snomed_display": "Squamous cell carcinoma of skin",
+  "synonyms": [
+   "squamous cell carcinoma of skin"
+  ],
+  "exact": [
+   "scc"
+  ]
+ },
+ {
+  "icd10": "Z91.010",
+  "display": "Allergy to peanuts",
+  "snomed": "91935009",
+  "snomed_display": "Allergy to peanut",
+  "synonyms": [
+   "peanut allergy"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "T78.2XXA",
+  "display": "Anaphylactic shock, unspecified, initial encounter",
+  "snomed": "39579001",
+  "snomed_display": "Anaphylaxis",
+  "synonyms": [
+   "anaphylaxis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "T78.3XXA",
+  "display": "Angioneurotic edema, initial encounter",
+  "snomed": "41291007",
+  "snomed_display": "Angioedema",
+  "synonyms": [
+   "angioedema"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E11.40",
+  "display": "Type 2 diabetes mellitus with diabetic neuropathy, unspecified",
+  "snomed": "230572002",
+  "snomed_display": "Neuropathy due to diabetes mellitus",
+  "synonyms": [
+   "diabetic neuropathy"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E11.21",
+  "display": "Type 2 diabetes mellitus with diabetic nephropathy",
+  "snomed": "127013003",
+  "snomed_display": "Disorder of kidney due to diabetes mellitus",
+  "synonyms": [
+   "diabetic nephropathy"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E11.319",
+  "display": "Type 2 diabetes mellitus with unspecified diabetic retinopathy without macular edema",
+  "snomed": "4855003",
+  "snomed_display": "Retinopathy due to diabetes mellitus",
+  "synonyms": [
+   "diabetic retinopathy"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E10.10",
+  "display": "Type 1 diabetes mellitus with ketoacidosis without coma",
+  "snomed": "420422005",
+  "snomed_display": "Diabetic ketoacidosis",
+  "synonyms": [
+   "diabetic ketoacidosis"
+  ],
+  "exact": [
+   "dka"
+  ]
+ },
+ {
+  "icd10": "E27.1",
+  "display": "Primary adrenocortical insufficiency",
+  "snomed": "373662000",
+  "snomed_display": "Primary adrenocortical insufficiency",
+  "synonyms": [
+   "addison disease",
+   "addison's disease",
+   "primary adrenal insufficiency"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E24.9",
+  "display": "Cushing's syndrome, unspecified",
+  "snomed": "47270006",
+  "snomed_display": "Hypercortisolism",
+  "synonyms": [
+   "cushing syndrome",
+   "cushing's syndrome"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E22.0",
+  "display": "Acromegaly and pituitary gigantism",
+  "snomed": "74107003",
+  "snomed_display": "Acromegaly",
+  "synonyms": [
+   "acromegaly"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E23.2",
+  "display": "Diabetes insipidus",
+  "snomed": "45369008",
+  "snomed_display": "Vasopressin deficiency",
+  "synonyms": [
+   "diabetes insipidus"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E20.9",
+  "display": "Hypoparathyroidism, unspecified",
+  "snomed": "36976004",
+  "snomed_display": "Hypoparathyroidism",
+  "synonyms": [
+   "hypoparathyroidism"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E83.52",
+  "display": "Hypercalcemia",
+  "snomed": "66931009",
+  "snomed_display": "Hypercalcemia",
+  "synonyms": [
+   "hypercalcemia",
+   "hypercalcaemia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E83.51",
+  "display": "Hypocalcemia",
+  "snomed": "5291005",
+  "snomed_display": "Hypocalcemia",
+  "synonyms": [
+   "hypocalcemia",
+   "hypocalcaemia"
+  ],
+  "exact": []
  }
 ]
