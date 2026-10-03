@@ -1,0 +1,21 @@
+{"resourceType": "Bundle", "type": "collection", "entry": [
+ {"resource": {"resourceType": "Patient", "id": "p1", "name": [{"family": "Chen", "given": ["Maria"]}],
+   "gender": "female", "birthDate": "1988-04-12",
+   "identifier": [{"system": "urn:oid:2.16.840.1.113883.19.5", "value": "SUT-00731122"}]}},
+ {"resource": {"resourceType": "MedicationRequest", "id": "mr1", "status": "active", "authoredOn": "2026-03-02",
+   "medicationCodeableConcept": {"coding": [{"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "6809"}], "text": "metFORMIN 500 MG tablet"},
+   "dosageInstruction": [{"text": "Take 1 tablet by mouth twice daily with meals",
+     "route": {"text": "oral"}, "timing": {"repeat": {"frequency": 2, "period": 1, "periodUnit": "d"}},
+     "doseAndRate": [{"doseQuantity": {"value": 500, "unit": "mg"}}]}]}},
+ {"resource": {"resourceType": "Condition", "id": "c1", "clinicalStatus": {"coding": [{"code": "active"}]},
+   "code": {"coding": [{"system": "http://snomed.info/sct", "code": "24079001", "display": "Atopic dermatitis"}]},
+   "onsetDateTime": "2025-09-01"}},
+ {"resource": {"resourceType": "Observation", "id": "o1", "status": "final", "effectiveDateTime": "2026-02-20",
+   "code": {"coding": [{"system": "http://loinc.org", "code": "29463-7", "display": "Body weight"}]},
+   "valueQuantity": {"value": 82.5, "unit": "kg"}}},
+ {"resource": {"resourceType": "Observation", "id": "o2", "status": "final", "effectiveDateTime": "2026-02-20",
+   "code": {"coding": [{"system": "http://loinc.org", "code": "85354-9", "display": "Blood pressure panel"}]},
+   "component": [
+     {"code": {"coding": [{"system": "http://loinc.org", "code": "8480-6"}]}, "valueQuantity": {"value": 138, "unit": "mmHg"}},
+     {"code": {"coding": [{"system": "http://loinc.org", "code": "8462-4"}]}, "valueQuantity": {"value": 86, "unit": "mmHg"}}]}}
+]}

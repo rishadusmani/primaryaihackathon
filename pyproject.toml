@@ -1,0 +1,19 @@
+[project]
+name = "canon"
+version = "0.1.0"
+description = "Universal clinical data normalization for AI agents"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+llm = ["anthropic>=1.11"]
+
+[project.scripts]
+canon = "canon.__main__:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["canon*"]

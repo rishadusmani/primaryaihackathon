@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClinicalDocument xmlns="urn:hl7-org:v3">
+  <title>Continuity of Care Document - Sutter Health</title>
+  <recordTarget><patientRole>
+    <id root="2.16.840.1.113883.19.5" extension="SUT-00731122"/>
+    <addr><streetAddressLine>1220 Valencia St</streetAddressLine><city>San Francisco</city><state>CA</state><postalCode>94110</postalCode></addr>
+    <telecom value="tel:+1-415-555-0199"/>
+    <patient><name><given>Maria</given><family>Chen</family></name>
+      <administrativeGenderCode code="F"/><birthTime value="19880412"/></patient>
+  </patientRole></recordTarget>
+  <component><structuredBody>
+    <component><section><code code="11450-4" codeSystem="2.16.840.1.113883.6.1"/><title>Problems</title>
+      <entry><act><entryRelationship><observation>
+        <effectiveTime><low value="20190301"/></effectiveTime>
+        <value code="38341003" codeSystem="2.16.840.1.113883.6.96" displayName="Essential hypertension"/>
+        <entryRelationship><observation><code code="33999-4"/><value displayName="Active"/></observation></entryRelationship>
+      </observation></entryRelationship></act></entry>
+      <entry><act><entryRelationship><observation>
+        <effectiveTime><low value="20050601"/></effectiveTime>
+        <value code="195967001" codeSystem="2.16.840.1.113883.6.96" displayName="Asthma"/>
+        <entryRelationship><observation><code code="33999-4"/><value displayName="Resolved"/></observation></entryRelationship>
+      </observation></entryRelationship></act></entry>
+    </section></component>
+    <component><section><code code="10160-0" codeSystem="2.16.840.1.113883.6.1"/><title>Medications</title>
+      <entry><substanceAdministration>
+        <statusCode code="active"/><effectiveTime><low value="20250915"/></effectiveTime>
+        <effectiveTime xsi:type="PIVL_TS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><period value="24" unit="h"/></effectiveTime>
+        <routeCode displayName="Oral"/><doseQuantity value="10" unit="mg"/>
+        <consumable><manufacturedProduct><manufacturedMaterial><code code="29046" codeSystem="2.16.840.1.113883.6.88" displayName="Lisinopril 10 MG Oral Tablet"/></manufacturedMaterial></manufacturedProduct></consumable>
+      </substanceAdministration></entry>
+      <entry><substanceAdministration>
+        <statusCode code="completed"/><effectiveTime><low value="20250915"/></effectiveTime>
+        <routeCode displayName="Inhalation"/>
+        <consumable><manufacturedProduct><manufacturedMaterial><code code="435" codeSystem="2.16.840.1.113883.6.88" displayName="Albuterol HFA inhaler"/></manufacturedMaterial></manufacturedProduct></consumable>
+      </substanceAdministration></entry>
+    </section></component>
+    <component><section><code code="48765-2" codeSystem="2.16.840.1.113883.6.1"/><title>Allergies</title>
+      <entry><act><entryRelationship><observation negationInd="true"><code code="ASSERTION"/></observation></entryRelationship></act></entry>
+    </section></component>
+    <component><section><code code="30954-2" codeSystem="2.16.840.1.113883.6.1"/><title>Results</title>
+      <entry><organizer><component><observation>
+        <code code="4548-4" codeSystem="2.16.840.1.113883.6.1" displayName="Hemoglobin A1c"/>
+        <effectiveTime value="20250915"/><value value="60" unit="mmol/mol"/>
+        <interpretationCode code="H"/>
+      </observation></component></organizer></entry>
+    </section></component>
+    <component><section><code code="11369-6" codeSystem="2.16.840.1.113883.6.1"/><title>Immunizations</title>
+      <entry><substanceAdministration><effectiveTime value="20251003"/>
+        <consumable><manufacturedProduct><manufacturedMaterial><code code="88" codeSystem="2.16.840.1.113883.12.292" displayName="Influenza vaccine"/></manufacturedMaterial></manufacturedProduct></consumable>
+      </substanceAdministration></entry>
+    </section></component>
+  </structuredBody></component>
+</ClinicalDocument>
