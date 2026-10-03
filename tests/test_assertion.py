@@ -159,6 +159,26 @@ class PipelineWiringTest(unittest.TestCase):
         self.assertEqual(sorted(f["text"] for f in facts if f["kind"] == "condition"), ["hypertension"])
         self.assertTrue(any("Assertion review skipped" in w for w in info["warnings"]))
 
+    def test_use_llm_false_never_calls_the_model(self):
+        """The public playground ingests with use_llm=False; it must not spend the operator's OpenAI key."""
+        calls = []
+        with mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test"}), \
+                mock.patch.object(assertion, "_post", lambda body: calls.append(body) or fake_response([])):
+            facts, info = parse("text", self.NOTE, use_llm=False)
+        self.assertEqual(calls, [])
+        self.assertNotIn("assertion_review", info)
+        self.assertEqual(sorted(f["text"] for f in facts if f["kind"] == "condition"), ["hypertension"])
+
+    def test_playground_never_calls_the_model(self):
+        from canon import playground
+
+        calls = []
+        doc = {"filename": "note.txt", "content": self.NOTE.decode()}
+        with mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test"}), \
+                mock.patch.object(assertion, "_post", lambda body: calls.append(body) or fake_response([])):
+            playground.normalize([doc])
+        self.assertEqual(calls, [])
+
     def test_kill_switch(self):
         with mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test", "CANON_ASSERTION": "0"}):
             self.assertFalse(assertion.enabled())
