@@ -67,12 +67,12 @@ WALKTHROUGH = [
      "canon": "Flagged low against the ABIM adult range (24–336 ng/mL)",
      "expect": [("present", "observations", "loinc", "2276-4", "interpretation", "low")]},
     {"quote": "Entresto 49-51 mg tablet", "naive": "Unknown drug: not in a built-in table",
-     "canon": "Looked up live in NLM RxNav: sacubitril / valsartan (RxNorm 1656339)", "live": True,
-     "expect": [("present", "medications", "rxnorm", "1656339", "terminology", "nlm_live")]},
+     "canon": "Looked up live in RxNorm: sacubitril / valsartan (RxNorm 1656339)", "live": True,
+     "expect": [("present", "medications", "rxnorm", "1656339", "terminology", "live_lookup")]},
     {"quote": "I50.22 (FHIR condition code)", "naive": "Kept as an unverified code",
      "canon": "Verified live against ICD-10-CM: chronic systolic (congestive) heart failure, merged with the note's heart failure",
      "live": True,
-     "expect": [("present", "conditions", "icd10", "I50.22", "terminology", "nlm_live"),
+     "expect": [("present", "conditions", "icd10", "I50.22", "terminology", "live_lookup"),
                 ("absent", "conditions", "icd10", "I50.9")]},
 ]
 

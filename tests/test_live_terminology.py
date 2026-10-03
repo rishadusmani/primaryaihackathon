@@ -74,7 +74,7 @@ class LiveTestCase(unittest.TestCase):
 class LiveLookupTest(LiveTestCase):
     def test_brand_resolves_to_combination(self):
         m = L.medication(text="Entresto 49-51 mg tablet")
-        self.assertEqual((m["ingredient"], m["rxnorm"], m["terminology"]), ("sacubitril / valsartan", "1656339", "nlm_live"))
+        self.assertEqual((m["ingredient"], m["rxnorm"], m["terminology"]), ("sacubitril / valsartan", "1656339", "live_lookup"))
         self.assertNotIn("_ingredients", m)
 
     def test_brand_resolves_to_ingredient_with_class(self):
@@ -126,7 +126,7 @@ class NormalizeIntegrationTest(LiveTestCase):
     def test_unverified_icd10_code_becomes_verified(self):
         kind, item = normalize(self.fact("condition", code="I50.22", system="icd10", status="active"))
         self.assertEqual(kind, "condition")
-        self.assertEqual((item["codes"]["icd10"], item["code_verified"], item["terminology"]), ("I50.22", True, "nlm_live"))
+        self.assertEqual((item["codes"]["icd10"], item["code_verified"], item["terminology"]), ("I50.22", True, "live_lookup"))
 
     def test_table_hits_never_call_nlm(self):
         normalize(self.fact("medication", text="Metformin 500 mg tablet"))

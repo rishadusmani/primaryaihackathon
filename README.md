@@ -266,7 +266,7 @@ A flag sent by the source (e.g. HL7 `OBX-8`) always wins.
 - **Sex-specific ranges** use the outer bounds of both sexes, as the hand-written hemoglobin range does.
 - **No single range, no flag:** PSA, cortisol, hCG, NT-proBNP, hs-CRP and testosterone get no range rather than a misleading one.
 
-### Live NLM lookup
+### Live terminology lookup
 
 When a code or name isn't in Canon's tables, `canon/live_terminology.py` asks the National Library of Medicine
 before marking a fact unmapped:
@@ -278,7 +278,7 @@ before marking a fact unmapped:
 | LOINC code | NLM Clinical Tables | `2947-0` → sodium in blood (value kept in the unit sent) |
 
 - **Only verifiable matches are accepted.** A fuzzy RxNav match counts only if every ingredient it resolves to is named in the original text. "metfromin" stays unmapped rather than becoming the wrong drug.
-- **Live items are marked.** They carry `terminology: "nlm_live"`, and the demo shows an **NLM live** chip.
+- **Live items are marked.** They carry `terminology: "live_lookup"`, and the demo shows a **live lookup** chip. NLM's terms don't allow its name in application labels, so the marker is generic.
 - **Lookups are bounded:**
   - 2.5 s timeout per call;
   - an in-process cache;
@@ -288,6 +288,17 @@ before marking a fact unmapped:
   If NLM is slow or down, facts simply stay `unmapped` as before.
 - **Turning it off:** set `CANON_LIVE_TERMINOLOGY=0`.
 
+## Data sources and attributions
+
+This product uses publicly available data from the U.S. National Library of Medicine (NLM), National Institutes of Health, Department of Health and Human Services; NLM is not responsible for the product and does not endorse or recommend this or any other product.
+
+- **RxNorm, RxClass:** drug codes and classes, via NLM's RxNav APIs. Free to use, with a limit of 20 requests per second per IP address. Canon caches results (NLM recommends 12–24 hours).
+- **ICD-10-CM:** published by the CDC (public domain), searched through NLM's Clinical Table Search Service.
+- **LOINC:** This material contains content from LOINC® (https://loinc.org). LOINC is copyright © Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under the license at https://loinc.org/terms-of-use. LOINC® is a registered United States trademark of Regenstrief Institute, Inc.
+- **UCUM:** unit codes are subject to a license from Regenstrief Institute, Inc. and The UCUM Organization, available at https://unitsofmeasure.org. The UCUM table and UCUM codes are copyright © 1995-2009, Regenstrief Institute, Inc. and the Unified Codes for Units of Measures (UCUM) Organization.
+- **SNOMED CT:** SNOMED CT® is a registered trademark of SNOMED International. Codes are built in only; they are checked when the vocabulary is built, never looked up live.
+- **Reference ranges:** [ABIM Laboratory Test Reference Ranges, January 2026](https://www.abim.org/media/e2wdwdqu/laboratory-reference-ranges.pdf).
+
 ## Layout
 
 ```
@@ -295,7 +306,7 @@ canon/
   parsers/         format detection + one parser per format (+ llm.py)
   terminology.py   code systems, synonyms, unit conversion, frequencies
   vocab/*.json     verified LOINC / SNOMED CT / ICD-10-CM / RxNorm tables (generated)
-  live_terminology.py  live NLM fallback for codes not in the tables
+  live_terminology.py  live RxNorm / ICD-10-CM / LOINC fallback for codes not in the tables
   normalize.py     fact → canonical item (or unmapped with reason)
   reconcile.py     cross-source merge, current state, conflicts
   service.py       ingest, patient matching, record/summary queries
