@@ -38,6 +38,14 @@ Every item carries `sources[]` (document, format, locator such as `OBX[2]` or
 `line 31`, the verbatim snippet) and a `confidence` score. Nothing that can't
 be mapped is dropped: it lands in `unmapped[]` with a reason.
 
+## Try it in the browser
+
+Open **https://primaryaihackathon.vercel.app** (or `python -m canon serve` → http://localhost:8080), click
+**Load sample patient**, and explore conflicts, coded problems, reconciled medications and lab trends. Click any
+item to see the exact source line it came from. The page uses the public playground API
+(`POST /v1/playground/normalize`), which processes documents in memory only: nothing is stored or billed, and
+LLM extraction is off.
+
 ## Quickstart (Python 3.10+, no dependencies)
 
 ```bash
@@ -79,6 +87,26 @@ curl localhost:8080/v1/audit/verify               # tamper-evident access log
 | `POST /v1/signup`, `GET /v1/account` | Create an account + API key; status and usage |
 | `POST /v1/billing/checkout`, `POST /v1/billing/portal` | Stripe Checkout / Billing Portal links |
 | `POST /v1/stripe/webhook`, `GET /v1/billing/sync` | Stripe events; cron retry for usage reporting |
+| `GET /v1/usage?days=30` | This account's agent usage: requests, errors, latency, documents, patients, LLM tokens |
+| `GET /dashboard` | Customer usage dashboard (HTML) |
+
+### Usage dashboard
+
+Open `/dashboard` (e.g. `http://localhost:8080/dashboard`) and sign in with an
+API key. Customers see only their own account's usage over the last 7, 30 or 90 days:
+
+- requests, error rate, p50/p95 latency, documents ingested, distinct patients
+  accessed, and LLM tokens spent reading scanned documents
+- requests per day (successful vs. errors), with a table view
+- a breakdown by endpoint and agent tool (`patients.summary`, `tool.get_conflicts`, ...)
+- HTTP API vs. MCP traffic, and the 50 most recent requests
+
+Every authenticated agent request is one row in `api_requests`, keyed by account.
+Account, billing and `/v1/usage` calls are not counted. This is observability,
+separate from the billable `usage_events`. MCP tool calls are metered to the MCP
+server's account in its own database. On Postgres, apply
+`migrations/002_api_requests.sql` after `001_init.sql`, and (when the API connects as `canon_app`)
+`migrations/003_app_role_api_requests.sql` after `002_app_role.sql`.
 
 ### Hosting on Vercel
 
@@ -89,7 +117,7 @@ two modes:
 - **Production** (`DATABASE_URL` set): Supabase Postgres, per-customer API keys
   and Stripe billing. See [Hosting and billing](#hosting-vercel--supabase-and-billing-stripe).
 - **Demo** (no `DATABASE_URL`): SQLite in `/tmp`, which is per instance and wiped
-  on cold starts. Each new instance reloads `samples/maria_chen`, so patient IDs
+  on cold starts (usage history and the dashboard reset with it). Each new instance reloads `samples/maria_chen`, so patient IDs
   change between instances and uploads are not kept. Set `CANON_API_KEYS` to
   require a static bearer key (otherwise the demo is open). Set
   `CANON_SEED_SAMPLES=0` to skip the sample load.
@@ -222,6 +250,8 @@ canon/
   api.py           HTTP API      mcp_server.py   MCP over stdio
   store.py         SQLite / Postgres + hash-chained audit log
   billing.py       accounts, API keys, quota, Stripe metering + webhooks
+  usage.py         per-request API metering + aggregates for /v1/usage
+  dashboard.html   customer usage dashboard served at /dashboard
 app.py             Vercel entry point         migrations/   Postgres schema
 scripts/build_vocab.py  regenerates and verifies canon/vocab/ online
 samples/maria_chen/  one patient across 7 messy sources

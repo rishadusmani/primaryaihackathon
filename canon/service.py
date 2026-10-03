@@ -66,6 +66,9 @@ class Canon:
         items: list[tuple[str, dict]] = []
         for f in facts:
             items.append(normalize(f))
+        if not any(k not in ("patient", "encounter") for k, _ in items):
+            info.setdefault("warnings", []).append(
+                f"No clinical facts found in this document (parsed as {fmt}). Check the file or format.")
 
         demo = {}
         for kind, it in items:

@@ -79,7 +79,7 @@ def available() -> bool:
                 or os.environ.get("CANON_LLM_FORCE"))
 
 
-def _call(content_blocks: list[dict]) -> dict:
+def _call(content_blocks: list[dict], usage: dict | None = None) -> dict:
     import anthropic
 
     client = anthropic.Anthropic()
@@ -97,6 +97,9 @@ def _call(content_blocks: list[dict]) -> dict:
         raise RuntimeError(f"Extraction declined by the model: {response.stop_details}")
     if response.stop_reason == "max_tokens":
         raise RuntimeError("Extraction output was truncated (max_tokens); split the document and retry.")
+    if usage is not None and getattr(response, "usage", None) is not None:
+        for k in ("input_tokens", "output_tokens"):
+            usage[k] = usage.get(k, 0) + (getattr(response.usage, k, 0) or 0)
     text = next(b.text for b in response.content if b.type == "text")
     return json.loads(text)
 
@@ -105,7 +108,8 @@ def _norm_ws(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip().lower()
 
 
-def extract(*, text: str | None = None, pdf: bytes | None = None) -> list[dict]:
+def extract(*, text: str | None = None, pdf: bytes | None = None, usage: dict | None = None) -> list[dict]:
+    """`usage`, when given, accumulates the model's input_tokens/output_tokens for metering."""
     blocks: list[dict] = []
     if pdf is not None:
         blocks.append({"type": "document", "source": {"type": "base64", "media_type": "application/pdf",
@@ -113,7 +117,7 @@ def extract(*, text: str | None = None, pdf: bytes | None = None) -> list[dict]:
     if text:
         blocks.append({"type": "text", "text": f"<document>\n{text}\n</document>"})
     blocks.append({"type": "text", "text": "Extract all patient clinical facts from the document above."})
-    data = _call(blocks)
+    data = _call(blocks, usage)
     return to_facts(data, source_text=text)
 
 
