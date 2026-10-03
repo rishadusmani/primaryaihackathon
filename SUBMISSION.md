@@ -48,17 +48,18 @@ Python (standard library only for the core: zero runtime dependencies), Supabase
   - Try the API: `curl -H "Authorization: Bearer cn_live_primaryaisupabasehackathon" https://primaryaihackathon.vercel.app/v1/patients`
   - Upload a document: `curl -X POST "https://primaryaihackathon.vercel.app/v1/documents?filename=note.txt" -H "Authorization: Bearer cn_live_primaryaisupabasehackathon" --data-binary @note.txt`
   - The key is unmetered: upload as much as you like, it's never billed.
+  - Connect an agent (Claude, OpenAI, Gemini, Cursor): https://primaryaihackathon.vercel.app/connect, paste the key under "Already have a key?"
   - Use it from Claude over MCP: `claude mcp add --transport http canon https://primaryaihackathon.vercel.app/mcp --header "Authorization: Bearer cn_live_primaryaisupabasehackathon"`
 - Your own key: `curl -X POST https://primaryaihackathon.vercel.app/v1/signup -H 'Content-Type: application/json' -d '{"name":"Judge","email":"you@example.com"}'`. New accounts have no free pages: reads work right away, and uploads need a subscription through the returned Checkout link (Stripe test card `4242 4242 4242 4242`).
 - API health: https://primaryaihackathon.vercel.app/healthz
-- Demo video with voice-over (2:03): https://github.com/rishadusmani/primaryaihackathon/blob/main/docs/canon-demo.mp4 (recorded on the live site; upload to YouTube or Loom if the form needs a streaming link)
+- Demo video with voice-over (2:27): https://github.com/rishadusmani/primaryaihackathon/blob/main/docs/canon-demo.mp4 (recorded on the live site: the web demo, connecting an agent over MCP, a REST call and an MCP tool call, and the usage dashboard; upload to YouTube or Loom if the form needs a streaming link)
 - Product images (10): https://github.com/rishadusmani/primaryaihackathon/tree/main/docs/images
 
 ## How to run it
 ```bash
 git clone https://github.com/rishadusmani/primaryaihackathon && cd primaryaihackathon
 python -m canon normalize samples/maria_chen/*        # 7 messy documents → one record (no dependencies)
-python -m unittest discover -s tests                  # 44 tests
+python -m unittest discover -s tests                  # 83 tests
 python -m canon serve                                 # local API on :8080
 claude mcp add canon -- python -m canon mcp           # local MCP (stdio) for Claude Code
 ```
