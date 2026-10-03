@@ -30,6 +30,30 @@ Healthcare data arrives as faxes, PDFs, HL7 feeds, C-CDA, FHIR, claims and CSVs 
 
 **A business from day one.** Canon is multi-tenant: each customer's data is isolated, API keys are stored hashed, and there's a tamper-evident hash-chained audit log of every read and write. It has Stripe usage-based billing at $0.05 per normalized page: signup, Checkout, metered usage, webhooks and a billing portal.
 
+## How matching works (technical)
+
+In technical terms, Canon does **deterministic, terminology-based entity resolution**. In healthcare this is usually called **clinical data reconciliation**. Matching is exact equality on standard codes, not fuzzy string similarity, and no ML model takes part. Each merged entry gets a **noisy-OR** confidence, and disagreements are surfaced as conflicts.
+
+All of it is plain Python in the `canon/` package. It runs as one framework-free HTTP app: `http.server` locally, a WSGI function on Vercel (`app.py`). The same code is also served over MCP and as a CLI. Storage is SQLite locally and Supabase Postgres in production. Every document goes through four steps:
+
+1. **Detect and parse** (`canon/parsers/`). The format is detected automatically, and a parser for each format (C-CDA, HL7 v2, FHIR, X12, portal CSV, PDF, fax/free text) turns the document into the same flat list of raw facts: mention text, any code given, date, status, and a locator back into the source. Free text goes through rule-based NLP for negation, family history, hedges and medication intent. A model is only asked for a second opinion on sentences the rules are unsure about.
+2. **Normalize to a standard code** (`canon/normalize.py` → `canon/terminology.py`). Each fact is mapped to a code in a standard vocabulary. For a condition:
+   - a known ICD-10 code is used as-is (`E119` is reformatted to `E11.9`);
+   - a SNOMED code is translated through a SNOMED → ICD-10 crosswalk;
+   - otherwise the normalized text has to exactly match a synonym or official name in `canon/vocab/*.json`.
+
+   Medications are mapped to RxNorm ingredients the same way, including brand names (`Zestril` → lisinopril, RxCUI 29046). Labs map to LOINC and vaccines to CVX. If the local tables miss, `canon/live_terminology.py` asks NLM Clinical Tables and RxNav, and accepts only exact or verifiably equivalent hits. Anything still unmapped goes into `unmapped` with a reason. The result is an item with a **canonical key**, which is essentially its standard code.
+3. **Match the patient** (`canon/service.py`, `_match_keys` / `_match_patient`). This is **deterministic record linkage**. Each document's demographics produce blocking keys: `id:<system>|<value>` for identifiers like an MRN, and `fam_dob:<surname>|<dob>`. These are looked up in the `patient_keys` table. A unique identifier hit attaches the document to that patient (confidence 0.99), and so does a unique name + date-of-birth hit (0.95). If nothing matches, a new patient is created. If the caller passes a `patient_id` whose demographics disagree, Canon warns about a possibly misfiled document. A SHA-256 hash of each upload catches exact duplicates.
+4. **Reconcile into one record** (`canon/reconcile.py`, `build_record`). This runs on every read, over all of the patient's normalized items:
+   - **Group** items by canonical key. The same ICD-10 code from a C-CDA, a claim and a clinic note becomes one group, and therefore one entry.
+   - **Pick a representative** for each group, preferring a verified code, then the most specific code, then the highest confidence.
+   - **Apply survivorship rules.** Current status comes from the most recent *clinical* source, and claims alone never decide it. Onset is the earliest date seen, and `first_seen`/`last_seen` span every source.
+   - **Combine confidence** with noisy-OR, `1 − ∏(1 − cᵢ)`. Three independent sources at 0.8 give 0.992.
+   - **Flag conflicts** instead of silently picking a winner. Examples: same-day sources disagreeing on a condition's status, medication dose or frequency mismatches, allergy disagreements.
+   - **Keep provenance.** Every entry lists all of its sources, each with document, locator and snippet. The entry's ID is a hash of kind + key, so the same concept keeps the same ID across reads.
+
+The finished record is served as JSON over REST and MCP, or exported as a FHIR R4 bundle (`canon/fhir_export.py`).
+
 ## How we used Supabase
 - **Supabase Postgres is the system of record** for production. Accounts, hashed API keys, usage events, Stripe event de-duplication, patients, patient-match keys, documents (raw bytes kept for re-processing) and the audit log all live in a dedicated `canon` schema (`migrations/001_init.sql`).
 - **Least privilege by design.** The `canon` schema isn't exposed through the Data API, and `anon`/`authenticated` have no grants. The hosted API connects as a dedicated `canon_app` role, not `postgres`. That role gets only the grants it needs; the audit log is insert-only, and a trigger makes Postgres reject any UPDATE or DELETE on it. Every table has row-level security, with policies only for `canon_app`.
