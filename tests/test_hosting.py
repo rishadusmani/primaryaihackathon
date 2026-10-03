@@ -215,3 +215,34 @@ class StripeEncodingTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class VercelEntryTest(unittest.TestCase):
+    """app.py demo mode (no DATABASE_URL): seeded /tmp SQLite, optional static keys."""
+
+    def run_app(self, env: dict, path: str, auth: str | None = None):
+        import subprocess
+        import sys
+        import tempfile
+        code = ("import io, json, app\n"
+                f"env={{'REQUEST_METHOD':'GET','PATH_INFO':{path!r},'QUERY_STRING':'','wsgi.input':io.BytesIO()}}\n"
+                + (f"env['HTTP_AUTHORIZATION']={auth!r}\n" if auth else "")
+                + "st={}\nbody=b''.join(app.app(env, lambda s,h: st.update(s=s)))\n"
+                  "print(json.dumps({'status': st['s'], 'body': json.loads(body)}))\n")
+        with tempfile.TemporaryDirectory() as d:
+            e = {k: v for k, v in os.environ.items() if k not in ("DATABASE_URL", "CANON_API_KEYS", "CANON_SANDBOX")}
+            e.update(CANON_DB=os.path.join(d, "demo.db"), **env)
+            out = subprocess.run([sys.executable, "-c", code], cwd=ROOT, env=e, capture_output=True, text=True,
+                                 check=True)
+        return json.loads(out.stdout.strip().splitlines()[-1])
+
+    def test_demo_mode_seeds_sample_patient(self):
+        r = self.run_app({}, "/v1/patients")
+        self.assertTrue(r["status"].startswith("200"))
+        self.assertEqual(r["body"]["patients"][0]["name"], "Maria Chen")
+        self.assertEqual(r["body"]["patients"][0]["documents"], 7)
+
+    def test_demo_mode_static_keys(self):
+        self.assertTrue(self.run_app({"CANON_API_KEYS": "k1:demo"}, "/v1/patients")["status"].startswith("401"))
+        r = self.run_app({"CANON_API_KEYS": "k1:demo", "CANON_SEED_SAMPLES": "0"}, "/v1/patients", "Bearer k1")
+        self.assertEqual(r["body"]["patients"], [])

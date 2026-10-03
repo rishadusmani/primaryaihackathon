@@ -1,5 +1,5 @@
 """HTTP API. One framework-free `App`, served by http.server locally and as a
-WSGI app on Vercel (api/index.py).
+WSGI app on Vercel (app.py).
 
 Public
     GET  /healthz
@@ -18,7 +18,9 @@ Authenticated (Authorization: Bearer cn_live_...)
     POST /v1/billing/checkout            -> Stripe Checkout URL
     POST /v1/billing/portal              -> Stripe Billing Portal URL
 
-CANON_SANDBOX=1 disables auth and billing (local development).
+CANON_SANDBOX=1 disables per-customer auth and billing (local development and the
+ephemeral demo deployment). In sandbox mode, CANON_API_KEYS="key1:label,key2:label"
+optionally requires one of those static keys.
 """
 
 from __future__ import annotations
@@ -69,6 +71,8 @@ class App:
         self.billing = billing or Billing(self.store)
         self.sandbox = (os.environ.get("CANON_SANDBOX") == "1") if sandbox is None else sandbox
         self.lock = threading.Lock()
+        raw = os.environ.get("CANON_API_KEYS", "")
+        self.static_keys = {k.strip() for k, _, _ in (p.partition(":") for p in raw.split(",")) if k.strip()}
         if self.sandbox:
             self.store.execute("INSERT INTO accounts (id, name, status, created_at) VALUES (?,?,?,?) "
                                "ON CONFLICT DO NOTHING", (SANDBOX_ACCOUNT, "Sandbox", "sandbox", "1970-01-01T00:00:00Z"))
@@ -188,10 +192,13 @@ class App:
         return _err(404, "not_found", f"No route {method} {path}")
 
     def _authenticate(self, h: dict) -> dict | None:
-        if self.sandbox:
-            return dict(self.store.one("SELECT * FROM accounts WHERE id=?", (SANDBOX_ACCOUNT,)))
         auth = h.get("authorization", "")
-        return self.billing.authenticate(auth[7:].strip() if auth.startswith("Bearer ") else None)
+        token = auth[7:].strip() if auth.startswith("Bearer ") else None
+        if self.sandbox:
+            if self.static_keys and token not in self.static_keys:
+                return None
+            return dict(self.store.one("SELECT * FROM accounts WHERE id=?", (SANDBOX_ACCOUNT,)))
+        return self.billing.authenticate(token)
 
     # ------------------------------------------------------------------ adapters
     def wsgi(self, environ, start_response):

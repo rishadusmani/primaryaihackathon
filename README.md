@@ -80,6 +80,20 @@ curl localhost:8080/v1/audit/verify               # tamper-evident access log
 | `POST /v1/billing/checkout`, `POST /v1/billing/portal` | Stripe Checkout / Billing Portal links |
 | `POST /v1/stripe/webhook`, `GET /v1/billing/sync` | Stripe events; cron retry for usage reporting |
 
+### Hosting on Vercel
+
+`app.py` exposes the API as a WSGI `app` for Vercel's Python runtime (`vercel.json`
+selects the `python` preset). Deploy with `vercel deploy --prod`. It runs in one of
+two modes:
+
+- **Production** (`DATABASE_URL` set): Supabase Postgres, per-customer API keys
+  and Stripe billing. See [Hosting and billing](#hosting-vercel--supabase-and-billing-stripe).
+- **Demo** (no `DATABASE_URL`): SQLite in `/tmp`, which is per instance and wiped
+  on cold starts. Each new instance reloads `samples/maria_chen`, so patient IDs
+  change between instances and uploads are not kept. Set `CANON_API_KEYS` to
+  require a static bearer key (otherwise the demo is open). Set
+  `CANON_SEED_SAMPLES=0` to skip the sample load.
+
 ### For agents
 
 **MCP** (Claude Code, Claude Desktop, any MCP client):
@@ -111,8 +125,8 @@ layer, never trusted from the model.
 
 ## Hosting (Vercel + Supabase) and billing (Stripe)
 
-The hosted API runs as one Python serverless function on Vercel (`api/index.py`,
-WSGI). Data lives in Supabase Postgres in a private `canon` schema
+The hosted API runs as one Python serverless function on Vercel (`app.py`,
+WSGI) in production mode. Data lives in Supabase Postgres in a private `canon` schema
 (`migrations/001_init.sql`, already applied to the `primaryaihackathon`
 Supabase project). Customers pay per normalized document through Stripe
 usage-based billing.
@@ -185,7 +199,7 @@ canon/
   api.py           HTTP API      mcp_server.py   MCP over stdio
   store.py         SQLite / Postgres + hash-chained audit log
   billing.py       accounts, API keys, quota, Stripe metering + webhooks
-api/index.py       Vercel entry point         migrations/   Postgres schema
+app.py             Vercel entry point         migrations/   Postgres schema
 samples/maria_chen/  one patient across 7 messy sources
 tests/               end-to-end and unit tests
 ```
