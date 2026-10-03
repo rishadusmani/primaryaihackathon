@@ -1,0 +1,232 @@
+[
+ {
+  "vaccine": "mmrv",
+  "cvx": "94",
+  "cvx_display": "MMRV",
+  "synonyms": [
+   "mmrv",
+   "proquad"
+  ]
+ },
+ {
+  "vaccine": "mmr",
+  "cvx": "03",
+  "cvx_display": "MMR",
+  "synonyms": [
+   "mmr",
+   "measles mumps rubella",
+   "measles mumps and rubella",
+   "m-m-r ii",
+   "priorix"
+  ]
+ },
+ {
+  "vaccine": "varicella",
+  "cvx": "21",
+  "cvx_display": "varicella",
+  "synonyms": [
+   "varicella",
+   "varivax",
+   "chickenpox"
+  ]
+ },
+ {
+  "vaccine": "hepatitis a-hepatitis b",
+  "cvx": "104",
+  "cvx_display": "Hep A-Hep B",
+  "synonyms": [
+   "twinrix"
+  ]
+ },
+ {
+  "vaccine": "hepatitis a",
+  "cvx": "85",
+  "cvx_display": "Hep A, unspecified formulation",
+  "synonyms": [
+   "hep a",
+   "hepatitis a",
+   "havrix",
+   "vaqta"
+  ]
+ },
+ {
+  "vaccine": "hpv",
+  "cvx": "165",
+  "cvx_display": "HPV9",
+  "synonyms": [
+   "hpv",
+   "gardasil",
+   "gardasil 9",
+   "human papillomavirus"
+  ]
+ },
+ {
+  "vaccine": "meningococcal b",
+  "cvx": "164",
+  "cvx_display": "meningococcal B, unspecified",
+  "synonyms": [
+   "menb",
+   "bexsero",
+   "trumenba",
+   "meningococcal b"
+  ]
+ },
+ {
+  "vaccine": "meningococcal acwy",
+  "cvx": "108",
+  "cvx_display": "meningococcal ACWY, unspecified formulation",
+  "synonyms": [
+   "menacwy",
+   "menveo",
+   "menquadfi",
+   "menactra",
+   "meningococcal"
+  ]
+ },
+ {
+  "vaccine": "dtap-hepb-ipv",
+  "cvx": "110",
+  "cvx_display": "DTaP-Hep B-IPV",
+  "synonyms": [
+   "pediarix"
+  ]
+ },
+ {
+  "vaccine": "dtap-ipv-hib-hepb",
+  "cvx": "146",
+  "cvx_display": "DTaP,IPV,Hib,HepB",
+  "synonyms": [
+   "vaxelis"
+  ]
+ },
+ {
+  "vaccine": "dtap",
+  "cvx": "107",
+  "cvx_display": "DTaP, unspecified formulation",
+  "synonyms": [
+   "dtap",
+   "daptacel",
+   "infanrix"
+  ]
+ },
+ {
+  "vaccine": "td",
+  "cvx": "139",
+  "cvx_display": "Td(adult) unspecified formulation",
+  "synonyms": [
+   "td",
+   "tenivac",
+   "tetanus diphtheria"
+  ]
+ },
+ {
+  "vaccine": "ipv",
+  "cvx": "10",
+  "cvx_display": "IPV",
+  "synonyms": [
+   "ipv",
+   "ipol",
+   "polio"
+  ]
+ },
+ {
+  "vaccine": "hib",
+  "cvx": "17",
+  "cvx_display": "Hib, unspecified formulation",
+  "synonyms": [
+   "hib",
+   "acthib",
+   "pedvaxhib",
+   "hiberix",
+   "haemophilus influenzae type b"
+  ]
+ },
+ {
+  "vaccine": "rotavirus",
+  "cvx": "122",
+  "cvx_display": "rotavirus, unspecified formulation",
+  "synonyms": [
+   "rotavirus",
+   "rotateq",
+   "rotarix"
+  ]
+ },
+ {
+  "vaccine": "rsv monoclonal antibody",
+  "cvx": "315",
+  "cvx_display": "Respiratory syncytial virus (RSV) MAB, unspecified",
+  "synonyms": [
+   "nirsevimab",
+   "beyfortus"
+  ]
+ },
+ {
+  "vaccine": "rsv",
+  "cvx": "314",
+  "cvx_display": "Respiratory syncytial virus (RSV) vaccine, unspecified",
+  "synonyms": [
+   "rsv",
+   "arexvy",
+   "abrysvo",
+   "mresvia",
+   "respiratory syncytial virus"
+  ]
+ },
+ {
+  "vaccine": "mpox",
+  "cvx": "325",
+  "cvx_display": "Vaccinia (smallpox, mpox), unspecified",
+  "synonyms": [
+   "mpox",
+   "monkeypox",
+   "jynneos",
+   "smallpox"
+  ]
+ },
+ {
+  "vaccine": "typhoid",
+  "cvx": "91",
+  "cvx_display": "typhoid, unspecified formulation",
+  "synonyms": [
+   "typhoid",
+   "vivotif",
+   "typhim vi"
+  ]
+ },
+ {
+  "vaccine": "yellow fever",
+  "cvx": "37",
+  "cvx_display": "yellow fever live",
+  "synonyms": [
+   "yellow fever",
+   "yf-vax"
+  ]
+ },
+ {
+  "vaccine": "rabies",
+  "cvx": "90",
+  "cvx_display": "rabies, unspecified formulation",
+  "synonyms": [
+   "rabies",
+   "imovax",
+   "rabavert"
+  ]
+ },
+ {
+  "vaccine": "japanese encephalitis",
+  "cvx": "134",
+  "cvx_display": "Japanese Encephalitis IM",
+  "synonyms": [
+   "japanese encephalitis",
+   "ixiaro"
+  ]
+ },
+ {
+  "vaccine": "bcg",
+  "cvx": "19",
+  "cvx_display": "BCG",
+  "synonyms": [
+   "bcg"
+  ]
+ }
+]

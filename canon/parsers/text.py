@@ -72,6 +72,8 @@ VACCINE_AFTER_RX = re.compile(r"^\W*(?:\w+\W+){0,2}?(vaccines?|vaccinations?|vac
                               r"jabs?)\b", re.I)
 VACCINE_BEFORE_RX = re.compile(r"\b(vaccines?|vaccinations?|vaccinated|immuni[sz]ed|immuni[sz]ations?|boosters?|"
                                r"tdap|dtap|td)\b(?:\W+\w+){0,3}\W*$", re.I)
+VACCINE_DECLINED_RX = re.compile(r"\b(declined|refused|deferred|not given|not administered|due|overdue|"
+                                 r"recommended|contraindicated)\b", re.I)
 STOP_RX = re.compile(r"\b(stop|stopped|discontinue|discontinued|d/c|dc'd|hold|held|off)\b", re.I)
 DOSE_RX = re.compile(r"(\d+(?:\.\d+)?(?:\s*[/-]\s*\d+(?:\.\d+)?)?)\s*(mg|mcg|µg|g|units?|u|ml|mL|puffs?|tabs?|"
                      r"tablets?|capsules?|caps?|drops?|%)\b", re.I)
@@ -326,9 +328,16 @@ def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None =
                                   code=loinc, system="loinc", text=phrase, value=m.group(1), unit=unit,
                                   effective=_nearby_date(line[m.end():m.end() + 30]) or _nearby_date(line) or dos))
         # ---- immunizations
-        if section == "immunizations" or re.search(r"\b(vaccine|vaccinated|immuniz|shot|booster)\b", low):
-            v = T.lookup_vaccine(text=low)
-            if v and not _negated(low, low.find(v["vaccine"].split("-")[0])):
+        # A vaccine line: an Immunizations section, a vaccine word, or a named vaccine that was given
+        # ("Tdap and Menveo given today", "Beyfortus administered").
+        strong = section == "immunizations" or re.search(r"\b(vaccines?|vaccinated|immuni[sz]|shots?|boosters?)\b", low)
+        if strong or re.search(r"\b(given|administered|received)\b", low):
+            for v, pos in T.find_vaccines(low):
+                if not strong and v["phrase"] in T.DISEASE_NAMED_VACCINE_PHRASES:
+                    continue  # "RSV infection", "given his ..." - the disease, not a vaccine
+                if (_negated(low, pos) or VACCINE_DECLINED_RX.search(_clause_after(low, pos))
+                        or VACCINE_DECLINED_RX.search(_clause_before(low, pos))):
+                    continue
                 facts.append(fact("immunization", locator=loc, method=method, snippet=line, confidence=base_conf,
                                   text=v["vaccine"], code=v["cvx"], date=_nearby_date(line)))
     return facts

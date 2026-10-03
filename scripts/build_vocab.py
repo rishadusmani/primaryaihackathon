@@ -12,6 +12,7 @@ and synonyms are curated here; official names come from the source of truth:
 - RxNorm:     NLM RxNav            (ingredient IN, or PIN when no IN exists;
                                     every brand synonym must map to that ingredient)
 - Drug class: NLM RxClass          (FDA Established Pharmacologic Class; ATC level 4 fallback)
+- CVX:        tx.fhir.org $lookup  (CDC vaccine codes; must be active)
 
 Synonyms are free-text phrases. Canon's text parser scans documents for them,
 so anything short or ambiguous ("pe", "cap", "aids") goes in `exact` instead:
@@ -1103,6 +1104,39 @@ MEDICATIONS = {
     "thiamine": ([], []),
     "melatonin": ([], []),
 }
+# --------------------------------------------------------------------------- #
+# Vaccines: name -> (CVX code, phrases). Matched only on lines that talk about vaccines
+# (an Immunizations section, or words like "vaccine", "booster", "shot"), so generic words
+# such as "polio" or "rsv" are safe here. Order matters: the first vaccine whose phrase
+# appears claims that span, so put specific products before generic names.
+# "Unspecified formulation" codes are used because notes rarely name the exact product.
+# --------------------------------------------------------------------------- #
+VACCINES = [
+    ("mmrv", "94", ["mmrv", "proquad"]),
+    ("mmr", "03", ["mmr", "measles mumps rubella", "measles mumps and rubella", "m-m-r ii", "priorix"]),
+    ("varicella", "21", ["varicella", "varivax", "chickenpox"]),
+    ("hepatitis a-hepatitis b", "104", ["twinrix"]),
+    ("hepatitis a", "85", ["hep a", "hepatitis a", "havrix", "vaqta"]),
+    ("hpv", "165", ["hpv", "gardasil", "gardasil 9", "human papillomavirus"]),
+    ("meningococcal b", "164", ["menb", "bexsero", "trumenba", "meningococcal b"]),
+    ("meningococcal acwy", "108", ["menacwy", "menveo", "menquadfi", "menactra", "meningococcal"]),
+    ("dtap-hepb-ipv", "110", ["pediarix"]),
+    ("dtap-ipv-hib-hepb", "146", ["vaxelis"]),
+    ("dtap", "107", ["dtap", "daptacel", "infanrix"]),
+    ("td", "139", ["td", "tenivac", "tetanus diphtheria"]),
+    ("ipv", "10", ["ipv", "ipol", "polio"]),
+    ("hib", "17", ["hib", "acthib", "pedvaxhib", "hiberix", "haemophilus influenzae type b"]),
+    ("rotavirus", "122", ["rotavirus", "rotateq", "rotarix"]),
+    ("rsv monoclonal antibody", "315", ["nirsevimab", "beyfortus"]),
+    ("rsv", "314", ["rsv", "arexvy", "abrysvo", "mresvia", "respiratory syncytial virus"]),
+    ("mpox", "325", ["mpox", "monkeypox", "jynneos", "smallpox"]),
+    ("typhoid", "91", ["typhoid", "vivotif", "typhim vi"]),
+    ("yellow fever", "37", ["yellow fever", "yf-vax"]),
+    ("rabies", "90", ["rabies", "imovax", "rabavert"]),
+    ("japanese encephalitis", "134", ["japanese encephalitis", "ixiaro"]),
+    ("bcg", "19", ["bcg"]),
+]
+
 # Synonyms RxNorm doesn't index as names but that unambiguously mean the ingredient.
 # Where RxClass offers several classes and the default pick is misleading, name the one
 # to use. It must be one of the classes RxClass returns for that drug (checked).
@@ -1149,6 +1183,21 @@ def snomed_name(code: str) -> tuple[str | None, bool]:
     if data.get("resourceType") != "Parameters":
         return None, False
     params = data["parameter"]
+    display = next((p.get("valueString") for p in params if p["name"] == "display"), None)
+    inactive = any(p["name"] == "property"
+                   and {"name": "code", "valueCode": "inactive"} in p.get("part", [])
+                   and {"name": "value", "valueBoolean": True} in p.get("part", [])
+                   for p in params)
+    return display, not inactive
+
+
+def cvx_name(code: str) -> tuple[str | None, bool]:
+    try:
+        data = get_json("https://tx.fhir.org/r4/CodeSystem/$lookup",
+                        system="http://hl7.org/fhir/sid/cvx", code=code, _format="json")
+    except urllib.error.HTTPError:
+        return None, False
+    params = data.get("parameter", [])
     display = next((p.get("valueString") for p in params if p["name"] == "display"), None)
     inactive = any(p["name"] == "property"
                    and {"name": "code", "valueCode": "inactive"} in p.get("part", [])
@@ -1319,7 +1368,22 @@ def main() -> int:
         medications.append({"ingredient": name, "rxnorm": rxcui, "rxnorm_name": rx_name, "tty": tty,
                             "drug_class": cls, "synonyms": syns, "exact": exact})
 
-    print(f"\n{len(observations)} observations, {len(conditions)} conditions, {len(medications)} medications")
+    print(f"Verifying {len(VACCINES)} CVX vaccine codes...")
+    vaccines = []
+    seen_codes: set[str] = set()
+    for (name, code, phrases), (cvx_display, active) in zip(VACCINES, pool.map(lambda v: cvx_name(v[1]), VACCINES)):
+        if cvx_display is None:
+            problems.append(f"CVX {code} ({name}): not found")
+            continue
+        if not active:
+            problems.append(f"CVX {code} ({name}, {cvx_display}): inactive")
+        if code in seen_codes:
+            problems.append(f"CVX {code}: listed twice")
+        seen_codes.add(code)
+        vaccines.append({"vaccine": name, "cvx": code, "cvx_display": cvx_display, "synonyms": phrases})
+
+    print(f"\n{len(observations)} observations, {len(conditions)} conditions, {len(medications)} medications, "
+          f"{len(vaccines)} vaccines")
     if problems:
         print(f"\n{len(problems)} problem(s):")
         for p in problems:
@@ -1328,7 +1392,7 @@ def main() -> int:
     if not check_only:
         OUT.mkdir(parents=True, exist_ok=True)
         for fname, rows in (("observations.json", observations), ("conditions.json", conditions),
-                            ("medications.json", medications)):
+                            ("medications.json", medications), ("vaccines.json", vaccines)):
             (OUT / fname).write_text(json.dumps(rows, indent=1, ensure_ascii=False) + "\n")
         print(f"Wrote {OUT}/")
     return 0
