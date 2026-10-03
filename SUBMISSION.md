@@ -1,6 +1,6 @@
 # Supabase Select 2026 Hackathon — submission draft (Primary AI)
 
-> Draft answers to paste into the form. Fields marked TODO need something only you have.
+> Paste-ready answers for the submission form. Every field is filled in; nothing has been submitted.
 
 ## Project name
 Canon
@@ -51,7 +51,8 @@ Python (standard library only for the core: zero runtime dependencies), Supabase
   - Use it from Claude over MCP: `claude mcp add --transport http canon https://primaryaihackathon.vercel.app/mcp --header "Authorization: Bearer cn_live_primaryaisupabasehackathon"`
 - Your own key: `curl -X POST https://primaryaihackathon.vercel.app/v1/signup -H 'Content-Type: application/json' -d '{"name":"Judge","email":"you@example.com"}'`. New accounts have no free pages: reads work right away, and uploads need a subscription through the returned Checkout link (Stripe test card `4242 4242 4242 4242`).
 - API health: https://primaryaihackathon.vercel.app/healthz
-- Demo video: TODO
+- Demo video with voice-over (2:03): https://github.com/rishadusmani/primaryaihackathon/blob/main/docs/canon-demo.mp4 (recorded on the live site; upload to YouTube or Loom if the form needs a streaming link)
+- Product images (10): https://github.com/rishadusmani/primaryaihackathon/tree/main/docs/images
 
 ## How to run it
 ```bash
@@ -76,4 +77,4 @@ claude mcp add canon -- python -m canon mcp           # local MCP (stdio) for Cl
 5. **Business (10s).** Supabase schema, signup → API key, Stripe billing.
 
 ## Team
-Rishad U. (owner). TODO: add teammates if any.
+Rishad U. (Primary AI): owner and builder.
