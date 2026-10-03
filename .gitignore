@@ -1,2 +1,8 @@
 .vercel
 .env*
+.venv/
+__pycache__/
+*.db
+.pytest_cache/
+*.egg-info/
+!.env.example
