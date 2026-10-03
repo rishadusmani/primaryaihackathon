@@ -19,4 +19,4 @@ build-backend = "setuptools.build_meta"
 include = ["canon*"]
 
 [tool.setuptools.package-data]
-canon = ["dashboard.html"]
+canon = ["vocab/*.json", "dashboard.html"]

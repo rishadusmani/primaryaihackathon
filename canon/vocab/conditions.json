@@ -1,0 +1,1376 @@
+[
+ {
+  "icd10": "E10.9",
+  "display": "Type 1 diabetes mellitus without complications",
+  "snomed": "46635009",
+  "snomed_display": "Type 1 diabetes mellitus",
+  "synonyms": [
+   "type 1 diabetes",
+   "type i diabetes",
+   "type 1 diabetes mellitus",
+   "diabetes mellitus type 1",
+   "t1dm",
+   "dm1",
+   "iddm",
+   "dm type 1"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R73.03",
+  "display": "Prediabetes",
+  "snomed": "714628002",
+  "snomed_display": "Prediabetes",
+  "synonyms": [
+   "prediabetes",
+   "pre diabetes",
+   "prediabetic"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E16.2",
+  "display": "Hypoglycemia, unspecified",
+  "snomed": "302866003",
+  "snomed_display": "Hypoglycemia",
+  "synonyms": [
+   "hypoglycemia",
+   "hypoglycaemia"
+  ],
+  "exact": [
+   "low blood sugar"
+  ]
+ },
+ {
+  "icd10": "I95.9",
+  "display": "Hypotension, unspecified",
+  "snomed": "45007003",
+  "snomed_display": "Low blood pressure",
+  "synonyms": [
+   "hypotension"
+  ],
+  "exact": [
+   "low blood pressure"
+  ]
+ },
+ {
+  "icd10": "E78.00",
+  "display": "Pure hypercholesterolemia, unspecified",
+  "snomed": "13644009",
+  "snomed_display": "Hypercholesterolemia",
+  "synonyms": [
+   "hypercholesterolemia",
+   "hypercholesterolaemia",
+   "pure hypercholesterolemia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E78.1",
+  "display": "Pure hyperglyceridemia",
+  "snomed": "302870006",
+  "snomed_display": "Hypertriglyceridemia",
+  "synonyms": [
+   "hypertriglyceridemia",
+   "hypertriglyceridaemia"
+  ],
+  "exact": [
+   "high triglycerides"
+  ]
+ },
+ {
+  "icd10": "I25.10",
+  "display": "Atherosclerotic heart disease of native coronary artery without angina pectoris",
+  "snomed": "53741008",
+  "snomed_display": "Coronary arteriosclerosis",
+  "synonyms": [
+   "coronary artery disease",
+   "coronary heart disease",
+   "ischemic heart disease",
+   "atherosclerotic heart disease"
+  ],
+  "exact": [
+   "cad",
+   "chd",
+   "ihd",
+   "ascvd"
+  ]
+ },
+ {
+  "icd10": "I21.9",
+  "display": "Acute myocardial infarction, unspecified",
+  "snomed": "22298006",
+  "snomed_display": "Myocardial infarction",
+  "synonyms": [
+   "myocardial infarction",
+   "heart attack",
+   "acute myocardial infarction",
+   "stemi",
+   "nstemi"
+  ],
+  "exact": [
+   "mi",
+   "ami"
+  ]
+ },
+ {
+  "icd10": "I50.9",
+  "display": "Heart failure, unspecified",
+  "snomed": "84114007",
+  "snomed_display": "Heart failure",
+  "synonyms": [
+   "heart failure",
+   "congestive heart failure",
+   "chf",
+   "cardiac failure"
+  ],
+  "exact": [
+   "hf"
+  ]
+ },
+ {
+  "icd10": "I48.92",
+  "display": "Unspecified atrial flutter",
+  "snomed": "5370000",
+  "snomed_display": "Atrial flutter",
+  "synonyms": [
+   "atrial flutter",
+   "a flutter",
+   "aflutter"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I35.0",
+  "display": "Nonrheumatic aortic (valve) stenosis",
+  "snomed": "60573004",
+  "snomed_display": "Aortic valve stenosis",
+  "synonyms": [
+   "aortic stenosis",
+   "aortic valve stenosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I42.2",
+  "display": "Other hypertrophic cardiomyopathy",
+  "snomed": "233873004",
+  "snomed_display": "Hypertrophic cardiomyopathy",
+  "synonyms": [
+   "hypertrophic cardiomyopathy"
+  ],
+  "exact": [
+   "hcm"
+  ]
+ },
+ {
+  "icd10": "I73.9",
+  "display": "Peripheral vascular disease, unspecified",
+  "snomed": "400047006",
+  "snomed_display": "Peripheral vascular disease",
+  "synonyms": [
+   "peripheral vascular disease",
+   "peripheral arterial disease",
+   "peripheral artery disease"
+  ],
+  "exact": [
+   "pvd",
+   "pad"
+  ]
+ },
+ {
+  "icd10": "I82.409",
+  "display": "Acute embolism and thrombosis of unspecified deep veins of unspecified lower extremity",
+  "snomed": "128053003",
+  "snomed_display": "Deep venous thrombosis",
+  "synonyms": [
+   "deep vein thrombosis",
+   "deep venous thrombosis",
+   "dvt"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I26.99",
+  "display": "Other pulmonary embolism without acute cor pulmonale",
+  "snomed": "59282003",
+  "snomed_display": "Pulmonary embolism",
+  "synonyms": [
+   "pulmonary embolism",
+   "pulmonary embolus"
+  ],
+  "exact": [
+   "pe"
+  ]
+ },
+ {
+  "icd10": "I63.9",
+  "display": "Cerebral infarction, unspecified",
+  "snomed": "230690007",
+  "snomed_display": "Cerebrovascular accident",
+  "synonyms": [
+   "stroke",
+   "cerebrovascular accident",
+   "cva",
+   "cerebral infarction"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G45.9",
+  "display": "Transient cerebral ischemic attack, unspecified",
+  "snomed": "266257000",
+  "snomed_display": "Transient cerebral ischemia",
+  "synonyms": [
+   "transient ischemic attack",
+   "mini stroke"
+  ],
+  "exact": [
+   "tia"
+  ]
+ },
+ {
+  "icd10": "J18.9",
+  "display": "Pneumonia, unspecified organism",
+  "snomed": "233604007",
+  "snomed_display": "Pneumonia",
+  "synonyms": [
+   "pneumonia",
+   "community acquired pneumonia"
+  ],
+  "exact": [
+   "cap"
+  ]
+ },
+ {
+  "icd10": "G47.33",
+  "display": "Obstructive sleep apnea (adult) (pediatric)",
+  "snomed": "78275009",
+  "snomed_display": "Obstructive sleep apnea syndrome",
+  "synonyms": [
+   "obstructive sleep apnea",
+   "sleep apnea",
+   "osa"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "J84.9",
+  "display": "Interstitial pulmonary disease, unspecified",
+  "snomed": "233703007",
+  "snomed_display": "Interstitial lung disease",
+  "synonyms": [
+   "interstitial lung disease",
+   "pulmonary fibrosis"
+  ],
+  "exact": [
+   "ild"
+  ]
+ },
+ {
+  "icd10": "E84.9",
+  "display": "Cystic fibrosis, unspecified",
+  "snomed": "190905008",
+  "snomed_display": "Cystic fibrosis",
+  "synonyms": [
+   "cystic fibrosis"
+  ],
+  "exact": [
+   "cf"
+  ]
+ },
+ {
+  "icd10": "J30.9",
+  "display": "Allergic rhinitis, unspecified",
+  "snomed": "61582004",
+  "snomed_display": "Allergic rhinitis",
+  "synonyms": [
+   "allergic rhinitis",
+   "hay fever",
+   "seasonal allergies"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "J32.9",
+  "display": "Chronic sinusitis, unspecified",
+  "snomed": "40055000",
+  "snomed_display": "Chronic sinusitis",
+  "synonyms": [
+   "chronic sinusitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "J02.0",
+  "display": "Streptococcal pharyngitis",
+  "snomed": "43878008",
+  "snomed_display": "Streptococcal sore throat",
+  "synonyms": [
+   "strep throat",
+   "streptococcal pharyngitis",
+   "strep pharyngitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "J11.1",
+  "display": "Influenza due to unidentified influenza virus with other respiratory manifestations",
+  "snomed": "6142004",
+  "snomed_display": "Influenza",
+  "synonyms": [],
+  "exact": [
+   "influenza",
+   "flu"
+  ]
+ },
+ {
+  "icd10": "U07.1",
+  "display": "COVID-19",
+  "snomed": "840539006",
+  "snomed_display": "COVID-19",
+  "synonyms": [
+   "sars cov 2 infection",
+   "covid 19 infection"
+  ],
+  "exact": [
+   "covid 19",
+   "covid19",
+   "covid"
+  ]
+ },
+ {
+  "icd10": "N18.9",
+  "display": "Chronic kidney disease, unspecified",
+  "snomed": "709044004",
+  "snomed_display": "Chronic kidney disease",
+  "synonyms": [
+   "chronic kidney disease",
+   "ckd",
+   "chronic renal disease"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N17.9",
+  "display": "Acute kidney failure, unspecified",
+  "snomed": "14669001",
+  "snomed_display": "Acute kidney injury",
+  "synonyms": [
+   "acute kidney injury",
+   "acute renal failure",
+   "aki"
+  ],
+  "exact": [
+   "arf"
+  ]
+ },
+ {
+  "icd10": "N20.0",
+  "display": "Calculus of kidney",
+  "snomed": "95570007",
+  "snomed_display": "Kidney stone",
+  "synonyms": [
+   "kidney stone",
+   "kidney stones",
+   "nephrolithiasis",
+   "renal calculus"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N39.0",
+  "display": "Urinary tract infection, site not specified",
+  "snomed": "68566005",
+  "snomed_display": "Urinary tract infectious disease",
+  "synonyms": [
+   "urinary tract infection",
+   "uti"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N40.0",
+  "display": "Benign prostatic hyperplasia without lower urinary tract symptoms",
+  "snomed": "266569009",
+  "snomed_display": "Benign prostatic hyperplasia",
+  "synonyms": [
+   "benign prostatic hyperplasia",
+   "enlarged prostate",
+   "bph"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E28.2",
+  "display": "Polycystic ovarian syndrome",
+  "snomed": "237055002",
+  "snomed_display": "Polycystic ovary syndrome",
+  "synonyms": [
+   "polycystic ovary syndrome",
+   "polycystic ovarian syndrome",
+   "pcos"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N80.9",
+  "display": "Endometriosis, unspecified",
+  "snomed": "129103003",
+  "snomed_display": "Endometriosis (clinical)",
+  "synonyms": [
+   "endometriosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K58.9",
+  "display": "Irritable bowel syndrome, unspecified",
+  "snomed": "10743008",
+  "snomed_display": "Irritable bowel syndrome",
+  "synonyms": [
+   "irritable bowel syndrome",
+   "ibs"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K50.90",
+  "display": "Crohn's disease, unspecified, without complications",
+  "snomed": "34000006",
+  "snomed_display": "Crohn's disease",
+  "synonyms": [
+   "crohn's disease",
+   "crohns disease",
+   "crohn disease",
+   "crohn's"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K51.90",
+  "display": "Ulcerative colitis, unspecified, without complications",
+  "snomed": "64766004",
+  "snomed_display": "Ulcerative colitis",
+  "synonyms": [
+   "ulcerative colitis"
+  ],
+  "exact": [
+   "uc"
+  ]
+ },
+ {
+  "icd10": "K74.60",
+  "display": "Unspecified cirrhosis of liver",
+  "snomed": "19943007",
+  "snomed_display": "Cirrhosis of liver",
+  "synonyms": [
+   "cirrhosis",
+   "liver cirrhosis",
+   "cirrhosis of liver"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K76.0",
+  "display": "Fatty (change of) liver, not elsewhere classified",
+  "snomed": "197321007",
+  "snomed_display": "Steatotic liver disease",
+  "synonyms": [
+   "fatty liver",
+   "hepatic steatosis",
+   "nafld",
+   "masld",
+   "steatotic liver disease"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B18.1",
+  "display": "Chronic viral hepatitis B without delta-agent",
+  "snomed": "61977001",
+  "snomed_display": "Chronic type B viral hepatitis",
+  "synonyms": [
+   "chronic hepatitis b"
+  ],
+  "exact": [
+   "hepatitis b",
+   "hep b",
+   "hbv"
+  ]
+ },
+ {
+  "icd10": "B18.2",
+  "display": "Chronic viral hepatitis C",
+  "snomed": "128302006",
+  "snomed_display": "Chronic hepatitis C",
+  "synonyms": [
+   "chronic hepatitis c"
+  ],
+  "exact": [
+   "hepatitis c",
+   "hep c",
+   "hcv"
+  ]
+ },
+ {
+  "icd10": "K85.90",
+  "display": "Acute pancreatitis without necrosis or infection, unspecified",
+  "snomed": "197456007",
+  "snomed_display": "Acute pancreatitis",
+  "synonyms": [
+   "acute pancreatitis",
+   "pancreatitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K59.00",
+  "display": "Constipation, unspecified",
+  "snomed": "14760008",
+  "snomed_display": "Constipation",
+  "synonyms": [
+   "constipation"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E05.90",
+  "display": "Thyrotoxicosis, unspecified without thyrotoxic crisis or storm",
+  "snomed": "34486009",
+  "snomed_display": "Hyperthyroidism",
+  "synonyms": [
+   "hyperthyroidism",
+   "overactive thyroid",
+   "thyrotoxicosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E55.9",
+  "display": "Vitamin D deficiency, unspecified",
+  "snomed": "34713006",
+  "snomed_display": "Vitamin D deficiency",
+  "synonyms": [
+   "vitamin d deficiency"
+  ],
+  "exact": [
+   "low vitamin d"
+  ]
+ },
+ {
+  "icd10": "E87.6",
+  "display": "Hypokalemia",
+  "snomed": "43339004",
+  "snomed_display": "Hypokalemia",
+  "synonyms": [
+   "hypokalemia",
+   "hypokalaemia"
+  ],
+  "exact": [
+   "low potassium"
+  ]
+ },
+ {
+  "icd10": "E87.5",
+  "display": "Hyperkalemia",
+  "snomed": "14140009",
+  "snomed_display": "Hyperkalemia",
+  "synonyms": [
+   "hyperkalemia",
+   "hyperkalaemia"
+  ],
+  "exact": [
+   "high potassium"
+  ]
+ },
+ {
+  "icd10": "E87.1",
+  "display": "Hypo-osmolality and hyponatremia",
+  "snomed": "89627008",
+  "snomed_display": "Hyponatremia",
+  "synonyms": [
+   "hyponatremia",
+   "hyponatraemia"
+  ],
+  "exact": [
+   "low sodium"
+  ]
+ },
+ {
+  "icd10": "M10.9",
+  "display": "Gout, unspecified",
+  "snomed": "90560007",
+  "snomed_display": "Gout",
+  "synonyms": [
+   "gout"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "D64.9",
+  "display": "Anemia, unspecified",
+  "snomed": "271737000",
+  "snomed_display": "Anemia",
+  "synonyms": [
+   "anemia",
+   "anaemia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "D50.9",
+  "display": "Iron deficiency anemia, unspecified",
+  "snomed": "87522002",
+  "snomed_display": "Iron deficiency anemia",
+  "synonyms": [
+   "iron deficiency anemia",
+   "iron deficiency anaemia"
+  ],
+  "exact": [
+   "ida"
+  ]
+ },
+ {
+  "icd10": "D57.1",
+  "display": "Sickle-cell disease without crisis",
+  "snomed": "417357006",
+  "snomed_display": "Sickling disorder due to hemoglobin S",
+  "synonyms": [
+   "sickle cell disease",
+   "sickle cell anemia"
+  ],
+  "exact": [
+   "scd"
+  ]
+ },
+ {
+  "icd10": "C80.1",
+  "display": "Malignant (primary) neoplasm, unspecified",
+  "snomed": "363346000",
+  "snomed_display": "Malignant neoplastic disease",
+  "synonyms": [
+   "malignant neoplasm"
+  ],
+  "exact": [
+   "cancer",
+   "malignancy"
+  ]
+ },
+ {
+  "icd10": "C50.919",
+  "display": "Malignant neoplasm of unspecified site of unspecified female breast",
+  "snomed": "254837009",
+  "snomed_display": "Malignant neoplasm of breast",
+  "synonyms": [
+   "breast cancer",
+   "breast carcinoma"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C61",
+  "display": "Malignant neoplasm of prostate",
+  "snomed": "399068003",
+  "snomed_display": "Malignant neoplasm of prostate",
+  "synonyms": [
+   "prostate cancer",
+   "prostate carcinoma"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C34.90",
+  "display": "Malignant neoplasm of unspecified part of unspecified bronchus or lung",
+  "snomed": "363358000",
+  "snomed_display": "Malignant neoplasm of lung",
+  "synonyms": [
+   "lung cancer",
+   "lung carcinoma"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C18.9",
+  "display": "Malignant neoplasm of colon, unspecified",
+  "snomed": "363406005",
+  "snomed_display": "Malignant neoplasm of colon",
+  "synonyms": [
+   "colon cancer",
+   "colorectal cancer",
+   "colon carcinoma"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C25.9",
+  "display": "Malignant neoplasm of pancreas, unspecified",
+  "snomed": "363418001",
+  "snomed_display": "Malignant neoplasm of pancreas",
+  "synonyms": [
+   "pancreatic cancer"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C43.9",
+  "display": "Malignant melanoma of skin, unspecified",
+  "snomed": "372244006",
+  "snomed_display": "Malignant melanoma",
+  "synonyms": [
+   "melanoma",
+   "malignant melanoma"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C95.90",
+  "display": "Leukemia, unspecified not having achieved remission",
+  "snomed": "93143009",
+  "snomed_display": "Leukemia",
+  "synonyms": [
+   "leukemia",
+   "leukaemia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C85.90",
+  "display": "Non-Hodgkin lymphoma, unspecified, unspecified site",
+  "snomed": "118600007",
+  "snomed_display": "Malignant lymphoma",
+  "synonyms": [
+   "lymphoma"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G40.909",
+  "display": "Epilepsy, unspecified, not intractable, without status epilepticus",
+  "snomed": "84757009",
+  "snomed_display": "Epilepsy",
+  "synonyms": [
+   "epilepsy",
+   "seizure disorder"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G43.909",
+  "display": "Migraine, unspecified, not intractable, without status migrainosus",
+  "snomed": "37796009",
+  "snomed_display": "Migraine",
+  "synonyms": [
+   "migraine",
+   "migraines"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G20.A1",
+  "display": "Parkinson's disease without dyskinesia, without mention of fluctuations",
+  "snomed": "49049000",
+  "snomed_display": "Parkinson's disease",
+  "synonyms": [
+   "parkinson's disease",
+   "parkinsons disease",
+   "parkinson disease",
+   "parkinson's"
+  ],
+  "exact": [
+   "pd"
+  ]
+ },
+ {
+  "icd10": "G30.9",
+  "display": "Alzheimer's disease, unspecified",
+  "snomed": "26929004",
+  "snomed_display": "Alzheimer's disease",
+  "synonyms": [
+   "alzheimer's disease",
+   "alzheimers disease",
+   "alzheimer disease",
+   "alzheimer's"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F03.90",
+  "display": "Unspecified dementia, unspecified severity, without behavioral disturbance, psychotic disturbance, mood disturbance, and anxiety",
+  "snomed": "52448006",
+  "snomed_display": "Dementia",
+  "synonyms": [
+   "dementia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G62.9",
+  "display": "Polyneuropathy, unspecified",
+  "snomed": "302226006",
+  "snomed_display": "Peripheral nerve disease",
+  "synonyms": [
+   "peripheral neuropathy",
+   "polyneuropathy",
+   "neuropathy"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G47.00",
+  "display": "Insomnia, unspecified",
+  "snomed": "193462001",
+  "snomed_display": "Insomnia",
+  "synonyms": [
+   "insomnia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G89.29",
+  "display": "Other chronic pain",
+  "snomed": "82423001",
+  "snomed_display": "Chronic pain",
+  "synonyms": [
+   "chronic pain"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F32.A",
+  "display": "Depression, unspecified",
+  "snomed": "35489007",
+  "snomed_display": "Depressive disorder",
+  "synonyms": [
+   "depression",
+   "depressive disorder"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F41.9",
+  "display": "Anxiety disorder, unspecified",
+  "snomed": "197480006",
+  "snomed_display": "Anxiety disorder",
+  "synonyms": [
+   "anxiety",
+   "anxiety disorder"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F31.9",
+  "display": "Bipolar disorder, unspecified",
+  "snomed": "13746004",
+  "snomed_display": "Bipolar disorder",
+  "synonyms": [
+   "bipolar disorder",
+   "bipolar",
+   "manic depression"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F20.9",
+  "display": "Schizophrenia, unspecified",
+  "snomed": "58214004",
+  "snomed_display": "Schizophrenia",
+  "synonyms": [
+   "schizophrenia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F43.10",
+  "display": "Post-traumatic stress disorder, unspecified",
+  "snomed": "47505003",
+  "snomed_display": "Posttraumatic stress disorder",
+  "synonyms": [
+   "post traumatic stress disorder",
+   "posttraumatic stress disorder",
+   "ptsd"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F90.9",
+  "display": "Attention-deficit hyperactivity disorder, unspecified type",
+  "snomed": "406506008",
+  "snomed_display": "Attention deficit hyperactivity disorder",
+  "synonyms": [
+   "attention deficit hyperactivity disorder",
+   "adhd"
+  ],
+  "exact": [
+   "add"
+  ]
+ },
+ {
+  "icd10": "F42.9",
+  "display": "Obsessive-compulsive disorder, unspecified",
+  "snomed": "191736004",
+  "snomed_display": "Obsessive-compulsive disorder",
+  "synonyms": [
+   "obsessive compulsive disorder",
+   "ocd"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F10.20",
+  "display": "Alcohol dependence, uncomplicated",
+  "snomed": "7200002",
+  "snomed_display": "Alcoholism",
+  "synonyms": [
+   "alcohol dependence",
+   "alcohol use disorder",
+   "alcoholism"
+  ],
+  "exact": [
+   "aud"
+  ]
+ },
+ {
+  "icd10": "F17.200",
+  "display": "Nicotine dependence, unspecified, uncomplicated",
+  "snomed": "56294008",
+  "snomed_display": "Nicotine dependence",
+  "synonyms": [
+   "nicotine dependence",
+   "tobacco dependence",
+   "tobacco use disorder"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F11.20",
+  "display": "Opioid dependence, uncomplicated",
+  "snomed": "75544000",
+  "snomed_display": "Opioid dependence",
+  "synonyms": [
+   "opioid dependence",
+   "opioid use disorder"
+  ],
+  "exact": [
+   "oud"
+  ]
+ },
+ {
+  "icd10": "M06.9",
+  "display": "Rheumatoid arthritis, unspecified",
+  "snomed": "69896004",
+  "snomed_display": "Rheumatoid arthritis",
+  "synonyms": [
+   "rheumatoid arthritis"
+  ],
+  "exact": [
+   "ra"
+  ]
+ },
+ {
+  "icd10": "M19.90",
+  "display": "Unspecified osteoarthritis, unspecified site",
+  "snomed": "396275006",
+  "snomed_display": "Osteoarthritis",
+  "synonyms": [
+   "osteoarthritis",
+   "degenerative joint disease"
+  ],
+  "exact": [
+   "oa",
+   "djd"
+  ]
+ },
+ {
+  "icd10": "M81.0",
+  "display": "Age-related osteoporosis without current pathological fracture",
+  "snomed": "64859006",
+  "snomed_display": "Osteoporosis",
+  "synonyms": [
+   "osteoporosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M32.9",
+  "display": "Systemic lupus erythematosus, unspecified",
+  "snomed": "55464009",
+  "snomed_display": "Systemic lupus erythematosus",
+  "synonyms": [
+   "systemic lupus erythematosus",
+   "lupus"
+  ],
+  "exact": [
+   "sle"
+  ]
+ },
+ {
+  "icd10": "M54.50",
+  "display": "Low back pain, unspecified",
+  "snomed": "279039007",
+  "snomed_display": "Low back pain",
+  "synonyms": [
+   "low back pain",
+   "lower back pain"
+  ],
+  "exact": [
+   "lbp"
+  ]
+ },
+ {
+  "icd10": "L40.9",
+  "display": "Psoriasis, unspecified",
+  "snomed": "9014002",
+  "snomed_display": "Psoriasis",
+  "synonyms": [
+   "psoriasis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "L03.90",
+  "display": "Cellulitis, unspecified",
+  "snomed": "128045006",
+  "snomed_display": "Cellulitis",
+  "synonyms": [
+   "cellulitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "L50.9",
+  "display": "Urticaria, unspecified",
+  "snomed": "126485001",
+  "snomed_display": "Urticaria",
+  "synonyms": [
+   "urticaria",
+   "hives"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B20",
+  "display": "Human immunodeficiency virus [HIV] disease",
+  "snomed": "86406008",
+  "snomed_display": "Human immunodeficiency virus infection",
+  "synonyms": [
+   "hiv infection",
+   "human immunodeficiency virus infection",
+   "hiv disease"
+  ],
+  "exact": [
+   "hiv",
+   "aids"
+  ]
+ },
+ {
+  "icd10": "A15.9",
+  "display": "Respiratory tuberculosis unspecified",
+  "snomed": "56717001",
+  "snomed_display": "Tuberculosis",
+  "synonyms": [
+   "pulmonary tuberculosis"
+  ],
+  "exact": [
+   "tuberculosis",
+   "tb"
+  ]
+ },
+ {
+  "icd10": "A41.9",
+  "display": "Sepsis, unspecified organism",
+  "snomed": "91302008",
+  "snomed_display": "Sepsis",
+  "synonyms": [
+   "sepsis",
+   "septicemia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "H40.9",
+  "display": "Unspecified glaucoma",
+  "snomed": "23986001",
+  "snomed_display": "Glaucoma",
+  "synonyms": [
+   "glaucoma"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "H26.9",
+  "display": "Unspecified cataract",
+  "snomed": "193570009",
+  "snomed_display": "Cataract",
+  "synonyms": [
+   "cataract",
+   "cataracts"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "H35.30",
+  "display": "Unspecified macular degeneration",
+  "snomed": "267718000",
+  "snomed_display": "Age related macular degeneration",
+  "synonyms": [
+   "macular degeneration",
+   "age related macular degeneration"
+  ],
+  "exact": [
+   "amd",
+   "armd"
+  ]
+ },
+ {
+  "icd10": "H91.90",
+  "display": "Unspecified hearing loss, unspecified ear",
+  "snomed": "15188001",
+  "snomed_display": "Hearing loss",
+  "synonyms": [
+   "hearing loss"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R07.9",
+  "display": "Chest pain, unspecified",
+  "snomed": "29857009",
+  "snomed_display": "Chest pain",
+  "synonyms": [],
+  "exact": [
+   "chest pain"
+  ]
+ },
+ {
+  "icd10": "R06.00",
+  "display": "Dyspnea, unspecified",
+  "snomed": "267036007",
+  "snomed_display": "Dyspnea",
+  "synonyms": [],
+  "exact": [
+   "dyspnea",
+   "shortness of breath",
+   "dyspnoea",
+   "sob"
+  ]
+ },
+ {
+  "icd10": "R05.9",
+  "display": "Cough, unspecified",
+  "snomed": "49727002",
+  "snomed_display": "Cough",
+  "synonyms": [],
+  "exact": [
+   "cough"
+  ]
+ },
+ {
+  "icd10": "R51.9",
+  "display": "Headache, unspecified",
+  "snomed": "25064002",
+  "snomed_display": "Headache",
+  "synonyms": [],
+  "exact": [
+   "headache"
+  ]
+ },
+ {
+  "icd10": "R50.9",
+  "display": "Fever, unspecified",
+  "snomed": "386661006",
+  "snomed_display": "Fever",
+  "synonyms": [],
+  "exact": [
+   "fever",
+   "pyrexia"
+  ]
+ },
+ {
+  "icd10": "R10.9",
+  "display": "Unspecified abdominal pain",
+  "snomed": "21522001",
+  "snomed_display": "Abdominal pain",
+  "synonyms": [],
+  "exact": [
+   "abdominal pain"
+  ]
+ },
+ {
+  "icd10": "R11.0",
+  "display": "Nausea",
+  "snomed": "422587007",
+  "snomed_display": "Nausea",
+  "synonyms": [],
+  "exact": [
+   "nausea"
+  ]
+ },
+ {
+  "icd10": "R19.7",
+  "display": "Diarrhea, unspecified",
+  "snomed": "62315008",
+  "snomed_display": "Diarrhea",
+  "synonyms": [],
+  "exact": [
+   "diarrhea",
+   "diarrhoea"
+  ]
+ },
+ {
+  "icd10": "R53.83",
+  "display": "Other fatigue",
+  "snomed": "84229001",
+  "snomed_display": "Fatigue",
+  "synonyms": [],
+  "exact": [
+   "fatigue"
+  ]
+ },
+ {
+  "icd10": "R42",
+  "display": "Dizziness and giddiness",
+  "snomed": "404640003",
+  "snomed_display": "Dizziness",
+  "synonyms": [],
+  "exact": [
+   "dizziness"
+  ]
+ },
+ {
+  "icd10": "E11.9",
+  "display": "Type 2 diabetes mellitus without complications",
+  "snomed": "44054006",
+  "snomed_display": "Type 2 diabetes mellitus",
+  "synonyms": [
+   "type 2 diabetes mellitus",
+   "diabetes mellitus type 2",
+   "type 2 diabetes",
+   "t2dm"
+  ],
+  "exact": [
+   "dm2",
+   "dmii"
+  ]
+ },
+ {
+  "icd10": "E78.5",
+  "display": "Hyperlipidemia, unspecified",
+  "snomed": "55822004",
+  "snomed_display": "Hyperlipidemia",
+  "synonyms": [
+   "hyperlipidemia",
+   "hyperlipidaemia"
+  ],
+  "exact": [
+   "hld"
+  ]
+ },
+ {
+  "icd10": "J45.909",
+  "display": "Unspecified asthma, uncomplicated",
+  "snomed": "195967001",
+  "snomed_display": "Asthma",
+  "synonyms": [
+   "asthma"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "L20.9",
+  "display": "Atopic dermatitis, unspecified",
+  "snomed": "24079001",
+  "snomed_display": "Atopic dermatitis",
+  "synonyms": [
+   "atopic dermatitis",
+   "eczema"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F41.1",
+  "display": "Generalized anxiety disorder",
+  "snomed": "21897009",
+  "snomed_display": "Generalized anxiety disorder",
+  "synonyms": [
+   "generalized anxiety disorder",
+   "generalised anxiety disorder"
+  ],
+  "exact": [
+   "gad"
+  ]
+ },
+ {
+  "icd10": "F32.9",
+  "display": "Major depressive disorder, single episode, unspecified",
+  "snomed": "370143000",
+  "snomed_display": "Major depressive disorder",
+  "synonyms": [
+   "major depressive disorder",
+   "major depression"
+  ],
+  "exact": [
+   "mdd"
+  ]
+ },
+ {
+  "icd10": "E03.9",
+  "display": "Hypothyroidism, unspecified",
+  "snomed": "40930008",
+  "snomed_display": "Hypothyroidism",
+  "synonyms": [
+   "hypothyroidism",
+   "underactive thyroid"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K21.9",
+  "display": "Gastro-esophageal reflux disease without esophagitis",
+  "snomed": "235595009",
+  "snomed_display": "Gastroesophageal reflux disease",
+  "synonyms": [
+   "gastroesophageal reflux disease",
+   "gerd",
+   "acid reflux"
+  ],
+  "exact": [
+   "gord"
+  ]
+ },
+ {
+  "icd10": "E66.9",
+  "display": "Obesity, unspecified",
+  "snomed": "414916001",
+  "snomed_display": "Obesity",
+  "synonyms": [
+   "obesity"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I48.91",
+  "display": "Unspecified atrial fibrillation",
+  "snomed": "49436004",
+  "snomed_display": "Atrial fibrillation",
+  "synonyms": [
+   "atrial fibrillation",
+   "afib",
+   "a fib"
+  ],
+  "exact": [
+   "af"
+  ]
+ },
+ {
+  "icd10": "J44.9",
+  "display": "Chronic obstructive pulmonary disease, unspecified",
+  "snomed": "13645005",
+  "snomed_display": "Chronic obstructive pulmonary disease",
+  "synonyms": [
+   "chronic obstructive pulmonary disease",
+   "copd"
+  ],
+  "exact": []
+ }
+]

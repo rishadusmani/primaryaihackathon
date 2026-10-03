@@ -213,12 +213,35 @@ billing, SQLite). `python -m canon serve --require-auth` turns on keys and billi
 | PDF | `parsers/pdf.py` | Stdlib text-layer extraction; scans go to the LLM |
 | Fax / OCR / notes | `parsers/text.py` | Sections, negation, family history, sig parsing, OCR repair, lab/vital values |
 
+## Vocabulary
+
+| | Codes | Systems |
+|---|---|---|
+| Conditions | 120 | ICD-10-CM + SNOMED CT |
+| Medications | 132 | RxNorm ingredients, with brand names and drug classes |
+| Labs and vitals | 105 | LOINC, with a canonical UCUM unit and SI ↔ conventional conversions |
+
+- **Where it lives:** the hand-written tables in `terminology.py` cover the core primary-care concepts and win on any conflict. `canon/vocab/*.json` extends them.
+- **How it's built:** `scripts/build_vocab.py` generates the JSON and checks every code online before writing:
+  - LOINC and ICD-10-CM against NLM Clinical Tables (ICD-10-CM must be a current billable code);
+  - SNOMED CT against tx.fhir.org (must be active);
+  - RxNorm against RxNav (brand names must map to the ingredient);
+  - drug classes from RxClass (FDA Established Pharmacologic Class).
+- **Display names** come from those sources, not from hand-typed text.
+- **To add codes:** edit the lists in the script and run `python scripts/build_vocab.py`. `--check` verifies without writing.
+- **Exact-only phrases:** Canon's text parser scans documents for synonym phrases, so phrases that are ambiguous in prose map only when they are a whole field. Examples:
+  - "influenza", so "influenza vaccine given" isn't a diagnosis;
+  - "low sodium", so "low sodium diet" isn't hyponatremia;
+  - "calcium" and "chloride", so "Calcium 600 mg" and "potassium chloride 20 mEq" aren't lab results;
+  - symptoms like "fever", so a mention in the HPI doesn't fill the problem list.
+
 ## Layout
 
 ```
 canon/
   parsers/         format detection + one parser per format (+ llm.py)
   terminology.py   code systems, synonyms, unit conversion, frequencies
+  vocab/*.json     verified LOINC / SNOMED CT / ICD-10-CM / RxNorm tables (generated)
   normalize.py     fact → canonical item (or unmapped with reason)
   reconcile.py     cross-source merge, current state, conflicts
   service.py       ingest, patient matching, record/summary queries
@@ -230,14 +253,14 @@ canon/
   usage.py         per-request API metering + aggregates for /v1/usage
   dashboard.html   customer usage dashboard served at /dashboard
 app.py             Vercel entry point         migrations/   Postgres schema
+scripts/build_vocab.py  regenerates and verifies canon/vocab/ online
 samples/maria_chen/  one patient across 7 messy sources
 tests/               end-to-end and unit tests
 ```
 
 ## Status and next steps
 
-This is a hackathon prototype. The terminology tables are a curated starter set
-covering common primary-care concepts. Production would load full
+This is a hackathon prototype. Production would load full
 UMLS/RxNorm/LOINC/SNOMED vocabularies behind the same functions. Next steps:
 a probabilistic patient-matching index, 835/NCPDP claims, a review UI for
 conflicts and unmapped facts, and per-agent delegated access grants on reads.

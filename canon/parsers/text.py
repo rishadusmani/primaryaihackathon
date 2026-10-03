@@ -203,10 +203,13 @@ def parse(content: str, *, method: str = "rule_nlp") -> list[dict]:
         if section in ("problems", "assessment", "body", "hpi"):
             conf = base_conf if section in ("problems", "assessment") else base_conf - 0.15
             taken: list[tuple[int, int]] = []
+            plain_low = _plain(low)
             for phrase, icd in T.condition_synonyms():
                 if len(phrase) <= 3 and section not in ("problems", "assessment"):
                     continue
-                for m in re.finditer(rf"(?<![a-z0-9]){re.escape(phrase)}(?![a-z0-9])", _plain(low)):
+                if phrase not in plain_low:  # cheap pre-check; avoids compiling hundreds of regexes per line
+                    continue
+                for m in re.finditer(rf"(?<![a-z0-9]){re.escape(phrase)}(?![a-z0-9])", plain_low):
                     if any(a <= m.start() < b for a, b in taken):
                         continue
                     taken.append((m.start(), m.end()))
@@ -224,6 +227,8 @@ def parse(content: str, *, method: str = "rule_nlp") -> list[dict]:
             hits: list[tuple[int, int, str, str]] = []
             plain = _plain(low)
             for phrase, ing in T.medication_synonyms():
+                if phrase not in plain:
+                    continue
                 for mm in re.finditer(rf"(?<![a-z0-9]){re.escape(phrase)}(?![a-z0-9])", plain):
                     if not any(a <= mm.start() < b for a, b, _, _ in hits) and \
                             not any(h[3] == ing for h in hits):
@@ -266,6 +271,8 @@ def parse(content: str, *, method: str = "rule_nlp") -> list[dict]:
                 continue
             short = len(phrase) <= 3
             if short and section not in ("labs", "vitals"):
+                continue
+            if phrase not in low:
                 continue
             rx = (rf"(?<![a-z0-9]){re.escape(phrase)}(?![a-z0-9])\s*(?:\([^)]*\))?\s*(?:level|value|was|of|is|=|:|-)?"
                   rf"\s*(?:was|of|is)?\s*([<>]?\d+(?:\.\d+)?)\s*([a-zA-Z%/µ\[\]\d.*^]+(?:/[a-zA-Z0-9.]+)?)?")
