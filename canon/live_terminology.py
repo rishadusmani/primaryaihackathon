@@ -24,6 +24,7 @@ import json
 import logging
 import os
 import re
+import sys
 import threading
 import time
 import urllib.error
@@ -117,7 +118,9 @@ def _cached(key: tuple, fn):
     except _Unavailable:
         return None  # don't cache outages; try again next time
     except Exception:  # an unexpected NLM response shape must never fail an ingest
-        log.warning("live terminology lookup %s failed", key, exc_info=True)
+        # Log only the lookup kind: the rest of the key is text from a patient's document.
+        log.warning("live terminology lookup (%s) failed: %s", key[0] if isinstance(key, tuple) else "lookup",
+                    type(sys.exc_info()[1]).__name__)
         return None
     with _lock:
         if len(_cache) >= CACHE_MAX:

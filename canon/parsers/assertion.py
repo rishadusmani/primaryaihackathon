@@ -81,6 +81,7 @@ def request_body(candidates: list[dict]) -> dict:
     lines = [{"id": i, "condition": c["term"], "sentence": c["sentence"]} for i, c in enumerate(candidates)]
     return {
         "model": MODEL,
+        "store": False,  # sentences come from patient records: don't let OpenAI retain the request or response
         "instructions": INSTRUCTIONS,
         "input": json.dumps({"items": lines}),
         "reasoning": {"effort": "low"},

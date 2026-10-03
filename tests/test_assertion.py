@@ -82,6 +82,7 @@ class AssertionModelTest(unittest.TestCase):
         self.assertEqual((fmt["type"], fmt["strict"]), ("json_schema", True))
         sent = json.loads(body["input"])["items"]
         self.assertEqual(sent, [{"id": 0, "condition": "asthma", "sentence": "Mother had asthma."}])
+        self.assertIs(body["store"], False, "patient sentences must not be retained by OpenAI")
         if "CANON_ASSERTION_MODEL" not in os.environ:
             self.assertEqual(assertion.MODEL, "gpt-5.6-luna")
 
