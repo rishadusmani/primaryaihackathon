@@ -1,5 +1,6 @@
-"""Persistence: accounts, API keys, usage, patients, documents and a
-hash-chained (tamper-evident) audit log.
+"""Persistence: accounts, API keys, usage, patients, documents, a
+hash-chained (tamper-evident) audit log, and per-request API metering
+(api_requests, behind the customer usage dashboard).
 
 Two backends behind one interface:
 * SQLite: local development, tests, single-node deployments (default).
@@ -100,6 +101,21 @@ CREATE TABLE IF NOT EXISTS audit (
     hash TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS audit_account ON audit(account_id, seq);
+CREATE TABLE IF NOT EXISTS api_requests (
+    seq INTEGER PRIMARY KEY AUTOINCREMENT,
+    ts TEXT NOT NULL,
+    account_id TEXT NOT NULL,
+    channel TEXT NOT NULL,
+    operation TEXT NOT NULL,
+    status INTEGER NOT NULL,
+    latency_ms REAL NOT NULL,
+    bytes_in INTEGER NOT NULL DEFAULT 0,
+    bytes_out INTEGER NOT NULL DEFAULT 0,
+    patient_id TEXT,
+    llm_input_tokens INTEGER NOT NULL DEFAULT 0,
+    llm_output_tokens INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS api_requests_account ON api_requests(account_id, ts);
 """
 
 GENESIS = "0" * 64

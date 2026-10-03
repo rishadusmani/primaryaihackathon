@@ -76,8 +76,12 @@ def _unstructured(fmt: str, data: bytes, use_llm: bool | None, info: dict) -> tu
         if not llm.available():
             info["warnings"] = ["LLM extraction requested but anthropic SDK/credentials are unavailable."]
         else:
-            llm_facts = llm.extract(text=None if needs_ocr else raw_text, pdf=data if fmt == "pdf" else None)
+            usage: dict = {}
+            llm_facts = llm.extract(text=None if needs_ocr else raw_text, pdf=data if fmt == "pdf" else None,
+                                    usage=usage)
             facts.extend(llm_facts)
+            if usage:
+                info["llm_usage"] = usage
             info["extractors"].append(f"llm:{llm.MODEL}")
     elif needs_ocr:
         info.setdefault("warnings", []).append(
