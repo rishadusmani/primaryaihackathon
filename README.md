@@ -77,6 +77,17 @@ curl localhost:8080/v1/audit/verify               # tamper-evident access log
 | `GET /v1/tools`, `POST /v1/tools/{name}` | Agent tool schemas and execution |
 | `GET /v1/audit`, `GET /v1/audit/verify` | Hash-chained log of every ingest and record read |
 
+### Hosting on Vercel
+
+`app.py` exposes the HTTP API as a WSGI `app` for Vercel's Python runtime
+(`vercel.json` selects the `python` preset). Deploy with `vercel deploy --prod`.
+
+- Set `CANON_API_KEYS` in the Vercel project; without it the API is open.
+- The SQLite database lives in `/tmp`, which is per instance and wiped on cold
+  starts. Each new instance reloads `samples/maria_chen`, so patient IDs change
+  between instances and uploaded documents are not kept. Use a hosted database
+  for anything durable. Set `CANON_SEED_SAMPLES=0` to skip the sample load.
+
 ### For agents
 
 **MCP** (Claude Code, Claude Desktop, any MCP client):
