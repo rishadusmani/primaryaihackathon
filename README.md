@@ -144,8 +144,20 @@ claude mcp add --transport http canon https://primaryaihackathon.vercel.app/mcp 
   --header "Authorization: Bearer cn_live_..."
 ```
 
-Any client that speaks Streamable HTTP and can send an `Authorization` header works
-(Claude Code, the Agent SDK, the MCP SDKs). The server is stateless and answers each
+Any client that speaks Streamable HTTP and can send an `Authorization` header works:
+
+```bash
+gemini mcp add --scope user --transport http canon https://primaryaihackathon.vercel.app/mcp \
+  --header "Authorization: Bearer cn_live_..."                        # Gemini CLI
+export CANON_API_KEY=cn_live_...
+codex mcp add canon --url https://primaryaihackathon.vercel.app/mcp \
+  --bearer-token-env-var CANON_API_KEY                                # OpenAI Codex CLI
+```
+
+From code: the Claude API MCP connector (`mcp_servers` + `mcp_toolset`), OpenAI's Responses API
+(`{"type": "mcp", "server_url": ..., "headers": ...}`), the OpenAI Agents SDK
+(`MCPServerStreamableHttp`) and the Google Gen AI SDK (an MCP `ClientSession` passed as a tool).
+[`/connect`](https://primaryaihackathon.vercel.app/connect) has copy-paste versions of each. The server is stateless and answers each
 POST with JSON, with no sessions or SSE stream, so it runs fine on serverless.
 
 **Local MCP** (stdio, your own SQLite file):

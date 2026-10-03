@@ -111,8 +111,8 @@
   pre { margin: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; padding-right: 76px; overflow-x: auto; font: 13px/1.55 var(--font-mono); color: var(--text-primary); white-space: pre; }
   .snip .copy { position: absolute; top: 8px; right: 8px; }
   .step { font-size: 14px; color: var(--text-secondary); margin: 14px 0 0; }
-  ol.steps { margin: 6px 0 0; padding-left: 20px; font-size: 14px; color: var(--text-secondary); }
-  ol.steps li { margin: 4px 0; }
+  h3 { font-size: 15px; font-weight: 600; margin: 22px 0 0; }
+  [role="tabpanel"] > h3:first-child { margin-top: 4px; }
 
   .status { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-top: 12px; }
   .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--text-muted); flex: none; }
@@ -149,8 +149,8 @@
 <main class="wrap">
   <p class="eyebrow">Get started</p>
   <h1>Connect your agent to Canon</h1>
-  <p class="lede">Create an API key, add Canon's MCP server to your agent, and it can read normalized, cited patient
-    records. The same key works for the REST API.</p>
+  <p class="lede">Create an API key, add Canon's MCP server to your agent (Claude, OpenAI, Gemini, Cursor, VS Code or any MCP client),
+    and it can read normalized, cited patient records. The same key works for the REST API.</p>
 
   <section class="card" aria-labelledby="h-key">
     <h2 id="h-key"><span class="n">1</span>Your API key</h2>
@@ -197,32 +197,51 @@
     <p class="muted small">Server URL <code id="mcp-url"></code>, Streamable HTTP, key sent as a Bearer token.
       <span id="no-key-hint">Create a key above and it fills in below.</span></p>
 
-    <div class="tabs" role="tablist" aria-label="MCP client">
-      <button class="tab" role="tab" id="t-code" aria-controls="p-code" aria-selected="true">Claude Code</button>
-      <button class="tab" role="tab" id="t-desktop" aria-controls="p-desktop" aria-selected="false" tabindex="-1">Claude Desktop</button>
-      <button class="tab" role="tab" id="t-cursor" aria-controls="p-cursor" aria-selected="false" tabindex="-1">Cursor</button>
-      <button class="tab" role="tab" id="t-vscode" aria-controls="p-vscode" aria-selected="false" tabindex="-1">VS Code</button>
+    <div class="tabs" role="tablist" aria-label="Agent platform">
+      <button class="tab" role="tab" id="t-claude" aria-controls="p-claude" aria-selected="true">Claude</button>
+      <button class="tab" role="tab" id="t-openai" aria-controls="p-openai" aria-selected="false" tabindex="-1">OpenAI</button>
+      <button class="tab" role="tab" id="t-gemini" aria-controls="p-gemini" aria-selected="false" tabindex="-1">Gemini</button>
+      <button class="tab" role="tab" id="t-ide" aria-controls="p-ide" aria-selected="false" tabindex="-1">Cursor &amp; VS Code</button>
       <button class="tab" role="tab" id="t-other" aria-controls="p-other" aria-selected="false" tabindex="-1">Other / REST</button>
     </div>
 
-    <div role="tabpanel" id="p-code" aria-labelledby="t-code">
+    <div role="tabpanel" id="p-claude" aria-labelledby="t-claude">
+      <h3>Claude Code</h3>
       <p class="step">Run in a terminal, then check it with <code>claude mcp list</code>:</p>
       <div class="snip"><pre id="s-code"></pre><button class="btn sm copy" type="button" data-copy="s-code">Copy</button></div>
-    </div>
-    <div role="tabpanel" id="p-desktop" aria-labelledby="t-desktop" hidden>
-      <ol class="steps">
-        <li>Open Claude Desktop → Settings → Developer → <strong>Edit Config</strong>.</li>
-        <li>Paste this into <code>claude_desktop_config.json</code> (merge with any existing <code>mcpServers</code>). It needs Node.js.</li>
-        <li>Restart Claude Desktop. Canon's tools appear in the tools menu.</li>
-      </ol>
+      <h3>Claude Desktop</h3>
+      <p class="step">Settings → Developer → <strong>Edit Config</strong>, merge this into <code>claude_desktop_config.json</code>,
+        then restart. Needs Node.js.</p>
       <div class="snip"><pre id="s-desktop"></pre><button class="btn sm copy" type="button" data-copy="s-desktop">Copy</button></div>
+      <h3>Claude API</h3>
+      <p class="step">The Messages API connects to Canon itself through the MCP connector (Python SDK):</p>
+      <div class="snip"><pre id="s-claude-api"></pre><button class="btn sm copy" type="button" data-copy="s-claude-api">Copy</button></div>
     </div>
-    <div role="tabpanel" id="p-cursor" aria-labelledby="t-cursor" hidden>
+    <div role="tabpanel" id="p-openai" aria-labelledby="t-openai" hidden>
+      <h3>Codex CLI</h3>
+      <p class="step">Codex reads the key from an environment variable:</p>
+      <div class="snip"><pre id="s-codex"></pre><button class="btn sm copy" type="button" data-copy="s-codex">Copy</button></div>
+      <h3>OpenAI API (Responses)</h3>
+      <p class="step">OpenAI's servers call Canon as a remote MCP tool:</p>
+      <div class="snip"><pre id="s-openai-api"></pre><button class="btn sm copy" type="button" data-copy="s-openai-api">Copy</button></div>
+      <h3>OpenAI Agents SDK</h3>
+      <div class="snip"><pre id="s-openai-agents"></pre><button class="btn sm copy" type="button" data-copy="s-openai-agents">Copy</button></div>
+      <p class="muted small">ChatGPT's custom connectors sign in with OAuth, which Canon doesn't offer yet. Use Codex or the API.</p>
+    </div>
+    <div role="tabpanel" id="p-gemini" aria-labelledby="t-gemini" hidden>
+      <h3>Gemini CLI</h3>
+      <p class="step">Run in a terminal, then check it with <code>gemini mcp list</code>:</p>
+      <div class="snip"><pre id="s-gemini-cli"></pre><button class="btn sm copy" type="button" data-copy="s-gemini-cli">Copy</button></div>
+      <h3>Gemini API</h3>
+      <p class="step">The Google Gen AI SDK (Python) takes an MCP session as a tool and calls it for you:</p>
+      <div class="snip"><pre id="s-gemini-api"></pre><button class="btn sm copy" type="button" data-copy="s-gemini-api">Copy</button></div>
+    </div>
+    <div role="tabpanel" id="p-ide" aria-labelledby="t-ide" hidden>
+      <h3>Cursor</h3>
       <div class="row" style="margin-top:6px"><a class="btn primary" id="cursor-link" href="#">Add to Cursor</a></div>
       <p class="step">Or add it to <code>~/.cursor/mcp.json</code>:</p>
       <div class="snip"><pre id="s-cursor"></pre><button class="btn sm copy" type="button" data-copy="s-cursor">Copy</button></div>
-    </div>
-    <div role="tabpanel" id="p-vscode" aria-labelledby="t-vscode" hidden>
+      <h3>VS Code</h3>
       <div class="row" style="margin-top:6px"><a class="btn primary" id="vscode-link" href="#">Add to VS Code</a></div>
       <p class="step">Or add it to <code>.vscode/mcp.json</code>:</p>
       <div class="snip"><pre id="s-vscode"></pre><button class="btn sm copy" type="button" data-copy="s-vscode">Copy</button></div>
@@ -263,11 +282,78 @@
 
   function snippets() {
     const auth = "Bearer " + k();
+    const q = "Is amoxicillin safe for this patient? Check Canon for allergy conflicts first.";
     return {
       "s-code": `claude mcp add --transport http canon ${MCP} \\\n  --header "Authorization: ${auth}"`,
       "s-desktop": JSON.stringify({ mcpServers: { canon: {
         command: "npx", args: ["-y", "mcp-remote", MCP, "--header", "Authorization:${CANON_AUTH}"],
         env: { CANON_AUTH: auth } } } }, null, 2),
+      "s-claude-api": `import anthropic
+
+client = anthropic.Anthropic()
+response = client.beta.messages.create(
+    model="claude-opus-5-5",
+    max_tokens=16000,
+    betas=["mcp-client-2025-11-20"],
+    mcp_servers=[{"type": "url", "name": "canon", "url": "${MCP}",
+                  "authorization_token": "${k()}"}],
+    tools=[{"type": "mcp_toolset", "mcp_server_name": "canon"}],
+    messages=[{"role": "user", "content": "${q}"}],
+)
+print(next(b.text for b in response.content if b.type == "text"))`,
+      "s-codex": `export CANON_API_KEY=${k()}
+codex mcp add canon --url ${MCP} \\
+  --bearer-token-env-var CANON_API_KEY`,
+      "s-openai-api": `from openai import OpenAI
+
+client = OpenAI()
+response = client.responses.create(
+    model="gpt-5",
+    tools=[{
+        "type": "mcp",
+        "server_label": "canon",
+        "server_url": "${MCP}",
+        "headers": {"Authorization": "${auth}"},
+        "require_approval": "never",
+    }],
+    input="${q}",
+)
+print(response.output_text)`,
+      "s-openai-agents": `import asyncio
+from agents import Agent, Runner
+from agents.mcp import MCPServerStreamableHttp
+
+async def main():
+    async with MCPServerStreamableHttp(name="canon", params={
+        "url": "${MCP}",
+        "headers": {"Authorization": "${auth}"},
+    }) as canon:
+        agent = Agent(name="Clinical assistant", mcp_servers=[canon])
+        result = await Runner.run(agent, "${q}")
+        print(result.final_output)
+
+asyncio.run(main())`,
+      "s-gemini-cli": `gemini mcp add --scope user --transport http canon ${MCP} \\\n  --header "Authorization: ${auth}"`,
+      "s-gemini-api": `import asyncio
+from google import genai
+from mcp import ClientSession
+from mcp.client.streamable_http import streamablehttp_client
+
+client = genai.Client()
+
+async def main():
+    async with streamablehttp_client("${MCP}",
+            headers={"Authorization": "${auth}"}) as (read, write, _):
+        async with ClientSession(read, write) as canon:
+            await canon.initialize()
+            response = await client.aio.models.generate_content(
+                model="gemini-2.5-pro",
+                contents="${q}",
+                config=genai.types.GenerateContentConfig(tools=[canon]),
+            )
+            print(response.text)
+
+asyncio.run(main())`,
       "s-cursor": JSON.stringify({ mcpServers: { canon: { url: MCP, headers: { Authorization: auth } } } }, null, 2),
       "s-vscode": JSON.stringify({ servers: { canon: { type: "http", url: MCP, headers: { Authorization: auth } } } }, null, 2),
       "s-other": `curl ${location.origin}/v1/patients \\\n  -H "Authorization: ${auth}"\n\n` +
