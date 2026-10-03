@@ -8,8 +8,8 @@ Canon
 ## Tagline (one line)
 Turns messy faxes, PDFs, HL7, FHIR, claims and portal exports into one clean, coded, cited patient record that AI agents can safely act on.
 
-## Short description (~280 characters)
-Healthcare data arrives as faxes, PDFs, HL7 feeds, C-CDA, FHIR, claims and CSVs that contradict each other. Canon normalizes all of it into one patient record: standard codes, canonical units, duplicates merged, conflicts flagged, every fact cited. Agents use it via API or MCP.
+## Short description (~460 characters)
+Healthcare data arrives as faxes, PDFs, HL7 feeds, C-CDA, FHIR, claims and CSVs that contradict each other. Canon normalizes all of it into one patient record: standard codes, canonical units, duplicates merged, conflicts flagged, every fact cited. Rules handle what's provable; when a sentence is ambiguous (a relative's diagnosis, a negative screen, a "possible" finding), a model gives a second opinion that must quote its evidence. Agents use it via API or MCP.
 
 ## Full description
 
@@ -22,7 +22,7 @@ Healthcare data arrives as faxes, PDFs, HL7 feeds, C-CDA, FHIR, claims and CSVs 
 - **Reconciled across sources.** The same A1c arriving by fax, HL7 and the portal becomes *one* result with three sources. Medication changes ("increase metformin to 1000 mg") update the current dose and keep the history.
 - **Conflicts surfaced, never hidden.** Examples: "Hospital says no known allergies, the fax says penicillin." "The portal still shows 500 mg." A diagnosis that appears only on a billing claim is flagged as such. Agents are told to check before acting.
 - **Every fact is cited.** Each item links to the source document, the exact location (`OBX[2]`, `line 31`) and a verbatim snippet, with a confidence score. Nothing is silently dropped: anything that can't be mapped is listed with a reason.
-- **Clinically careful text extraction.** Negation ("denies chest pain"), family history ("father had diabetes"), OCR repair ("5OO mg" → 500 mg) and medication start/stop/increase intent are all handled.
+- **Rules first, a model only where the rules are unsure.** The rule engine handles negation ("denies chest pain", "depression screen negative"), someone else's history ("mother had diabetes", "runs in the family"), hedges ("possible pneumonia", "asthma vs COPD") and pseudo-negation ("no improvement in hypertension" keeps hypertension), whether the cue comes before or after the condition, plus OCR repair ("5OO mg" → 500 mg) and medication start/stop/increase intent. When a cue makes the rules unsure, they hold the condition back and send only that sentence to GPT-5.6 Luna for a second opinion. It can restore a condition ("His wife reports he was diagnosed with COPD") but never invent one, and every label must quote the sentence. That costs about $0.0004 per note.
 - **See it in the browser.** The live demo opens on the 7-document sample patient (or drop in your own files). Conflicts come first, then coded problems, reconciled medications with change history, and lab trends. Click any row to see the exact line it came from. Customers get an Agent usage dashboard showing their agents' requests, errors, latency and LLM tokens.
 - **Built for agents.** A token-efficient patient summary, 9 tools in Anthropic/OpenAI/MCP formats, a hosted MCP server (plus a local stdio one), FHIR R4 export, and a Claude agent example. Scanned faxes can go through Claude with structured outputs, and every LLM-extracted fact must quote its evidence. Unverifiable quotes are downgraded.
 
@@ -38,7 +38,7 @@ Healthcare data arrives as faxes, PDFs, HL7 feeds, C-CDA, FHIR, claims and CSVs 
 - Schema in `migrations/` (001 init, 002 metering and app role, 003 metering grants). Checked with Supabase's security advisor.
 
 ## Tech stack
-Python (standard library only for the core: zero runtime dependencies), Supabase Postgres (psycopg 3), Vercel serverless (WSGI), Stripe Billing Meters, Model Context Protocol, Claude (optional extraction and the example agent), FHIR R4 / HL7 v2 / C-CDA / X12.
+Python (standard library only for the core: zero runtime dependencies), Supabase Postgres (psycopg 3), Vercel serverless (WSGI), Stripe Billing Meters, Model Context Protocol, OpenAI GPT-5.6 Luna (second opinion on ambiguous sentences), Claude (optional scanned-fax extraction and the example agent), FHIR R4 / HL7 v2 / C-CDA / X12.
 
 ## Links
 - Repository: https://github.com/rishadusmani/primaryaihackathon
@@ -59,13 +59,13 @@ Python (standard library only for the core: zero runtime dependencies), Supabase
 ```bash
 git clone https://github.com/rishadusmani/primaryaihackathon && cd primaryaihackathon
 python -m canon normalize samples/maria_chen/*        # 7 messy documents → one record (no dependencies)
-python -m unittest discover -s tests                  # 83 tests
+python -m unittest discover -s tests                  # 100 tests
 python -m canon serve                                 # local API on :8080
 claude mcp add canon -- python -m canon mcp           # local MCP (stdio) for Claude Code
 ```
 
 ## Demo script (for the video, ~2 minutes)
-0. **Tip:** record the live demo at https://primaryaihackathon.vercel.app. It opens with steps 1–3 already on screen. For step 5, show /dashboard.
+0. **Tip:** record the live demo at https://primaryaihackathon.vercel.app. It opens with steps 1–3 already on screen. For step 6, show /dashboard.
 1. **Problem (15s).** Show the 7 sample files for one patient: a fax with OCR typos, an HL7 lab feed, a hospital C-CDA, a FHIR bundle, an insurance claim, a CSV and a PDF letter.
 2. **Normalize (30s).** Run `python -m canon normalize samples/maria_chen/*`. Point out that all seven are matched to one patient.
 3. **The catches (45s).** In the summary, show:
@@ -74,8 +74,9 @@ claude mcp add canon -- python -m canon mcp           # local MCP (stdio) for Cl
    - The **allergy conflict**: the hospital says NKDA, the fax says penicillin, the derm letter says sulfa.
    - The metformin dose discrepancy.
    - Anxiety flagged "claims only".
-4. **Agent (20s).** Ask Claude (MCP or `examples/claude_agent.py`) "Is amoxicillin safe?" It checks conflicts and cites the penicillin allergy from the fax.
-5. **Business (10s).** Supabase schema, signup → API key, Stripe billing.
+4. **The tricky note (20s).** Click "Load tricky note" and scroll to the last five walkthrough rows. A keyword matcher gives the patient his mother's diabetes and an active pneumonia from 2019; Canon keeps those out, and each row shows the model's live label. On the COPD row, the rules held it back because his wife is mentioned, and the model restored it as his diagnosis.
+5. **Agent (20s).** Ask Claude (MCP or `examples/claude_agent.py`) "Is amoxicillin safe?" It checks conflicts and cites the penicillin allergy from the fax.
+6. **Business (10s).** Supabase schema, signup → API key, Stripe billing.
 
 ## Team
 Rishad U. (Primary AI): owner and builder.
