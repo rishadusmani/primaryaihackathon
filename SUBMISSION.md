@@ -23,7 +23,7 @@ Healthcare data arrives as faxes, PDFs, HL7 feeds, C-CDA, FHIR, claims and CSVs 
 - **Conflicts surfaced, never hidden.** Examples: "Hospital says no known allergies, the fax says penicillin." "The portal still shows 500 mg." A diagnosis that appears only on a billing claim is flagged as such. Agents are told to check before acting.
 - **Every fact is cited.** Each item links to the source document, the exact location (`OBX[2]`, `line 31`) and a verbatim snippet, with a confidence score. Nothing is silently dropped: anything that can't be mapped is listed with a reason.
 - **Clinically careful text extraction.** Negation ("denies chest pain"), family history ("father had diabetes"), OCR repair ("5OO mg" → 500 mg) and medication start/stop/increase intent are all handled.
-- **See it in the browser.** A one-page demo: load the 7-document sample patient (or drop in your own files), see conflicts first, then coded problems, reconciled medications with change history, and lab trends. Click any item to see the exact line it came from.
+- **See it in the browser.** The live demo opens on the 7-document sample patient (or drop in your own files). Conflicts come first, then coded problems, reconciled medications with change history, and lab trends. Click any row to see the exact line it came from. Customers get an Agent usage dashboard showing their agents' requests, errors, latency and LLM tokens.
 - **Built for agents.** A token-efficient patient summary, 9 tools in Anthropic/OpenAI/MCP formats, an MCP server, FHIR R4 export, and a Claude agent example. Scanned faxes can go through Claude with structured outputs, and every LLM-extracted fact must quote its evidence. Unverifiable quotes are downgraded.
 
 **How it's different from FHIR/HL7/SNOMED.** Those standards define the *envelope* and the *dictionary*. They don't make the data inside correct, de-duplicated or consistent. Canon consumes those standards and outputs them (FHIR R4 export). Its job is to make the data trustworthy enough for an agent to act on.
@@ -32,30 +32,33 @@ Healthcare data arrives as faxes, PDFs, HL7 feeds, C-CDA, FHIR, claims and CSVs 
 
 ## How we used Supabase
 - **Supabase Postgres is the system of record** for production. Accounts, hashed API keys, usage events, Stripe event de-duplication, patients, patient-match keys, documents (raw bytes kept for re-processing) and the audit log all live in a dedicated `canon` schema (`migrations/001_init.sql`).
-- **Security by design.** The `canon` schema isn't exposed through the Data API: only the server role can reach it, and `anon`/`authenticated` have no grants. Every table has RLS enabled with no policies, so access is deny-all. A database trigger makes the audit log **append-only**: Postgres itself rejects any UPDATE or DELETE.
+- **Least privilege by design.** The `canon` schema isn't exposed through the Data API, and `anon`/`authenticated` have no grants. The hosted API connects as a dedicated `canon_app` role, not `postgres`. That role gets only the grants it needs; the audit log is insert-only, and a trigger makes Postgres reject any UPDATE or DELETE on it. Every table has row-level security, with policies only for `canon_app`.
+- **Usage metering in Postgres.** Every authenticated agent request becomes a row in `canon.api_requests` (operation, status, latency, patient, LLM tokens). That table powers the per-customer Agent usage dashboard, alongside the billable `usage_events` that feed Stripe.
 - **Serverless-safe concurrency.** The API runs on Vercel serverless through Supabase's transaction pooler. Audit-log appends take a Postgres advisory lock inside a transaction, so the hash chain stays correct across concurrent instances.
-- Verified with Supabase's security advisor (only the expected "RLS enabled, no policy" notice).
+- Schema in `migrations/` (001 init, 002 metering and app role, 003 metering grants). Checked with Supabase's security advisor.
 
 ## Tech stack
 Python (standard library only for the core: zero runtime dependencies), Supabase Postgres (psycopg 3), Vercel serverless (WSGI), Stripe Billing Meters, Model Context Protocol, Claude (optional extraction and the example agent), FHIR R4 / HL7 v2 / C-CDA / X12.
 
 ## Links
 - Repository: https://github.com/rishadusmani/primaryaihackathon
-- Live demo (web): https://primaryaihackathon.vercel.app → "Load sample patient" (no key needed once the latest `main` is deployed)
-- Live API: https://primaryaihackathon.vercel.app (demo deployment; requires `Authorization: Bearer <key>`. TODO: share a judge key, or remove `CANON_API_KEYS` so the demo is open)
+- Live demo: https://primaryaihackathon.vercel.app (opens with the 7-document sample patient already normalized; no sign-in needed)
+- Agent usage dashboard: https://primaryaihackathon.vercel.app/dashboard (sign in with an API key)
+- Get an API key: `curl -X POST https://primaryaihackathon.vercel.app/v1/signup -H 'Content-Type: application/json' -d '{"name":"Judge","email":"you@example.com"}'`
+- API health: https://primaryaihackathon.vercel.app/healthz
 - Demo video: TODO
 
 ## How to run it
 ```bash
 git clone https://github.com/rishadusmani/primaryaihackathon && cd primaryaihackathon
 python -m canon normalize samples/maria_chen/*        # 7 messy documents → one record (no dependencies)
-python -m unittest discover -s tests                  # 41 tests
+python -m unittest discover -s tests                  # 44 tests
 python -m canon serve                                 # local API on :8080
 claude mcp add canon -- python -m canon mcp           # use it from Claude Code
 ```
 
 ## Demo script (for the video, ~2 minutes)
-0. **Tip:** the web demo (https://primaryaihackathon.vercel.app) is the easiest thing to screen-record. Steps 1–3 work there with one click.
+0. **Tip:** record the live demo at https://primaryaihackathon.vercel.app. It opens with steps 1–3 already on screen. For step 5, show /dashboard.
 1. **Problem (15s).** Show the 7 sample files for one patient: a fax with OCR typos, an HL7 lab feed, a hospital C-CDA, a FHIR bundle, an insurance claim, a CSV and a PDF letter.
 2. **Normalize (30s).** Run `python -m canon normalize samples/maria_chen/*`. Point out that all seven are matched to one patient.
 3. **The catches (45s).** In the summary, show:
