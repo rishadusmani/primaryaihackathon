@@ -50,7 +50,8 @@ Python (standard library only for the core: zero runtime dependencies), Supabase
   - The key is on the free tier (25 documents); the web demo doesn't count toward it.
 - Your own key: `curl -X POST https://primaryaihackathon.vercel.app/v1/signup -H 'Content-Type: application/json' -d '{"name":"Judge","email":"you@example.com"}'`
 - API health: https://primaryaihackathon.vercel.app/healthz
-- Demo video (85 s): https://github.com/rishadusmani/primaryaihackathon/blob/main/docs/canon-demo.mp4 (recorded on the live site; upload to YouTube or Loom if the form needs a streaming link)
+- Demo video with voice-over (2:03): https://github.com/rishadusmani/primaryaihackathon/blob/main/docs/canon-demo.mp4 (recorded on the live site; upload to YouTube or Loom if the form needs a streaming link)
+- Product images (10): https://github.com/rishadusmani/primaryaihackathon/tree/main/docs/images
 
 ## How to run it
 ```bash
