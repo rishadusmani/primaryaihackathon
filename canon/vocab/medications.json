@@ -6709,5 +6709,2356 @@
   "drug_class": "Zinc",
   "synonyms": [],
   "exact": []
+ },
+ {
+  "ingredient": "latanoprost",
+  "rxnorm": "43611",
+  "rxnorm_name": "latanoprost",
+  "tty": "IN",
+  "drug_class": "Prostaglandin Analog",
+  "synonyms": [
+   "xalatan"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "timolol",
+  "rxnorm": "10600",
+  "rxnorm_name": "timolol",
+  "tty": "IN",
+  "drug_class": "beta-Adrenergic Blocker",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "brimonidine",
+  "rxnorm": "134615",
+  "rxnorm_name": "brimonidine",
+  "tty": "IN",
+  "drug_class": "alpha-Adrenergic Agonist",
+  "synonyms": [
+   "alphagan"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "dorzolamide",
+  "rxnorm": "60207",
+  "rxnorm_name": "dorzolamide",
+  "tty": "IN",
+  "drug_class": "Carbonic Anhydrase Inhibitor",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "bimatoprost",
+  "rxnorm": "283810",
+  "rxnorm_name": "bimatoprost",
+  "tty": "IN",
+  "drug_class": "Prostaglandin Analog",
+  "synonyms": [
+   "lumigan"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "travoprost",
+  "rxnorm": "283809",
+  "rxnorm_name": "travoprost",
+  "tty": "IN",
+  "drug_class": "Prostaglandin Analog",
+  "synonyms": [
+   "travatan"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "olopatadine",
+  "rxnorm": "135391",
+  "rxnorm_name": "olopatadine",
+  "tty": "IN",
+  "drug_class": "Histamine-1 Receptor Inhibitor; Histamine-1 Receptor Antagonist; Mast Cell Stabilizer",
+  "synonyms": [
+   "pataday"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ketotifen",
+  "rxnorm": "6146",
+  "rxnorm_name": "ketotifen",
+  "tty": "IN",
+  "drug_class": "Histamine-1 Receptor Inhibitor",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "lifitegrast",
+  "rxnorm": "1801820",
+  "rxnorm_name": "lifitegrast",
+  "tty": "IN",
+  "drug_class": "Lymphocyte Function-Associated Antigen-1 Antagonist",
+  "synonyms": [
+   "xiidra"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "pilocarpine",
+  "rxnorm": "8328",
+  "rxnorm_name": "pilocarpine",
+  "tty": "IN",
+  "drug_class": "Cholinergic Receptor Agonist",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "fluorometholone",
+  "rxnorm": "4491",
+  "rxnorm_name": "fluorometholone",
+  "tty": "IN",
+  "drug_class": "Corticosteroid",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "hydroquinone",
+  "rxnorm": "5509",
+  "rxnorm_name": "hydroquinone",
+  "tty": "IN",
+  "drug_class": "Melanin Synthesis Inhibitor",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "imiquimod",
+  "rxnorm": "59943",
+  "rxnorm_name": "imiquimod",
+  "tty": "IN",
+  "drug_class": "Antivirals",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "azelaic acid",
+  "rxnorm": "18602",
+  "rxnorm_name": "azelaic acid",
+  "tty": "PIN",
+  "drug_class": "Other anti-acne preparations for topical use",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "tapinarof",
+  "rxnorm": "2602286",
+  "rxnorm_name": "tapinarof",
+  "tty": "IN",
+  "drug_class": "Aryl Hydrocarbon Receptor Agonist",
+  "synonyms": [
+   "vtama"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "chlorhexidine",
+  "rxnorm": "2358",
+  "rxnorm_name": "chlorhexidine",
+  "tty": "IN",
+  "drug_class": "Antiinfectives and antiseptics for local oral treatment",
+  "synonyms": [
+   "peridex"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "miconazole",
+  "rxnorm": "6932",
+  "rxnorm_name": "miconazole",
+  "tty": "IN",
+  "drug_class": "Azole Antifungal",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "terconazole",
+  "rxnorm": "37806",
+  "rxnorm_name": "terconazole",
+  "tty": "IN",
+  "drug_class": "Azole Antifungal",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "ulipristal",
+  "rxnorm": "1005921",
+  "rxnorm_name": "ulipristal",
+  "tty": "IN",
+  "drug_class": "Progesterone Agonist/Antagonist",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "etonogestrel",
+  "rxnorm": "14584",
+  "rxnorm_name": "etonogestrel",
+  "tty": "IN",
+  "drug_class": "Progestin",
+  "synonyms": [
+   "nexplanon"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ospemifene",
+  "rxnorm": "1370971",
+  "rxnorm_name": "ospemifene",
+  "tty": "IN",
+  "drug_class": "Estrogen Agonist/Antagonist",
+  "synonyms": [
+   "osphena"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "elagolix",
+  "rxnorm": "2049846",
+  "rxnorm_name": "elagolix",
+  "tty": "IN",
+  "drug_class": "Gonadotropin Releasing Hormone Receptor Antagonist",
+  "synonyms": [
+   "orilissa"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "relugolix",
+  "rxnorm": "2472778",
+  "rxnorm_name": "relugolix",
+  "tty": "IN",
+  "drug_class": "Gonadotropin Releasing Hormone Receptor Antagonist",
+  "synonyms": [
+   "orgovyx"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "methylergonovine",
+  "rxnorm": "6883",
+  "rxnorm_name": "methylergonovine",
+  "tty": "IN",
+  "drug_class": "Ergot Derivative",
+  "synonyms": [
+   "methergine"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "terbutaline",
+  "rxnorm": "10368",
+  "rxnorm_name": "terbutaline",
+  "tty": "IN",
+  "drug_class": "Selective beta-2-adrenoreceptor agonists",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "pentosan polysulfate",
+  "rxnorm": "155046",
+  "rxnorm_name": "pentosan polysulfate",
+  "tty": "IN",
+  "drug_class": "Glycosaminoglycan",
+  "synonyms": [
+   "elmiron"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "riluzole",
+  "rxnorm": "35623",
+  "rxnorm_name": "riluzole",
+  "tty": "IN",
+  "drug_class": "Benzothiazole",
+  "synonyms": [
+   "rilutek"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "edaravone",
+  "rxnorm": "1921877",
+  "rxnorm_name": "edaravone",
+  "tty": "IN",
+  "drug_class": "Other nervous system drugs",
+  "synonyms": [
+   "radicava"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "pyridostigmine",
+  "rxnorm": "9000",
+  "rxnorm_name": "pyridostigmine",
+  "tty": "IN",
+  "drug_class": "Cholinesterase Inhibitor",
+  "synonyms": [
+   "mestinon"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "onabotulinumtoxinA",
+  "rxnorm": "860189",
+  "rxnorm_name": "onabotulinumtoxinA",
+  "tty": "PIN",
+  "drug_class": "Acetylcholine Release Inhibitor; Neuromuscular Blocker",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "ofatumumab",
+  "rxnorm": "712566",
+  "rxnorm_name": "ofatumumab",
+  "tty": "IN",
+  "drug_class": "CD20-directed Cytolytic Antibody",
+  "synonyms": [
+   "kesimpta"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "siponimod",
+  "rxnorm": "2121085",
+  "rxnorm_name": "siponimod",
+  "tty": "IN",
+  "drug_class": "Sphingosine 1-phosphate Receptor Modulator",
+  "synonyms": [
+   "mayzent"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ozanimod",
+  "rxnorm": "2288236",
+  "rxnorm_name": "ozanimod",
+  "tty": "IN",
+  "drug_class": "Sphingosine 1-phosphate Receptor Modulator",
+  "synonyms": [
+   "zeposia"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "diroximel fumarate",
+  "rxnorm": "2261783",
+  "rxnorm_name": "diroximel fumarate",
+  "tty": "IN",
+  "drug_class": "Other immunosuppressants",
+  "synonyms": [
+   "vumerity"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "cladribine",
+  "rxnorm": "44157",
+  "rxnorm_name": "cladribine",
+  "tty": "IN",
+  "drug_class": "Purine Antimetabolite",
+  "synonyms": [
+   "mavenclad"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "alemtuzumab",
+  "rxnorm": "117055",
+  "rxnorm_name": "alemtuzumab",
+  "tty": "IN",
+  "drug_class": "CD52-directed Cytolytic Antibody",
+  "synonyms": [
+   "lemtrada"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "lecanemab",
+  "rxnorm": "2626143",
+  "rxnorm_name": "lecanemab",
+  "tty": "IN",
+  "drug_class": "Amyloid Beta-directed Antibody",
+  "synonyms": [
+   "leqembi"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "donanemab",
+  "rxnorm": "2687966",
+  "rxnorm_name": "donanemab",
+  "tty": "IN",
+  "drug_class": "Other anti-dementia drugs",
+  "synonyms": [
+   "kisunla"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "safinamide",
+  "rxnorm": "1922448",
+  "rxnorm_name": "safinamide",
+  "tty": "IN",
+  "drug_class": "Monoamine Oxidase Type B Inhibitor",
+  "synonyms": [
+   "xadago"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "istradefylline",
+  "rxnorm": "2199015",
+  "rxnorm_name": "istradefylline",
+  "tty": "IN",
+  "drug_class": "Other antiparkinson drugs",
+  "synonyms": [
+   "nourianz"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "pimavanserin",
+  "rxnorm": "1791685",
+  "rxnorm_name": "pimavanserin",
+  "tty": "IN",
+  "drug_class": "Atypical Antipsychotic",
+  "synonyms": [
+   "nuplazid"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "trihexyphenidyl",
+  "rxnorm": "10811",
+  "rxnorm_name": "trihexyphenidyl",
+  "tty": "IN",
+  "drug_class": "Tertiary amines",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "dihydroergotamine",
+  "rxnorm": "3418",
+  "rxnorm_name": "dihydroergotamine",
+  "tty": "IN",
+  "drug_class": "Ergotamine Derivative",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "acetazolamide",
+  "rxnorm": "167",
+  "rxnorm_name": "acetazolamide",
+  "tty": "IN",
+  "drug_class": "Carbonic Anhydrase Inhibitor",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "zuranolone",
+  "rxnorm": "2669905",
+  "rxnorm_name": "zuranolone",
+  "tty": "IN",
+  "drug_class": "Neuroactive Steroid Gamma-Aminobutyric Acid A Receptor Positive Modulator",
+  "synonyms": [
+   "zurzuvae"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "cefprozil",
+  "rxnorm": "19552",
+  "rxnorm_name": "cefprozil",
+  "tty": "IN",
+  "drug_class": "Cephalosporin Antibacterial",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "cefixime",
+  "rxnorm": "25033",
+  "rxnorm_name": "cefixime",
+  "tty": "IN",
+  "drug_class": "Cephalosporin Antibacterial",
+  "synonyms": [
+   "suprax"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "cefoxitin",
+  "rxnorm": "2189",
+  "rxnorm_name": "cefoxitin",
+  "tty": "IN",
+  "drug_class": "Cephalosporin Antibacterial",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "ceftaroline fosamil",
+  "rxnorm": "1040004",
+  "rxnorm_name": "ceftaroline fosamil",
+  "tty": "IN",
+  "drug_class": "Other cephalosporins and penems",
+  "synonyms": [
+   "teflaro"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "dalbavancin",
+  "rxnorm": "1539239",
+  "rxnorm_name": "dalbavancin",
+  "tty": "IN",
+  "drug_class": "Lipoglycopeptide Antibacterial",
+  "synonyms": [
+   "dalvance"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "tedizolid",
+  "rxnorm": "1540825",
+  "rxnorm_name": "tedizolid",
+  "tty": "IN",
+  "drug_class": "Oxazolidinone Antibacterial",
+  "synonyms": [
+   "sivextro"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "amikacin",
+  "rxnorm": "641",
+  "rxnorm_name": "amikacin",
+  "tty": "IN",
+  "drug_class": "Aminoglycoside Antibacterial",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "nitazoxanide",
+  "rxnorm": "31819",
+  "rxnorm_name": "nitazoxanide",
+  "tty": "IN",
+  "drug_class": "Antiprotozoal",
+  "synonyms": [
+   "alinia"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "fidaxomicin",
+  "rxnorm": "1111103",
+  "rxnorm_name": "fidaxomicin",
+  "tty": "IN",
+  "drug_class": "Macrolide Antibacterial",
+  "synonyms": [
+   "dificid"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "secnidazole",
+  "rxnorm": "36314",
+  "rxnorm_name": "secnidazole",
+  "tty": "IN",
+  "drug_class": "Nitroimidazole Antimicrobial",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "micafungin",
+  "rxnorm": "325887",
+  "rxnorm_name": "micafungin",
+  "tty": "IN",
+  "drug_class": "Echinocandin Antifungal",
+  "synonyms": [
+   "mycamine"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "caspofungin",
+  "rxnorm": "140108",
+  "rxnorm_name": "caspofungin",
+  "tty": "IN",
+  "drug_class": "Echinocandin Antifungal",
+  "synonyms": [
+   "cancidas"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "amphotericin B",
+  "rxnorm": "732",
+  "rxnorm_name": "amphotericin B",
+  "tty": "IN",
+  "drug_class": "Polyene Antifungal; Lipid-based Polyene Antifungal",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "letermovir",
+  "rxnorm": "1988648",
+  "rxnorm_name": "letermovir",
+  "tty": "IN",
+  "drug_class": "Cytomegalovirus DNA Terminase Complex Inhibitor",
+  "synonyms": [
+   "prevymis"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "tecovirimat",
+  "rxnorm": "2055104",
+  "rxnorm_name": "tecovirimat",
+  "tty": "IN",
+  "drug_class": "Orthopoxvirus VP37 Envelope Wrapping Protein Inhibitor",
+  "synonyms": [
+   "tpoxx"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ritonavir",
+  "rxnorm": "85762",
+  "rxnorm_name": "ritonavir",
+  "tty": "IN",
+  "drug_class": "Protease Inhibitor; Cytochrome P450 3A Inhibitor",
+  "synonyms": [
+   "norvir"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "doravirine",
+  "rxnorm": "2055755",
+  "rxnorm_name": "doravirine",
+  "tty": "IN",
+  "drug_class": "Human Immunodeficiency Virus 1 Non-Nucleoside Analog Reverse Transcriptase Inhibitor",
+  "synonyms": [
+   "pifeltro"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "lenacapavir",
+  "rxnorm": "2625651",
+  "rxnorm_name": "lenacapavir",
+  "tty": "IN",
+  "drug_class": "Human Immunodeficiency Virus 1 Capsid Inhibitor",
+  "synonyms": [
+   "sunlenca"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "tenofovir alafenamide",
+  "rxnorm": "1721603",
+  "rxnorm_name": "tenofovir alafenamide",
+  "tty": "IN",
+  "drug_class": "Nucleoside and nucleotide reverse transcriptase inhibitors",
+  "synonyms": [
+   "vemlidy"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "sotagliflozin",
+  "rxnorm": "2638675",
+  "rxnorm_name": "sotagliflozin",
+  "tty": "IN",
+  "drug_class": "Sodium-Glucose Cotransporter 2 Inhibitor",
+  "synonyms": [
+   "inpefa"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "bosentan",
+  "rxnorm": "75207",
+  "rxnorm_name": "bosentan",
+  "tty": "IN",
+  "drug_class": "Endothelin Receptor Antagonist",
+  "synonyms": [
+   "tracleer"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ambrisentan",
+  "rxnorm": "358274",
+  "rxnorm_name": "ambrisentan",
+  "tty": "IN",
+  "drug_class": "Endothelin Receptor Antagonist",
+  "synonyms": [
+   "letairis"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "macitentan",
+  "rxnorm": "1442132",
+  "rxnorm_name": "macitentan",
+  "tty": "IN",
+  "drug_class": "Endothelin Receptor Antagonist",
+  "synonyms": [
+   "opsumit"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "riociguat",
+  "rxnorm": "1439816",
+  "rxnorm_name": "riociguat",
+  "tty": "IN",
+  "drug_class": "Soluble Guanylate Cyclase Stimulator",
+  "synonyms": [
+   "adempas"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "treprostinil",
+  "rxnorm": "343048",
+  "rxnorm_name": "treprostinil",
+  "tty": "IN",
+  "drug_class": "Prostacycline Vasodilator",
+  "synonyms": [
+   "tyvaso",
+   "remodulin"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "selexipag",
+  "rxnorm": "1729002",
+  "rxnorm_name": "selexipag",
+  "tty": "IN",
+  "drug_class": "Prostacyclin Receptor Agonist",
+  "synonyms": [
+   "uptravi"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "sotatercept",
+  "rxnorm": "2678930",
+  "rxnorm_name": "sotatercept",
+  "tty": "IN",
+  "drug_class": "Activin Signaling Inhibitor",
+  "synonyms": [
+   "winrevair"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "teprotumumab",
+  "rxnorm": "2274803",
+  "rxnorm_name": "teprotumumab",
+  "tty": "IN",
+  "drug_class": "Insulin-like Growth Factor-1 Receptor Inhibitor",
+  "synonyms": [
+   "tepezza"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "lanreotide",
+  "rxnorm": "68092",
+  "rxnorm_name": "lanreotide",
+  "tty": "IN",
+  "drug_class": "Somatostatin Analog",
+  "synonyms": [
+   "somatuline"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "pegvisomant",
+  "rxnorm": "278739",
+  "rxnorm_name": "pegvisomant",
+  "tty": "IN",
+  "drug_class": "Growth Hormone Receptor Antagonist",
+  "synonyms": [
+   "somavert"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "somatropin",
+  "rxnorm": "61148",
+  "rxnorm_name": "somatropin",
+  "tty": "IN",
+  "drug_class": "Recombinant Human Growth Hormone",
+  "synonyms": [
+   "genotropin",
+   "norditropin"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "calcifediol",
+  "rxnorm": "1889",
+  "rxnorm_name": "calcifediol",
+  "tty": "IN",
+  "drug_class": "Vitamin D3 Analog",
+  "synonyms": [
+   "rayaldee"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "pramlintide",
+  "rxnorm": "139953",
+  "rxnorm_name": "pramlintide",
+  "tty": "IN",
+  "drug_class": "Amylin Analog",
+  "synonyms": [
+   "symlin"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "insulin glulisine",
+  "rxnorm": "400008",
+  "rxnorm_name": "insulin glulisine, human",
+  "tty": "IN",
+  "drug_class": "Insulin Analog",
+  "synonyms": [
+   "apidra",
+   "insulin glulisine, human"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "tenapanor",
+  "rxnorm": "2199674",
+  "rxnorm_name": "tenapanor",
+  "tty": "IN",
+  "drug_class": "Sodium-Hydrogen Exchanger 3 Inhibitor",
+  "synonyms": [
+   "ibsrela"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "eluxadoline",
+  "rxnorm": "1653781",
+  "rxnorm_name": "eluxadoline",
+  "tty": "IN",
+  "drug_class": "mu-Opioid Receptor Agonist",
+  "synonyms": [
+   "viberzi"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "alosetron",
+  "rxnorm": "85248",
+  "rxnorm_name": "alosetron",
+  "tty": "IN",
+  "drug_class": "Serotonin-3 Receptor Antagonist",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "mirikizumab",
+  "rxnorm": "2668384",
+  "rxnorm_name": "mirikizumab",
+  "tty": "IN",
+  "drug_class": "Interleukin-23 Antagonist",
+  "synonyms": [
+   "omvoh"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "etrasimod",
+  "rxnorm": "2668045",
+  "rxnorm_name": "etrasimod",
+  "tty": "IN",
+  "drug_class": "Sphingosine-1-phosphate (S1P) receptor modulators",
+  "synonyms": [
+   "velsipity"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "obeticholic acid",
+  "rxnorm": "1798288",
+  "rxnorm_name": "obeticholic acid",
+  "tty": "IN",
+  "drug_class": "Bile acids and derivatives",
+  "synonyms": [
+   "ocaliva"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "resmetirom",
+  "rxnorm": "2677894",
+  "rxnorm_name": "resmetirom",
+  "tty": "IN",
+  "drug_class": "Thyroid Hormone Receptor beta Agonist",
+  "synonyms": [
+   "rezdiffra"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "vonoprazan",
+  "rxnorm": "2604577",
+  "rxnorm_name": "vonoprazan",
+  "tty": "IN",
+  "drug_class": "Proton pump inhibitors",
+  "synonyms": [
+   "voquezna"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "emicizumab",
+  "rxnorm": "1989794",
+  "rxnorm_name": "emicizumab",
+  "tty": "IN",
+  "drug_class": "Other systemic hemostatics",
+  "synonyms": [
+   "hemlibra"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "luspatercept",
+  "rxnorm": "2262544",
+  "rxnorm_name": "luspatercept",
+  "tty": "IN",
+  "drug_class": "Erythroid Maturation Agent",
+  "synonyms": [
+   "reblozyl"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "crizanlizumab",
+  "rxnorm": "2262279",
+  "rxnorm_name": "crizanlizumab",
+  "tty": "IN",
+  "drug_class": "Selectin Blocker",
+  "synonyms": [
+   "adakveo"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "eltrombopag",
+  "rxnorm": "711942",
+  "rxnorm_name": "eltrombopag",
+  "tty": "IN",
+  "drug_class": "Thrombopoietin Receptor Agonist",
+  "synonyms": [
+   "promacta"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "romiplostim",
+  "rxnorm": "805452",
+  "rxnorm_name": "romiplostim",
+  "tty": "IN",
+  "drug_class": "Thrombopoietin Receptor Agonist",
+  "synonyms": [
+   "nplate"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "avatrombopag",
+  "rxnorm": "2045726",
+  "rxnorm_name": "avatrombopag",
+  "tty": "IN",
+  "drug_class": "Other systemic hemostatics",
+  "synonyms": [
+   "doptelet"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "deferasirox",
+  "rxnorm": "614373",
+  "rxnorm_name": "deferasirox",
+  "tty": "IN",
+  "drug_class": "Iron Chelator",
+  "synonyms": [
+   "jadenu",
+   "exjade"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ferrous gluconate",
+  "rxnorm": "24942",
+  "rxnorm_name": "ferrous gluconate",
+  "tty": "IN",
+  "drug_class": "Iron bivalent, oral preparations",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "anagrelide",
+  "rxnorm": "596724",
+  "rxnorm_name": "anagrelide",
+  "tty": "IN",
+  "drug_class": "Platelet-reducing Agent",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "sacituzumab govitecan",
+  "rxnorm": "2360232",
+  "rxnorm_name": "sacituzumab govitecan",
+  "tty": "PIN",
+  "drug_class": "Other monoclonal antibodies and antibody drug conjugates",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "cetuximab",
+  "rxnorm": "318341",
+  "rxnorm_name": "cetuximab",
+  "tty": "IN",
+  "drug_class": "Epidermal Growth Factor Receptor Antagonist",
+  "synonyms": [
+   "erbitux"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "panitumumab",
+  "rxnorm": "263034",
+  "rxnorm_name": "panitumumab",
+  "tty": "IN",
+  "drug_class": "Epidermal Growth Factor Receptor Antagonist",
+  "synonyms": [
+   "vectibix"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ramucirumab",
+  "rxnorm": "1535922",
+  "rxnorm_name": "ramucirumab",
+  "tty": "IN",
+  "drug_class": "Vascular Endothelial Growth Factor Receptor 2 Antagonist",
+  "synonyms": [
+   "cyramza"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "alectinib",
+  "rxnorm": "1727455",
+  "rxnorm_name": "alectinib",
+  "tty": "IN",
+  "drug_class": "Kinase Inhibitor",
+  "synonyms": [
+   "alecensa"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "crizotinib",
+  "rxnorm": "1148495",
+  "rxnorm_name": "crizotinib",
+  "tty": "IN",
+  "drug_class": "Kinase Inhibitor",
+  "synonyms": [
+   "xalkori"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "lorlatinib",
+  "rxnorm": "2103164",
+  "rxnorm_name": "lorlatinib",
+  "tty": "IN",
+  "drug_class": "Kinase Inhibitor",
+  "synonyms": [
+   "lorbrena"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "sotorasib",
+  "rxnorm": "2550714",
+  "rxnorm_name": "sotorasib",
+  "tty": "IN",
+  "drug_class": "Other antineoplastic agents",
+  "synonyms": [
+   "lumakras"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "lapatinib",
+  "rxnorm": "480167",
+  "rxnorm_name": "lapatinib",
+  "tty": "IN",
+  "drug_class": "Kinase Inhibitor",
+  "synonyms": [
+   "tykerb"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "tucatinib",
+  "rxnorm": "2361285",
+  "rxnorm_name": "tucatinib",
+  "tty": "IN",
+  "drug_class": "Kinase Inhibitor",
+  "synonyms": [
+   "tukysa"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "cabozantinib",
+  "rxnorm": "1363268",
+  "rxnorm_name": "cabozantinib",
+  "tty": "IN",
+  "drug_class": "Kinase Inhibitor",
+  "synonyms": [
+   "cabometyx"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "lenvatinib",
+  "rxnorm": "1603296",
+  "rxnorm_name": "lenvatinib",
+  "tty": "IN",
+  "drug_class": "Kinase Inhibitor",
+  "synonyms": [
+   "lenvima"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "sorafenib",
+  "rxnorm": "495881",
+  "rxnorm_name": "sorafenib",
+  "tty": "IN",
+  "drug_class": "Kinase Inhibitor",
+  "synonyms": [
+   "nexavar"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "sunitinib",
+  "rxnorm": "357977",
+  "rxnorm_name": "sunitinib",
+  "tty": "IN",
+  "drug_class": "Kinase Inhibitor",
+  "synonyms": [
+   "sutent"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "pazopanib",
+  "rxnorm": "714438",
+  "rxnorm_name": "pazopanib",
+  "tty": "IN",
+  "drug_class": "Kinase Inhibitor",
+  "synonyms": [
+   "votrient"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "axitinib",
+  "rxnorm": "1242999",
+  "rxnorm_name": "axitinib",
+  "tty": "IN",
+  "drug_class": "Kinase Inhibitor",
+  "synonyms": [
+   "inlyta"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "regorafenib",
+  "rxnorm": "1312397",
+  "rxnorm_name": "regorafenib",
+  "tty": "IN",
+  "drug_class": "Kinase Inhibitor",
+  "synonyms": [
+   "stivarga"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "temozolomide",
+  "rxnorm": "37776",
+  "rxnorm_name": "temozolomide",
+  "tty": "IN",
+  "drug_class": "Alkylating Drug",
+  "synonyms": [
+   "temodar"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "irinotecan",
+  "rxnorm": "51499",
+  "rxnorm_name": "irinotecan",
+  "tty": "IN",
+  "drug_class": "Topoisomerase Inhibitor",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "vincristine",
+  "rxnorm": "11202",
+  "rxnorm_name": "vincristine",
+  "tty": "IN",
+  "drug_class": "Vinca Alkaloid",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "vinorelbine",
+  "rxnorm": "39541",
+  "rxnorm_name": "vinorelbine",
+  "tty": "IN",
+  "drug_class": "Vinca Alkaloid",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "cytarabine",
+  "rxnorm": "3041",
+  "rxnorm_name": "cytarabine",
+  "tty": "IN",
+  "drug_class": "Nucleoside Metabolic Inhibitor",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "azacitidine",
+  "rxnorm": "1251",
+  "rxnorm_name": "azacitidine",
+  "tty": "IN",
+  "drug_class": "Nucleoside Metabolic Inhibitor",
+  "synonyms": [
+   "vidaza"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "decitabine",
+  "rxnorm": "15657",
+  "rxnorm_name": "decitabine",
+  "tty": "IN",
+  "drug_class": "Nucleoside Metabolic Inhibitor",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "bendamustine",
+  "rxnorm": "134547",
+  "rxnorm_name": "bendamustine",
+  "tty": "IN",
+  "drug_class": "Alkylating Drug",
+  "synonyms": [],
+  "exact": []
+ },
+ {
+  "ingredient": "carfilzomib",
+  "rxnorm": "1302966",
+  "rxnorm_name": "carfilzomib",
+  "tty": "IN",
+  "drug_class": "Proteasome Inhibitor",
+  "synonyms": [
+   "kyprolis"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "zanubrutinib",
+  "rxnorm": "2262435",
+  "rxnorm_name": "zanubrutinib",
+  "tty": "IN",
+  "drug_class": "Kinase Inhibitor",
+  "synonyms": [
+   "brukinsa"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "obinutuzumab",
+  "rxnorm": "974779",
+  "rxnorm_name": "obinutuzumab",
+  "tty": "IN",
+  "drug_class": "CD20-directed Cytolytic Antibody",
+  "synonyms": [
+   "gazyva"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "brentuximab vedotin",
+  "rxnorm": "1147320",
+  "rxnorm_name": "brentuximab vedotin",
+  "tty": "IN",
+  "drug_class": "CD30-directed Immunoconjugate",
+  "synonyms": [
+   "adcetris"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "degarelix",
+  "rxnorm": "475230",
+  "rxnorm_name": "degarelix",
+  "tty": "IN",
+  "drug_class": "Gonadotropin Releasing Hormone Receptor Antagonist",
+  "synonyms": [
+   "firmagon"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "apalutamide",
+  "rxnorm": "1999574",
+  "rxnorm_name": "apalutamide",
+  "tty": "IN",
+  "drug_class": "Anti-androgens",
+  "synonyms": [
+   "erleada"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "darolutamide",
+  "rxnorm": "2180325",
+  "rxnorm_name": "darolutamide",
+  "tty": "IN",
+  "drug_class": "Anti-androgens",
+  "synonyms": [
+   "nubeqa"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "goserelin",
+  "rxnorm": "50610",
+  "rxnorm_name": "goserelin",
+  "tty": "IN",
+  "drug_class": "Gonadotropin Releasing Hormone Receptor Agonist",
+  "synonyms": [
+   "zoladex"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "amoxicillin / clavulanate",
+  "rxnorm": "19711",
+  "rxnorm_name": "amoxicillin / clavulanate",
+  "tty": "MIN",
+  "drug_class": "Penicillin-class Antibacterial + beta Lactamase Inhibitor",
+  "components": [
+   "amoxicillin",
+   "clavulanate"
+  ],
+  "synonyms": [
+   "amoxicillin clavulanate",
+   "amoxicillin-clavulanate",
+   "amox-clav",
+   "augmentin"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "sulfamethoxazole / trimethoprim",
+  "rxnorm": "10831",
+  "rxnorm_name": "sulfamethoxazole / trimethoprim",
+  "tty": "MIN",
+  "drug_class": "Sulfonamide Antimicrobial + Dihydrofolate Reductase Inhibitor Antibacterial",
+  "components": [
+   "sulfamethoxazole",
+   "trimethoprim"
+  ],
+  "synonyms": [
+   "sulfamethoxazole-trimethoprim",
+   "trimethoprim-sulfamethoxazole",
+   "tmp-smx",
+   "smx-tmp",
+   "bactrim",
+   "septra"
+  ],
+  "exact": [
+   "tmp smx",
+   "smx tmp"
+  ]
+ },
+ {
+  "ingredient": "piperacillin / tazobactam",
+  "rxnorm": "74169",
+  "rxnorm_name": "piperacillin / tazobactam",
+  "tty": "MIN",
+  "drug_class": "Penicillin-class Antibacterial + beta Lactamase Inhibitor",
+  "components": [
+   "piperacillin",
+   "tazobactam"
+  ],
+  "synonyms": [
+   "piperacillin-tazobactam",
+   "pip-tazo",
+   "zosyn"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ampicillin / sulbactam",
+  "rxnorm": "1009148",
+  "rxnorm_name": "ampicillin / sulbactam",
+  "tty": "MIN",
+  "drug_class": "Penicillin-class Antibacterial + beta Lactamase Inhibitor",
+  "components": [
+   "ampicillin",
+   "sulbactam"
+  ],
+  "synonyms": [
+   "ampicillin-sulbactam",
+   "unasyn"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "avibactam / ceftazidime",
+  "rxnorm": "1603839",
+  "rxnorm_name": "avibactam / ceftazidime",
+  "tty": "MIN",
+  "drug_class": "beta Lactamase Inhibitor + Cephalosporin Antibacterial",
+  "components": [
+   "avibactam",
+   "ceftazidime"
+  ],
+  "synonyms": [
+   "ceftazidime-avibactam",
+   "avycaz"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "emtricitabine / tenofovir disoproxil",
+  "rxnorm": "1008145",
+  "rxnorm_name": "emtricitabine / tenofovir disoproxil",
+  "tty": "MIN",
+  "drug_class": "Human Immunodeficiency Virus Nucleoside Analog Reverse Transcriptase Inhibitor + Nucleoside and nucleotide reverse transcriptase inhibitors",
+  "components": [
+   "emtricitabine",
+   "tenofovir disoproxil"
+  ],
+  "synonyms": [
+   "emtricitabine-tenofovir",
+   "truvada"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "bictegravir / emtricitabine / tenofovir alafenamide",
+  "rxnorm": "1996259",
+  "rxnorm_name": "bictegravir / emtricitabine / tenofovir alafenamide",
+  "tty": "MIN",
+  "drug_class": "Human Immunodeficiency Virus Nucleoside Analog Reverse Transcriptase Inhibitor + Nucleoside and nucleotide reverse transcriptase inhibitors",
+  "components": [
+   "bictegravir",
+   "emtricitabine",
+   "tenofovir alafenamide"
+  ],
+  "synonyms": [
+   "biktarvy"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "abacavir / dolutegravir / lamivudine",
+  "rxnorm": "1546887",
+  "rxnorm_name": "abacavir / dolutegravir / lamivudine",
+  "tty": "MIN",
+  "drug_class": "Human Immunodeficiency Virus Nucleoside Analog Reverse Transcriptase Inhibitor + Human Immunodeficiency Virus Integrase Strand Transfer Inhibitor + Human Immunodeficiency Virus Nucleoside Analog Reverse Transcriptase Inhibitor; Hepatitis B Virus Nucleoside Analog Reverse Transcriptase Inhibitor",
+  "components": [
+   "abacavir",
+   "dolutegravir",
+   "lamivudine"
+  ],
+  "synonyms": [
+   "triumeq"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "sofosbuvir / velpatasvir",
+  "rxnorm": "1799211",
+  "rxnorm_name": "sofosbuvir / velpatasvir",
+  "tty": "MIN",
+  "drug_class": "Hepatitis C Virus Nucleotide Analog NS5B Polymerase Inhibitor + Hepatitis C Virus NS5A Inhibitor",
+  "components": [
+   "sofosbuvir",
+   "velpatasvir"
+  ],
+  "synonyms": [
+   "sofosbuvir-velpatasvir",
+   "epclusa"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "glecaprevir / pibrentasvir",
+  "rxnorm": "1940702",
+  "rxnorm_name": "glecaprevir / pibrentasvir",
+  "tty": "MIN",
+  "drug_class": "Hepatitis C Virus NS3/4A Protease Inhibitor + Hepatitis C Virus NS5A Inhibitor",
+  "components": [
+   "glecaprevir",
+   "pibrentasvir"
+  ],
+  "synonyms": [
+   "glecaprevir-pibrentasvir",
+   "mavyret"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ledipasvir / sofosbuvir",
+  "rxnorm": "1591942",
+  "rxnorm_name": "ledipasvir / sofosbuvir",
+  "tty": "MIN",
+  "drug_class": "Hepatitis C Virus NS5A Inhibitor + Hepatitis C Virus Nucleotide Analog NS5B Polymerase Inhibitor",
+  "components": [
+   "ledipasvir",
+   "sofosbuvir"
+  ],
+  "synonyms": [
+   "ledipasvir-sofosbuvir",
+   "harvoni"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "sacubitril / valsartan",
+  "rxnorm": "1656339",
+  "rxnorm_name": "sacubitril / valsartan",
+  "tty": "MIN",
+  "drug_class": "Angiotensin 2 Receptor Blocker",
+  "components": [
+   "sacubitril",
+   "valsartan"
+  ],
+  "synonyms": [
+   "sacubitril-valsartan",
+   "entresto"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "hydrochlorothiazide / lisinopril",
+  "rxnorm": "214618",
+  "rxnorm_name": "hydrochlorothiazide / lisinopril",
+  "tty": "MIN",
+  "drug_class": "Thiazide Diuretic + Angiotensin Converting Enzyme Inhibitor",
+  "components": [
+   "hydrochlorothiazide",
+   "lisinopril"
+  ],
+  "synonyms": [
+   "lisinopril-hydrochlorothiazide",
+   "lisinopril-hctz",
+   "zestoretic"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "hydrochlorothiazide / losartan",
+  "rxnorm": "214619",
+  "rxnorm_name": "hydrochlorothiazide / losartan",
+  "tty": "MIN",
+  "drug_class": "Thiazide Diuretic + Angiotensin 2 Receptor Blocker",
+  "components": [
+   "hydrochlorothiazide",
+   "losartan"
+  ],
+  "synonyms": [
+   "losartan-hydrochlorothiazide",
+   "losartan-hctz",
+   "hyzaar"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "hydrochlorothiazide / valsartan",
+  "rxnorm": "214626",
+  "rxnorm_name": "hydrochlorothiazide / valsartan",
+  "tty": "MIN",
+  "drug_class": "Thiazide Diuretic + Angiotensin 2 Receptor Blocker",
+  "components": [
+   "hydrochlorothiazide",
+   "valsartan"
+  ],
+  "synonyms": [
+   "valsartan-hydrochlorothiazide",
+   "valsartan-hctz"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "hydrochlorothiazide / olmesartan",
+  "rxnorm": "817496",
+  "rxnorm_name": "hydrochlorothiazide / olmesartan",
+  "tty": "MIN",
+  "drug_class": "Thiazide Diuretic + Angiotensin 2 Receptor Blocker",
+  "components": [
+   "hydrochlorothiazide",
+   "olmesartan"
+  ],
+  "synonyms": [
+   "olmesartan-hydrochlorothiazide",
+   "olmesartan-hctz"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "hydrochlorothiazide / triamterene",
+  "rxnorm": "258337",
+  "rxnorm_name": "hydrochlorothiazide / triamterene",
+  "tty": "MIN",
+  "drug_class": "Thiazide Diuretic + Potassium-sparing Diuretic",
+  "components": [
+   "hydrochlorothiazide",
+   "triamterene"
+  ],
+  "synonyms": [
+   "triamterene-hydrochlorothiazide",
+   "triamterene-hctz",
+   "maxzide",
+   "dyazide"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "bisoprolol / hydrochlorothiazide",
+  "rxnorm": "214317",
+  "rxnorm_name": "bisoprolol / hydrochlorothiazide",
+  "tty": "MIN",
+  "drug_class": "beta-Adrenergic Blocker + Thiazide Diuretic",
+  "components": [
+   "bisoprolol",
+   "hydrochlorothiazide"
+  ],
+  "synonyms": [
+   "bisoprolol-hydrochlorothiazide",
+   "bisoprolol-hctz"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "amlodipine / benazepril",
+  "rxnorm": "214223",
+  "rxnorm_name": "amlodipine / benazepril",
+  "tty": "MIN",
+  "drug_class": "Dihydropyridine Calcium Channel Blocker; Calcium Channel Blocker + Angiotensin Converting Enzyme Inhibitor",
+  "components": [
+   "amlodipine",
+   "benazepril"
+  ],
+  "synonyms": [
+   "amlodipine-benazepril",
+   "lotrel"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "amlodipine / valsartan",
+  "rxnorm": "729455",
+  "rxnorm_name": "amlodipine / valsartan",
+  "tty": "MIN",
+  "drug_class": "Dihydropyridine Calcium Channel Blocker; Calcium Channel Blocker + Angiotensin 2 Receptor Blocker",
+  "components": [
+   "amlodipine",
+   "valsartan"
+  ],
+  "synonyms": [
+   "amlodipine-valsartan",
+   "exforge"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "amlodipine / olmesartan",
+  "rxnorm": "1009015",
+  "rxnorm_name": "amlodipine / olmesartan",
+  "tty": "MIN",
+  "drug_class": "Dihydropyridine Calcium Channel Blocker; Calcium Channel Blocker + Angiotensin 2 Receptor Blocker",
+  "components": [
+   "amlodipine",
+   "olmesartan"
+  ],
+  "synonyms": [
+   "amlodipine-olmesartan",
+   "azor"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "amlodipine / atorvastatin",
+  "rxnorm": "404773",
+  "rxnorm_name": "amlodipine / atorvastatin",
+  "tty": "MIN",
+  "drug_class": "Dihydropyridine Calcium Channel Blocker; Calcium Channel Blocker + HMG-CoA Reductase Inhibitor",
+  "components": [
+   "amlodipine",
+   "atorvastatin"
+  ],
+  "synonyms": [
+   "amlodipine-atorvastatin",
+   "caduet"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ezetimibe / simvastatin",
+  "rxnorm": "484211",
+  "rxnorm_name": "ezetimibe / simvastatin",
+  "tty": "MIN",
+  "drug_class": "Dietary Cholesterol Absorption Inhibitor + HMG-CoA Reductase Inhibitor",
+  "components": [
+   "ezetimibe",
+   "simvastatin"
+  ],
+  "synonyms": [
+   "ezetimibe-simvastatin",
+   "vytorin"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "metformin / sitagliptin",
+  "rxnorm": "729717",
+  "rxnorm_name": "metformin / sitagliptin",
+  "tty": "MIN",
+  "drug_class": "Biguanide + Dipeptidyl Peptidase 4 Inhibitor",
+  "components": [
+   "metformin",
+   "sitagliptin"
+  ],
+  "synonyms": [
+   "sitagliptin-metformin",
+   "janumet"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "empagliflozin / metformin",
+  "rxnorm": "1664314",
+  "rxnorm_name": "empagliflozin / metformin",
+  "tty": "MIN",
+  "drug_class": "Sodium-Glucose Cotransporter 2 Inhibitor + Biguanide",
+  "components": [
+   "empagliflozin",
+   "metformin"
+  ],
+  "synonyms": [
+   "empagliflozin-metformin",
+   "synjardy"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "dapagliflozin / metformin",
+  "rxnorm": "1486436",
+  "rxnorm_name": "dapagliflozin / metformin",
+  "tty": "MIN",
+  "drug_class": "Sodium-Glucose Cotransporter 2 Inhibitor + Biguanide",
+  "components": [
+   "dapagliflozin",
+   "metformin"
+  ],
+  "synonyms": [
+   "dapagliflozin-metformin",
+   "xigduo"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "empagliflozin / linagliptin",
+  "rxnorm": "1598392",
+  "rxnorm_name": "empagliflozin / linagliptin",
+  "tty": "MIN",
+  "drug_class": "Sodium-Glucose Cotransporter 2 Inhibitor + Dipeptidyl Peptidase 4 Inhibitor",
+  "components": [
+   "empagliflozin",
+   "linagliptin"
+  ],
+  "synonyms": [
+   "empagliflozin-linagliptin",
+   "glyxambi"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "glyburide / metformin",
+  "rxnorm": "285129",
+  "rxnorm_name": "glyburide / metformin",
+  "tty": "MIN",
+  "drug_class": "Sulfonylurea + Biguanide",
+  "components": [
+   "glyburide",
+   "metformin"
+  ],
+  "synonyms": [
+   "glyburide-metformin",
+   "glucovance"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "insulin degludec / liraglutide",
+  "rxnorm": "1727493",
+  "rxnorm_name": "insulin degludec / liraglutide",
+  "tty": "MIN",
+  "drug_class": "Insulin Analog + GLP-1 Receptor Agonist",
+  "components": [
+   "insulin degludec",
+   "liraglutide"
+  ],
+  "synonyms": [
+   "xultophy"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "insulin glargine / lixisenatide",
+  "rxnorm": "1858994",
+  "rxnorm_name": "insulin glargine / lixisenatide",
+  "tty": "MIN",
+  "drug_class": "Insulin Analog + GLP-1 Receptor Agonist",
+  "components": [
+   "insulin glargine",
+   "lixisenatide"
+  ],
+  "synonyms": [
+   "soliqua"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "fluticasone / salmeterol",
+  "rxnorm": "284635",
+  "rxnorm_name": "fluticasone / salmeterol",
+  "tty": "MIN",
+  "drug_class": "Corticosteroid + beta2-Adrenergic Agonist",
+  "components": [
+   "fluticasone",
+   "salmeterol"
+  ],
+  "synonyms": [
+   "fluticasone-salmeterol",
+   "advair",
+   "wixela"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "budesonide / formoterol",
+  "rxnorm": "389132",
+  "rxnorm_name": "budesonide / formoterol",
+  "tty": "MIN",
+  "drug_class": "Corticosteroid + beta2-Adrenergic Agonist",
+  "components": [
+   "budesonide",
+   "formoterol"
+  ],
+  "synonyms": [
+   "budesonide-formoterol",
+   "symbicort",
+   "breyna"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "fluticasone / vilanterol",
+  "rxnorm": "1424888",
+  "rxnorm_name": "fluticasone / vilanterol",
+  "tty": "MIN",
+  "drug_class": "Corticosteroid + beta2-Adrenergic Agonist",
+  "components": [
+   "fluticasone",
+   "vilanterol"
+  ],
+  "synonyms": [
+   "fluticasone-vilanterol",
+   "breo",
+   "breo ellipta"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "umeclidinium / vilanterol",
+  "rxnorm": "1487518",
+  "rxnorm_name": "umeclidinium / vilanterol",
+  "tty": "MIN",
+  "drug_class": "Anticholinergic + beta2-Adrenergic Agonist",
+  "components": [
+   "umeclidinium",
+   "vilanterol"
+  ],
+  "synonyms": [
+   "umeclidinium-vilanterol",
+   "anoro",
+   "anoro ellipta"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "fluticasone / umeclidinium / vilanterol",
+  "rxnorm": "1945038",
+  "rxnorm_name": "fluticasone / umeclidinium / vilanterol",
+  "tty": "MIN",
+  "drug_class": "Corticosteroid + Anticholinergic + beta2-Adrenergic Agonist",
+  "components": [
+   "fluticasone",
+   "umeclidinium",
+   "vilanterol"
+  ],
+  "synonyms": [
+   "fluticasone-umeclidinium-vilanterol",
+   "trelegy",
+   "trelegy ellipta"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "formoterol / mometasone",
+  "rxnorm": "1002293",
+  "rxnorm_name": "formoterol / mometasone",
+  "tty": "MIN",
+  "drug_class": "beta2-Adrenergic Agonist + Corticosteroid",
+  "components": [
+   "formoterol",
+   "mometasone"
+  ],
+  "synonyms": [
+   "mometasone-formoterol",
+   "dulera"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "albuterol / ipratropium",
+  "rxnorm": "214199",
+  "rxnorm_name": "albuterol / ipratropium",
+  "tty": "MIN",
+  "drug_class": "beta2-Adrenergic Agonist + Anticholinergic",
+  "components": [
+   "albuterol",
+   "ipratropium"
+  ],
+  "synonyms": [
+   "ipratropium-albuterol",
+   "albuterol-ipratropium",
+   "duoneb",
+   "combivent"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "azelastine / fluticasone",
+  "rxnorm": "1291859",
+  "rxnorm_name": "azelastine / fluticasone",
+  "tty": "MIN",
+  "drug_class": "Histamine-1 Receptor Antagonist + Corticosteroid",
+  "components": [
+   "azelastine",
+   "fluticasone"
+  ],
+  "synonyms": [
+   "azelastine-fluticasone",
+   "dymista"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "acetaminophen / hydrocodone",
+  "rxnorm": "214182",
+  "rxnorm_name": "acetaminophen / hydrocodone",
+  "tty": "MIN",
+  "drug_class": "Anilides + Opioid Agonist",
+  "components": [
+   "acetaminophen",
+   "hydrocodone"
+  ],
+  "synonyms": [
+   "hydrocodone-acetaminophen",
+   "hydrocodone/apap",
+   "norco",
+   "vicodin",
+   "lortab"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "acetaminophen / oxycodone",
+  "rxnorm": "214183",
+  "rxnorm_name": "acetaminophen / oxycodone",
+  "tty": "MIN",
+  "drug_class": "Anilides + Opioid Agonist",
+  "components": [
+   "acetaminophen",
+   "oxycodone"
+  ],
+  "synonyms": [
+   "oxycodone-acetaminophen",
+   "oxycodone/apap",
+   "percocet",
+   "endocet"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "acetaminophen / codeine",
+  "rxnorm": "817579",
+  "rxnorm_name": "acetaminophen / codeine",
+  "tty": "MIN",
+  "drug_class": "Anilides + Opioid Agonist",
+  "components": [
+   "acetaminophen",
+   "codeine"
+  ],
+  "synonyms": [
+   "acetaminophen-codeine",
+   "tylenol with codeine",
+   "tylenol #3"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "buprenorphine / naloxone",
+  "rxnorm": "352364",
+  "rxnorm_name": "buprenorphine / naloxone",
+  "tty": "MIN",
+  "drug_class": "Partial Opioid Agonist + Opioid Antagonist",
+  "components": [
+   "buprenorphine",
+   "naloxone"
+  ],
+  "synonyms": [
+   "buprenorphine-naloxone",
+   "suboxone",
+   "zubsolv"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "carbidopa / levodopa",
+  "rxnorm": "103990",
+  "rxnorm_name": "carbidopa / levodopa",
+  "tty": "MIN",
+  "drug_class": "Aromatic Amino Acid Decarboxylation Inhibitor + Aromatic Amino Acid",
+  "components": [
+   "carbidopa",
+   "levodopa"
+  ],
+  "synonyms": [
+   "carbidopa-levodopa",
+   "sinemet",
+   "rytary"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "bupropion / naltrexone",
+  "rxnorm": "1551467",
+  "rxnorm_name": "bupropion / naltrexone",
+  "tty": "MIN",
+  "drug_class": "Aminoketone + Opioid Antagonist",
+  "components": [
+   "bupropion",
+   "naltrexone"
+  ],
+  "synonyms": [
+   "naltrexone-bupropion",
+   "contrave"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "olanzapine / samidorphan",
+  "rxnorm": "2562108",
+  "rxnorm_name": "olanzapine / samidorphan",
+  "tty": "MIN",
+  "drug_class": "Atypical Antipsychotic + Opioid Antagonist",
+  "components": [
+   "olanzapine",
+   "samidorphan"
+  ],
+  "synonyms": [
+   "lybalvi"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "dextromethorphan / quinidine",
+  "rxnorm": "1040053",
+  "rxnorm_name": "dextromethorphan / quinidine",
+  "tty": "MIN",
+  "drug_class": "Uncompetitive N-methyl-D-aspartate Receptor Antagonist; Sigma-1 Agonist + Antiarrhythmic; Cytochrome P450 2D6 Inhibitor",
+  "components": [
+   "dextromethorphan",
+   "quinidine"
+  ],
+  "synonyms": [
+   "nuedexta"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "drospirenone / ethinyl estradiol",
+  "rxnorm": "840781",
+  "rxnorm_name": "drospirenone / ethinyl estradiol",
+  "tty": "MIN",
+  "drug_class": "Progestin + Estrogen",
+  "components": [
+   "drospirenone",
+   "ethinyl estradiol"
+  ],
+  "synonyms": [
+   "drospirenone-ethinyl estradiol",
+   "yaz",
+   "yasmin"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ethinyl estradiol / norgestimate",
+  "rxnorm": "214559",
+  "rxnorm_name": "ethinyl estradiol / norgestimate",
+  "tty": "MIN",
+  "drug_class": "Estrogen + Progestin",
+  "components": [
+   "ethinyl estradiol",
+   "norgestimate"
+  ],
+  "synonyms": [
+   "norgestimate-ethinyl estradiol",
+   "sprintec",
+   "tri-sprintec",
+   "ortho tri-cyclen"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ethinyl estradiol / levonorgestrel",
+  "rxnorm": "214558",
+  "rxnorm_name": "ethinyl estradiol / levonorgestrel",
+  "tty": "MIN",
+  "drug_class": "Estrogen + Progestin; Progestin-containing Intrauterine System",
+  "components": [
+   "ethinyl estradiol",
+   "levonorgestrel"
+  ],
+  "synonyms": [
+   "levonorgestrel-ethinyl estradiol",
+   "seasonique",
+   "aviane"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ethinyl estradiol / norethindrone",
+  "rxnorm": "384410",
+  "rxnorm_name": "ethinyl estradiol / norethindrone",
+  "tty": "MIN",
+  "drug_class": "Estrogen + Progestin",
+  "components": [
+   "ethinyl estradiol",
+   "norethindrone"
+  ],
+  "synonyms": [
+   "norethindrone-ethinyl estradiol",
+   "loestrin",
+   "junel"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "dutasteride / tamsulosin",
+  "rxnorm": "1001472",
+  "rxnorm_name": "dutasteride / tamsulosin",
+  "tty": "MIN",
+  "drug_class": "5-alpha Reductase Inhibitor + alpha-Adrenergic Blocker",
+  "components": [
+   "dutasteride",
+   "tamsulosin"
+  ],
+  "synonyms": [
+   "dutasteride-tamsulosin",
+   "jalyn"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "dorzolamide / timolol",
+  "rxnorm": "662263",
+  "rxnorm_name": "dorzolamide / timolol",
+  "tty": "MIN",
+  "drug_class": "Carbonic Anhydrase Inhibitor + beta-Adrenergic Blocker",
+  "components": [
+   "dorzolamide",
+   "timolol"
+  ],
+  "synonyms": [
+   "dorzolamide-timolol",
+   "cosopt"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "brimonidine / timolol",
+  "rxnorm": "597142",
+  "rxnorm_name": "brimonidine / timolol",
+  "tty": "MIN",
+  "drug_class": "alpha-Adrenergic Agonist + beta-Adrenergic Blocker",
+  "components": [
+   "brimonidine",
+   "timolol"
+  ],
+  "synonyms": [
+   "brimonidine-timolol",
+   "combigan"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "aspirin / dipyridamole",
+  "rxnorm": "226716",
+  "rxnorm_name": "aspirin / dipyridamole",
+  "tty": "MIN",
+  "drug_class": "Platelet Aggregation Inhibitor; Nonsteroidal Anti-inflammatory Drug + Platelet Aggregation Inhibitor",
+  "components": [
+   "aspirin",
+   "dipyridamole"
+  ],
+  "synonyms": [
+   "aspirin-dipyridamole",
+   "aggrenox"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "hydralazine / isosorbide dinitrate",
+  "rxnorm": "608424",
+  "rxnorm_name": "hydralazine / isosorbide dinitrate",
+  "tty": "MIN",
+  "drug_class": "Arteriolar Vasodilator + Nitrate Vasodilator",
+  "components": [
+   "hydralazine",
+   "isosorbide dinitrate"
+  ],
+  "synonyms": [
+   "isosorbide dinitrate-hydralazine",
+   "bidil"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "bupropion / dextromethorphan",
+  "rxnorm": "2611256",
+  "rxnorm_name": "bupropion / dextromethorphan",
+  "tty": "MIN",
+  "drug_class": "Aminoketone + Uncompetitive N-methyl-D-aspartate Receptor Antagonist; Sigma-1 Agonist",
+  "components": [
+   "bupropion",
+   "dextromethorphan"
+  ],
+  "synonyms": [
+   "dextromethorphan-bupropion",
+   "auvelity"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "fluoxetine / olanzapine",
+  "rxnorm": "611247",
+  "rxnorm_name": "fluoxetine / olanzapine",
+  "tty": "MIN",
+  "drug_class": "Serotonin Reuptake Inhibitor + Atypical Antipsychotic",
+  "components": [
+   "fluoxetine",
+   "olanzapine"
+  ],
+  "synonyms": [
+   "olanzapine-fluoxetine",
+   "symbyax"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "tipiracil / trifluridine",
+  "rxnorm": "1670310",
+  "rxnorm_name": "tipiracil / trifluridine",
+  "tty": "MIN",
+  "drug_class": "Thymidine Phosphorylase Inhibitor + Nucleoside Analog Antiviral; Nucleoside Metabolic Inhibitor",
+  "components": [
+   "tipiracil",
+   "trifluridine"
+  ],
+  "synonyms": [
+   "trifluridine-tipiracil",
+   "lonsurf"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "ivacaftor / lumacaftor",
+  "rxnorm": "1655927",
+  "rxnorm_name": "ivacaftor / lumacaftor",
+  "tty": "MIN",
+  "drug_class": "Cystic Fibrosis Transmembrane Conductance Regulator Potentiator + Other respiratory system products",
+  "components": [
+   "ivacaftor",
+   "lumacaftor"
+  ],
+  "synonyms": [
+   "orkambi"
+  ],
+  "exact": []
+ },
+ {
+  "ingredient": "calcium carbonate / cholecalciferol",
+  "rxnorm": "608343",
+  "rxnorm_name": "calcium carbonate / cholecalciferol",
+  "tty": "MIN",
+  "drug_class": "Calcium compounds + Vitamin D",
+  "components": [
+   "calcium carbonate",
+   "cholecalciferol"
+  ],
+  "synonyms": [
+   "calcium with vitamin d",
+   "calcium-vitamin d"
+  ],
+  "exact": []
  }
 ]
