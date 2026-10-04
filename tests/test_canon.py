@@ -9,7 +9,7 @@ import urllib.request
 
 from canon import terminology as T
 from canon.mcp_server import handle
-from canon.parsers import detect, llm, pdf, text
+from canon.parsers import detect, hl7v2, llm, pdf, text
 from canon.service import Canon, CanonError
 from canon.tools import call_tool
 
@@ -266,6 +266,45 @@ class ChronologyTest(unittest.TestCase):
         rec = c.record(pid)
         self.assertEqual([h["date"] for h in rec["allergies"][0]["history"]], ["2026-02-20"])  # the encounter's date
         self.assertEqual(rec["allergy_status"], "has_allergies")
+
+    def test_same_day_statements_ordered_by_time(self):
+        c, pid = self.notes(HEAD + "Admission 03/02/2026 08:05\nMedications:\nMetformin 500 mg daily\n",
+                            HEAD + "Discharge 03/02/2026 4:40 PM\nMedications:\nMetformin 1000 mg twice daily\n")
+        rec = c.record(pid)
+        met = next(m for m in rec["medications"] if m["ingredient"] == "metformin")
+        self.assertEqual(met["dose"], "1000 mg")
+        self.assertEqual([h.get("at") for h in met["history"]], ["2026-03-02T08:05", "2026-03-02T16:40"])
+        self.assertNotIn("medication_discrepancy", {x["type"] for x in rec["conflicts"]})  # a change, not a clash
+
+    def test_same_day_without_times_is_still_a_conflict(self):
+        c, pid = self.notes(HEAD + "Admission 03/02/2026 08:05\nMedications:\nMetformin 500 mg daily\n",
+                            HEAD + "Date of service: 03/02/2026\nMedications:\nMetformin 1000 mg twice daily\n")
+        self.assertIn("medication_discrepancy", {x["type"] for x in c.record(pid)["conflicts"]})
+
+    def test_later_list_contradicting_an_explicit_change_is_flagged(self):
+        c, pid = self.notes(HEAD + "Visit 03/02/2026 08:00\nPlan: increase metformin to 1000 mg twice daily\n",
+                            HEAD + "Visit 03/02/2026 16:00\nMedications:\nMetformin 500 mg daily\n")
+        rec = c.record(pid)
+        met = next(m for m in rec["medications"] if m["ingredient"] == "metformin")
+        self.assertEqual(met["dose"], "1000 mg")   # the explicit change still wins the day
+        self.assertIn("medication_discrepancy", {x["type"] for x in rec["conflicts"]})
+
+    def test_hl7_order_time_dates_medications(self):
+        msg = ("MSH|^~\\&|EHR|HOSP|||20260302170000||RDE^O11|1|P|2.5.1\r"
+               "ORC|NW|1|||||||20260302164000\r"  # ORC-9: when the order was placed
+               "RXE|^QD^daily|860975^metformin 500 MG Oral Tablet^RXNORM|500||mg\r")
+        med = next(f for f in hl7v2.parse(msg) if f["kind"] == "medication")
+        self.assertEqual(med["as_of"], "2026-03-02T16:40")
+
+    def test_readings_at_different_times_are_a_series_not_a_mismatch(self):
+        c, pid = self.notes(HEAD + "Date of service: 2026-03-02\nAllergies: NKDA\n")
+        c.ingest("Test,Result,Unit,Date\nGlucose,98,mg/dL,2026-03-02 08:00\n", filename="am.csv", patient_id=pid)
+        c.ingest("Test,Result,Unit,Date\nGlucose,180,mg/dL,2026-03-02 16:00\n", filename="pm.csv", patient_id=pid)
+        self.assertNotIn("observation_mismatch", {x["type"] for x in c.record(pid)["conflicts"]})
+        glucose = next(lab for lab in c.summary(pid)["latest_labs"] if lab["name"].lower().startswith("glucose"))
+        self.assertEqual((glucose["value"], glucose["at"], glucose["trend"]), (180, "2026-03-02T16:00", "up"))
+        c.ingest("Test,Result,Unit,Date\nGlucose,120,mg/dL,2026-03-02\n", filename="untimed.csv", patient_id=pid)
+        self.assertIn("observation_mismatch", {x["type"] for x in c.record(pid)["conflicts"]})
 
     def test_allergy_resolved_by_negative_challenge(self):
         c, pid = self.notes(

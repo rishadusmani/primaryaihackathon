@@ -29,6 +29,19 @@ def _d(s: str | None) -> str | None:
     return m.group(0) if m else None
 
 
+def _at(s: str | None) -> str | None:
+    """"YYYY-MM-DDTHH:MM" when the source gave a time of day: local time as written, any UTC offset dropped
+    (dates are kept the same way), so it orders statements within a day."""
+    m = re.match(r"(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})", s or "")
+    return f"{m.group(1)}T{m.group(2)}:{m.group(3)}" if m else None
+
+
+def _when(*vals: str | None) -> dict:
+    """{"date", "at"} from the first value that holds a date."""
+    s = next((v for v in vals if _d(v)), None)
+    return {"date": _d(s), "at": _at(s)}
+
+
 def normalize(f: dict) -> tuple[str, dict]:
     kind = f["kind"]
     base = {"confidence": f["confidence"], "provenance": f["provenance"]}
@@ -84,7 +97,7 @@ def _condition(f: dict):
     return {"key": c["icd10"].split(".")[0], "display": c["display"],
             "codes": {"icd10": c["icd10"], **({"snomed": c["snomed"]} if c.get("snomed") else {})},
             "code_verified": c["verified"], "status": status, "onset": _d(f.get("onset")),
-            "date": _d(f.get("recorded")) or _d(f.get("as_of")) or _d(f.get("onset")),
+            **_when(f.get("recorded"), f.get("as_of"), f.get("onset")),
             "billed_only": bool(f.get("billed_only")),
             "original_text": f.get("text") or f.get("code"), "terminology": c.get("terminology")}
 
@@ -113,13 +126,13 @@ def _medication(f: dict):
     return {"key": m["ingredient"], "ingredient": m["ingredient"], "display": f.get("text") or m["ingredient"],
             "codes": {"rxnorm": m["rxnorm"]}, "drug_class": m["drug_class"], "dose": dose,
             "terminology": m.get("terminology"),
-            "route": route, "frequency": freq, "status": status, "date": _d(f.get("as_of")) or _d(f.get("start")),
+            "route": route, "frequency": freq, "status": status, **_when(f.get("as_of"), f.get("start")),
             **({"change": f["change"]} if f.get("change") else {})}
 
 
 def _allergy(f: dict):
     if f.get("no_known_allergies"):
-        return {"key": "__nkda__", "no_known_allergies": True, "date": _d(f.get("recorded")) or _d(f.get("as_of"))}
+        return {"key": "__nkda__", "no_known_allergies": True, **_when(f.get("recorded"), f.get("as_of"))}
     a = T.lookup_allergen(f.get("text")) or (T.lookup_allergen(f.get("code")) if f.get("code") else None)
     if not a and f.get("code"):
         for name, (sct, sub, _) in T.ALLERGENS.items():
@@ -131,7 +144,7 @@ def _allergy(f: dict):
             "codes": {"snomed": a["snomed_allergy"], "snomed_substance": a["snomed_substance"]},
             "reaction": (f.get("reaction") or "").lower() or None, "severity": f.get("severity"),
             "status": ALLERGY_STATUS.get((f.get("status") or "active").lower(), "active"),
-            "date": _d(f.get("recorded")) or _d(f.get("as_of")), "original_text": f.get("text")}
+            **_when(f.get("recorded"), f.get("as_of")), "original_text": f.get("text")}
 
 
 def _observation(f: dict):
@@ -146,7 +159,8 @@ def _observation(f: dict):
     raw = str(f.get("value")).strip()
     m = re.match(r"^([<>]=?)?\s*(-?\d+(?:\.\d+)?)", raw)
     item = {"key": o["loinc"], "display": o["display"], "codes": {"loinc": o["loinc"]}, "category": o["category"],
-            "effective": _d(f.get("effective")), "original": {"value": raw, "unit": f.get("unit")}}
+            "effective": _d(f.get("effective")), "at": _at(f.get("effective")),
+            "original": {"value": raw, "unit": f.get("unit")}}
     item["date"] = item["effective"]
     if not m:
         return {**item, "value": None, "value_text": raw, "unit": None,
@@ -185,7 +199,7 @@ def _immunization(f: dict):
 
 
 def _encounter(f: dict):
-    return {"key": f"{_d(f.get('date'))}", "type": f.get("type"), "date": _d(f.get("date")),
+    return {"key": f"{_d(f.get('date'))}", "type": f.get("type"), **_when(f.get("date")),
             "provider": f.get("provider"), "facility": f.get("facility"), "reason": f.get("reason"),
             **({"claim_id": f["claim_id"]} if f.get("claim_id") else {})}
 

@@ -10,6 +10,7 @@ import io
 import re
 
 from ..model import fact
+from .text import time_after
 
 COLUMNS = {
     "text": ["test", "test name", "component", "name", "analyte", "result name", "lab", "description"],
@@ -27,18 +28,23 @@ def _norm(h: str) -> str:
 
 
 def _date(s: str | None) -> str | None:
+    """"YYYY-MM-DD", or "YYYY-MM-DDTHH:MM" when the cell also has a time ("2026-03-02 08:15", "3/2/26 4:30 PM")."""
     if not s:
         return None
     s = s.strip()
     m = re.match(r"(\d{4})-(\d{2})-(\d{2})", s)
     if m:
-        return m.group(0)
-    m = re.match(r"(\d{1,2})/(\d{1,2})/(\d{2,4})", s)
-    if m:
+        date = m.group(0)
+    else:
+        m = re.match(r"(\d{1,2})/(\d{1,2})/(\d{2,4})", s)
+        if not m:
+            return None
         y = m.group(3)
         y = ("20" + y) if len(y) == 2 else y
-        return f"{y}-{int(m.group(1)):02d}-{int(m.group(2)):02d}"
-    return None
+        date = f"{y}-{int(m.group(1)):02d}-{int(m.group(2)):02d}"
+    t = time_after(s[m.end():])
+    return f"{date}T{t}" if t else date
+
 
 
 def parse(content: str) -> list[dict]:

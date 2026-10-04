@@ -194,12 +194,30 @@ def _header(text: str) -> dict:
     return out
 
 
+def time_after(s: str) -> str | None:
+    """"HH:MM" (24-hour) from text right after a date: "T08:15", " 4:30 PM", " @ 14:10"."""
+    m = re.match(r"\s*[T@,]?\s*(\d{1,2}):(\d{2})(?::\d{2})?\s*([ap]\.?m\.?)?", s, re.I)
+    if not m:
+        return None
+    h, mi = int(m.group(1)), int(m.group(2))
+    if m.group(3):
+        h = h % 12 + (12 if m.group(3).lower().startswith("p") else 0)
+    return f"{h:02d}:{mi:02d}" if h < 24 and mi < 60 else None
+
+
+def _stamp(text: str, m: re.Match) -> str | None:
+    """The date DATE_RX matched in `text`, with the time of day written right after it when there is one."""
+    d = _date(m)
+    t = d and time_after(text[m.end():])
+    return f"{d}T{t}" if t else d
+
+
 def _service_date(text: str) -> str | None:
     m = SERVICE_DATE_RX.search(text)
     if m:
-        dm = DATE_RX.search(m.group(1))
+        dm = DATE_RX.search(text, m.start(1), m.end(1))
         if dm:
-            return _date(dm)
+            return _stamp(text, dm)
     return None
 
 
@@ -212,7 +230,7 @@ def _visit_date(line: str) -> str | None:
         return _service_date(line)
     m = DATE_RX.search(line)
     if m and m.start() <= 30 and len(line.strip()) <= 60 and VISIT_HEADING_RX.search(line):
-        return _date(m)
+        return _stamp(line, m)
     return None
 
 

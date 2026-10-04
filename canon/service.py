@@ -219,10 +219,11 @@ class Canon:
             series.setdefault(o["display"], []).append(o)
         labs, vitals = [], []
         for name, obs in series.items():
-            obs = sorted(obs, key=lambda o: o["effective"])
+            obs = sorted(obs, key=lambda o: (o["effective"], o.get("at") or ""))
             cur = obs[-1]
             entry = {"name": name, "loinc": cur["codes"]["loinc"], "value": cur["value"], "unit": cur["unit"],
-                     "date": cur["effective"], "interpretation": cur.get("interpretation")}
+                     "date": cur["effective"], **({"at": cur["at"]} if cur.get("at") else {}),
+                     "interpretation": cur.get("interpretation")}
             if len(obs) > 1:
                 prev = obs[-2]
                 delta = round(cur["value"] - prev["value"], 2)

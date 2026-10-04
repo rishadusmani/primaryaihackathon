@@ -30,6 +30,7 @@ gives it:
 | Hospital CCD says NKDA; fax says penicillin (hives); derm letter says sulfa | `has_allergies` **plus an `allergy_vs_nkda` conflict** |
 | Allergist note: "penicillin allergy delabeled after negative amoxicillin challenge" | Penicillin `status: resolved` with its date; a later copied-forward list re-adding it raises `allergy_resolution_disputed` |
 | A fax with no visit date, only "Electronically signed 04/01/2026" | Dated by when it was generated (signature, fax header, PDF/CCD/FHIR/HL7/X12 timestamp), with `date_basis: generated` |
+| Admission med list at 08:05 says metformin 500 mg; discharge list at 16:40 the same day says 1000 mg | Current dose 1000 mg with a timed history, not a same-day conflict (an untimed same-day source still raises one) |
 | A document with no date anywhere lists an older dose | Ranked oldest, so it can't override dated notes, plus a low-severity `undated_source` flag |
 | Claim bills F41.1 (anxiety) with no clinical note | `evidence: claims_only`, `status: unknown` |
 | "Father had type 2 diabetes", "Denies chest pain" | Excluded (family history and negation handling) |

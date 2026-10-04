@@ -28,13 +28,21 @@ def _date(s: str | None) -> str | None:
     return f"{m.group(1)}-{m.group(2)}-{m.group(3)}" if m else None
 
 
+def _stamp(s: str | None) -> str | None:
+    """A clinical timestamp, YYYYMMDD[HHMM...] -> "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM" (local, as sent)."""
+    m = re.match(r"(\d{4})(\d{2})(\d{2})(?:(\d{2})(\d{2}))?", s or "")
+    if not m:
+        return None
+    return f"{m.group(1)}-{m.group(2)}-{m.group(3)}" + (f"T{m.group(4)}:{m.group(5)}" if m.group(4) else "")
+
+
 def _eff(el: ET.Element | None) -> str | None:
     if el is None:
         return None
     et = el.find("effectiveTime")
     if et is None:
         return None
-    return _date(et.get("value")) or _date((et.find("low") if et.find("low") is not None else et).get("value"))
+    return _stamp(et.get("value")) or _stamp((et.find("low") if et.find("low") is not None else et).get("value"))
 
 
 def _code(el: ET.Element | None) -> dict:
@@ -87,8 +95,8 @@ def parse(content: str) -> list[dict]:
         for ei, entry in enumerate(section.findall("entry")):
             loc = f"section[{kind}]/entry[{ei + 1}]"
             author_time = entry.find(".//author/time")
-            if author_time is not None and _date(author_time.get("value")):
-                asserted[loc] = _date(author_time.get("value"))
+            if author_time is not None and _stamp(author_time.get("value")):
+                asserted[loc] = _stamp(author_time.get("value"))
             if kind == "problems":
                 for obs in entry.iter("observation"):
                     v = obs.find("value")
