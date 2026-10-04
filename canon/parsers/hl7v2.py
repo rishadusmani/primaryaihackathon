@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 
+from .. import dates
 from ..model import fact
 
 
@@ -12,6 +13,9 @@ def _date(s: str | None) -> str | None:
         return None
     m = re.match(r"(\d{4})(\d{2})(\d{2})", s.strip())
     return f"{m.group(1)}-{m.group(2)}-{m.group(3)}" if m else None
+
+
+_stamp = dates.from_compact  # a clinical timestamp, kept to the precision (and zone) it was sent with
 
 
 class _Msg:
@@ -47,7 +51,7 @@ def parse(content: str) -> list[dict]:
     msg = _Msg(content)
     facts: list[dict] = []
     counts: dict[str, int] = {}
-    obr_date = None
+    obr_date = order_at = None
     m = "structured"
     for seg in msg.segments:
         name = seg[0]
@@ -70,16 +74,16 @@ def parse(content: str) -> list[dict]:
         elif name == "PV1":
             facts.append(fact("encounter", locator=loc, method=m, snippet=snippet,
                               type={"O": "outpatient", "I": "inpatient", "E": "emergency"}.get(f(2), f(2) or None),
-                              date=_date(f(44)),
+                              date=_stamp(f(44)),
                               provider=" ".join(filter(None, [c(f(7), 3), c(f(7), 2)])) or None,
                               facility=c(f(3), 4) or c(f(3), 1) or None))
         elif name == "DG1":
             facts.append(fact("condition", locator=loc, method=m, snippet=snippet, code=c(f(3), 1),
-                              text=c(f(3), 2) or f(4) or None, system=c(f(3), 3) or None, recorded=_date(f(5)),
+                              text=c(f(3), 2) or f(4) or None, system=c(f(3), 3) or None, recorded=_stamp(f(5)),
                               status="active"))
         elif name == "PRB":
             facts.append(fact("condition", locator=loc, method=m, snippet=snippet, code=c(f(3), 1),
-                              text=c(f(3), 2) or None, system=c(f(3), 3) or None, recorded=_date(f(2)),
+                              text=c(f(3), 2) or None, system=c(f(3), 3) or None, recorded=_stamp(f(2)),
                               onset=_date(f(16)), status="active"))
         elif name == "AL1":
             facts.append(fact("allergy", locator=loc, method=m, snippet=snippet, code=c(f(3), 1) or None,
@@ -87,7 +91,7 @@ def parse(content: str) -> list[dict]:
                                                                        "MI": "mild"}.get(c(f(4), 1), None),
                               reaction=f(5) or None))
         elif name == "OBR":
-            obr_date = _date(f(7))
+            obr_date = _stamp(f(7))
             facts.append(fact("procedure", locator=loc, method=m, snippet=snippet, code=c(f(4), 1),
                               text=c(f(4), 2) or None, system=c(f(4), 3) or None, date=obr_date))
         elif name == "OBX":
@@ -97,7 +101,9 @@ def parse(content: str) -> list[dict]:
             facts.append(fact("observation", locator=loc, method=m, snippet=snippet, code=c(f(3), 1),
                               text=c(f(3), 2) or None, system=c(f(3), 3) or None, value=c(val, 1) if f(2) == "CE"
                               else val, unit=c(f(6), 1) or None, ref_range=f(7) or None, flag=f(8) or None,
-                              effective=_date(f(14)) or obr_date))
+                              effective=_stamp(f(14)) or obr_date))
+        elif name == "ORC":  # the order the following RX segments belong to, and when it was placed
+            order_at = _stamp(f(9))
         elif name in ("RXE", "RXO", "RXD"):
             code_field = {"RXE": 2, "RXO": 1, "RXD": 2}[name]
             g = f(code_field)
@@ -105,7 +111,8 @@ def parse(content: str) -> list[dict]:
             facts.append(fact("medication", locator=loc, method=m, snippet=snippet, code=c(g, 1),
                               text=c(g, 2) or None, system=c(g, 3) or None,
                               dose_text=f"{amt} {units}".strip() or None,
-                              frequency_text=c(f(1), 2) if name == "RXE" else None, status="active"))
+                              frequency_text=c(f(1), 2) if name == "RXE" else None, status="active",
+                              as_of=order_at))
         elif name == "RXR":
             if facts and facts[-1]["kind"] == "medication":
                 facts[-1]["route_text"] = c(f(1), 2) or c(f(1), 1)

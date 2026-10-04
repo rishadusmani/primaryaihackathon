@@ -13,9 +13,12 @@
 
 Dates on a fact: a kind's own dates (`onset`, `start`, `effective`, `recorded`) say when
 something happened; `as_of` says when the source asserted it (the visit a note line sits
-under, a C-CDA entry's author time, the FHIR encounter a resource belongs to). A
-`document` fact carries `generated`: when the document itself was produced (signed,
-faxed, exported), the fallback when nothing in it is dated.
+under, a C-CDA entry's author time, the FHIR encounter a resource belongs to). Every
+date is one ISO 8601 value at the precision the source gave: a day ("2026-03-02"), a
+local time ("2026-03-02T14:30") or an instant ("2026-03-02T14:30-05:00"); see
+canon.dates. A missing time is never filled in. A `document` fact carries `generated`:
+when the document itself was produced (signed, faxed, exported), the fallback when
+nothing in it is dated.
 """
 
 from __future__ import annotations

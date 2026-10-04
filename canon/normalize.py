@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import re
 
+from . import dates
 from . import live_terminology as L
 from . import terminology as T
 from .parsers.text import DOSE_RX
@@ -27,6 +28,12 @@ def _d(s: str | None) -> str | None:
         return None
     m = re.match(r"(\d{4})-(\d{2})-(\d{2})", s)
     return m.group(0) if m else None
+
+
+def _ts(*vals: str | None) -> str | None:
+    """The first value that holds a date, kept to the precision the source gave (canon.dates): a day, a local
+    time or an instant. Never padded with an invented time."""
+    return next((dates.from_iso(v) for v in vals if dates.from_iso(v)), None)
 
 
 def normalize(f: dict) -> tuple[str, dict]:
@@ -84,7 +91,7 @@ def _condition(f: dict):
     return {"key": c["icd10"].split(".")[0], "display": c["display"],
             "codes": {"icd10": c["icd10"], **({"snomed": c["snomed"]} if c.get("snomed") else {})},
             "code_verified": c["verified"], "status": status, "onset": _d(f.get("onset")),
-            "date": _d(f.get("recorded")) or _d(f.get("as_of")) or _d(f.get("onset")),
+            "date": _ts(f.get("recorded"), f.get("as_of"), f.get("onset")),
             "billed_only": bool(f.get("billed_only")),
             "original_text": f.get("text") or f.get("code"), "terminology": c.get("terminology")}
 
@@ -113,13 +120,13 @@ def _medication(f: dict):
     return {"key": m["ingredient"], "ingredient": m["ingredient"], "display": f.get("text") or m["ingredient"],
             "codes": {"rxnorm": m["rxnorm"]}, "drug_class": m["drug_class"], "dose": dose,
             "terminology": m.get("terminology"),
-            "route": route, "frequency": freq, "status": status, "date": _d(f.get("as_of")) or _d(f.get("start")),
+            "route": route, "frequency": freq, "status": status, "date": _ts(f.get("as_of"), f.get("start")),
             **({"change": f["change"]} if f.get("change") else {})}
 
 
 def _allergy(f: dict):
     if f.get("no_known_allergies"):
-        return {"key": "__nkda__", "no_known_allergies": True, "date": _d(f.get("recorded")) or _d(f.get("as_of"))}
+        return {"key": "__nkda__", "no_known_allergies": True, "date": _ts(f.get("recorded"), f.get("as_of"))}
     a = T.lookup_allergen(f.get("text")) or (T.lookup_allergen(f.get("code")) if f.get("code") else None)
     if not a and f.get("code"):
         for name, (sct, sub, _) in T.ALLERGENS.items():
@@ -131,7 +138,7 @@ def _allergy(f: dict):
             "codes": {"snomed": a["snomed_allergy"], "snomed_substance": a["snomed_substance"]},
             "reaction": (f.get("reaction") or "").lower() or None, "severity": f.get("severity"),
             "status": ALLERGY_STATUS.get((f.get("status") or "active").lower(), "active"),
-            "date": _d(f.get("recorded")) or _d(f.get("as_of")), "original_text": f.get("text")}
+            "date": _ts(f.get("recorded"), f.get("as_of")), "original_text": f.get("text")}
 
 
 def _observation(f: dict):
@@ -146,7 +153,7 @@ def _observation(f: dict):
     raw = str(f.get("value")).strip()
     m = re.match(r"^([<>]=?)?\s*(-?\d+(?:\.\d+)?)", raw)
     item = {"key": o["loinc"], "display": o["display"], "codes": {"loinc": o["loinc"]}, "category": o["category"],
-            "effective": _d(f.get("effective")), "original": {"value": raw, "unit": f.get("unit")}}
+            "effective": _ts(f.get("effective")), "original": {"value": raw, "unit": f.get("unit")}}
     item["date"] = item["effective"]
     if not m:
         return {**item, "value": None, "value_text": raw, "unit": None,
@@ -174,18 +181,18 @@ def _procedure(f: dict):
         return None
     codes = {"cpt": code} if code and (display or sys == T.CPT) else ({"code": code, "system": sys} if code else {})
     return {"key": code or f.get("text", "").lower(), "display": display or f.get("text"), "codes": codes,
-            "date": _d(f.get("date"))}
+            "date": _ts(f.get("date"))}
 
 
 def _immunization(f: dict):
     v = T.lookup_vaccine(text=f.get("text"), cvx=f.get("code"))
     if not v:
         return None
-    return {"key": v["vaccine"], "vaccine": v["vaccine"], "codes": {"cvx": v["cvx"]}, "date": _d(f.get("date"))}
+    return {"key": v["vaccine"], "vaccine": v["vaccine"], "codes": {"cvx": v["cvx"]}, "date": _ts(f.get("date"))}
 
 
 def _encounter(f: dict):
-    return {"key": f"{_d(f.get('date'))}", "type": f.get("type"), "date": _d(f.get("date")),
+    return {"key": f"{_d(f.get('date'))}", "type": f.get("type"), "date": _ts(f.get("date")),
             "provider": f.get("provider"), "facility": f.get("facility"), "reason": f.get("reason"),
             **({"claim_id": f["claim_id"]} if f.get("claim_id") else {})}
 

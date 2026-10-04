@@ -18,6 +18,8 @@ from __future__ import annotations
 from collections import defaultdict
 from hashlib import sha1
 
+from . import dates
+
 LIST_KINDS = ("condition", "medication", "allergy", "observation", "procedure", "immunization", "encounter",
               "coverage")
 CLINICAL_METHODS = ("structured", "rule_nlp", "llm")
@@ -44,8 +46,8 @@ def _date_of(item: dict) -> str | None:
 
 
 def _rank(item: dict) -> str:
-    """Chronological sort key; undated statements sort first (oldest). Ties keep upload order."""
-    return _date_of(item) or ""
+    """Chronological sort key (the day); undated statements sort first (oldest). Ties keep upload order."""
+    return dates.day(_date_of(item)) or ""
 
 
 def _when(date: str | None) -> str:
@@ -72,9 +74,11 @@ def build_record(patient_id: str, items: list[tuple[str, dict]], sources: list[d
         "medications": _medications(by_kind["medication"], conflicts),
         **_allergies(by_kind["allergy"], conflicts),
         "observations": _observations(by_kind["observation"], conflicts),
-        "procedures": _simple("procedure", by_kind["procedure"], lambda i: (i["key"], i.get("date"))),
-        "immunizations": _simple("immunization", by_kind["immunization"], lambda i: (i["key"], i.get("date"))),
-        "encounters": _simple("encounter", by_kind["encounter"], lambda i: (i.get("date"), i.get("provider") or "")),
+        "procedures": _simple("procedure", by_kind["procedure"], lambda i: (i["key"], dates.day(i.get("date")))),
+        "immunizations": _simple("immunization", by_kind["immunization"],
+                                 lambda i: (i["key"], dates.day(i.get("date")))),
+        "encounters": _simple("encounter", by_kind["encounter"],
+                              lambda i: (dates.day(i.get("date")), i.get("provider") or "")),
         "coverage": _simple("coverage", by_kind["coverage"], lambda i: (i.get("key") or "",)),
         "conflicts": conflicts + _undated(items),
         "unmapped": [{**{k: v for k, v in u.items() if k not in ("_source",)}, "source": _src(u)} for u in unmapped],
@@ -137,14 +141,19 @@ def _patient(items: list[dict], conflicts: list) -> dict:
 # --------------------------------------------------------------------------- timelines
 def _timeline(items: list[dict], explicit=lambda i: False) -> list[dict]:
     """One concept's statements, oldest to newest; the last one is the current state. On the same date an
-    explicit statement (a dose change, a stop, a resolution) outranks a list entry that may be copied forward."""
-    return sorted(items, key=lambda i: (_rank(i), bool(explicit(i)), i["confidence"]))
+    explicit statement (a dose change, a stop, a resolution) outranks a list entry that may be copied forward,
+    then the later time of day wins (an admission list at 08:00, the discharge list at 16:00). A statement
+    with a known time sorts after a same-day one without; whether they can really be ordered is _latest's call."""
+    return sorted(items, key=lambda i: (_rank(i), bool(explicit(i)), dates.moment(_date_of(i)), i["confidence"]))
 
 
-def _latest_day(timeline: list[dict]) -> tuple[str | None, list[dict]]:
-    """The newest date and every statement made on it (where same-day disagreements live)."""
-    latest = _date_of(timeline[-1])
-    return latest, [i for i in timeline if _date_of(i) == latest]
+def _latest(timeline: list[dict]) -> tuple[str | None, list[dict]]:
+    """The newest date and the statements that day not known to come before the current one. Disagreements
+    among these are conflicts; statements timed earlier that day are history. (A list timed after an explicit
+    change still counts: the change wins the tie, but the later list contradicting it must be surfaced.)"""
+    when = _date_of(timeline[-1])
+    day = dates.day(when)
+    return day, [i for i in timeline if dates.day(_date_of(i)) == day and not dates.before(_date_of(i), when)]
 
 
 def _span(timeline: list[dict]) -> tuple[str | None, str | None]:
@@ -174,7 +183,7 @@ def _conditions(items: list[dict], conflicts: list) -> list[dict]:
         clinical = [i for i in g if i["provenance"]["method"] in CLINICAL_METHODS and i.get("status")]
         status = clinical[-1]["status"] if clinical else "unknown"
         if clinical:
-            latest, same_day = _latest_day(clinical)
+            latest, same_day = _latest(clinical)
             statuses = {i["status"] for i in same_day}
             if len(statuses) > 1:
                 status = "active"
@@ -215,7 +224,7 @@ def _medications(items: list[dict], conflicts: list) -> list[dict]:
             (i["frequency"] for i in reversed(g) if i.get("frequency") and i["status"] != "stopped"), None)
         route = next((i["route"] for i in reversed(g) if i.get("route")), None)
         # discrepancies among statements from the latest date across different documents
-        latest, same_day = _latest_day(g)
+        latest, same_day = _latest(g)
         docs = {i["_source"]["id"] for i in same_day}
         if len(docs) > 1:
             statuses = {i["status"] for i in same_day}
@@ -233,7 +242,8 @@ def _medications(items: list[dict], conflicts: list) -> list[dict]:
             "id": _id("medication", key), "ingredient": key, "display": current["display"],
             "codes": current["codes"], "drug_class": current["drug_class"], "status": current["status"],
             "terminology": current.get("terminology"),
-            "dose": dose, "route": route, "frequency": freq, "last_changed": latest, "first_seen": _span(g)[0],
+            "dose": dose, "route": route, "frequency": freq,
+            "last_changed": _date_of(current), "first_seen": _span(g)[0],
             "confidence": _combine([i["confidence"] for i in g]),
             "history": _history(g, status=lambda i: i["status"], dose=lambda i: i.get("dose"),
                                 frequency=lambda i: (i.get("frequency") or {}).get("display")),
@@ -288,30 +298,41 @@ def _observations(items: list[dict], conflicts: list) -> list[dict]:
     groups: dict[tuple, list[dict]] = defaultdict(list)
     for i in items:
         v = i.get("value")
-        groups[(i["key"], i.get("effective"), round(v, 1) if isinstance(v, float) else i.get("value_text"))].append(i)
+        groups[(i["key"], dates.day(i.get("effective")), round(v, 1) if isinstance(v, float) else i.get("value_text"))
+               ].append(i)
     out = []
-    for (key, eff, _), g in groups.items():
+    for (key, day, _), g in groups.items():
         best = max(g, key=lambda i: i["confidence"])
+        eff = max((i.get("effective") for i in g), key=lambda e: len(e or ""))  # the most precise source
         out.append({k: v for k, v in {
-            "id": _id("observation", f"{key}|{eff}|{best.get('value')}"), "display": best["display"],
+            "id": _id("observation", f"{key}|{day}|{best.get('value')}"), "display": best["display"],
             "codes": best["codes"], "category": best["category"], "value": best.get("value"),
             "value_text": best.get("value_text"), "qualifier": best.get("qualifier"), "unit": best.get("unit"),
             "interpretation": best.get("interpretation"), "effective": eff, "terminology": best.get("terminology"),
             "original": best["original"] if best.get("unit_converted") else None,
             "confidence": _combine([i["confidence"] for i in g]), "sources": [_src(i) for i in g],
         }.items() if v is not None})
-    # same test, same day, materially different values from different documents
+    # same test, same day, materially different values from different documents; readings taken at
+    # different known times of day (a morning and an evening glucose) are a series, not a disagreement
     by_day: dict[tuple, list[dict]] = defaultdict(list)
     for o in out:
         if o.get("effective") and isinstance(o.get("value"), float):
-            by_day[(o["codes"]["loinc"], o["effective"])].append(o)
+            by_day[(o["codes"]["loinc"], dates.day(o["effective"]))].append(o)
+
+    def differ(a: dict, b: dict) -> bool:
+        apart = abs(a["value"] - b["value"]) / max(abs(a["value"]), abs(b["value"]), 1e-9) > 0.05
+        ordered = dates.before(a["effective"], b["effective"]) or dates.before(b["effective"], a["effective"])
+        return apart and not ordered
+
     for (loinc, day), obs in by_day.items():
-        vals = sorted({o["value"] for o in obs})
-        if len(vals) > 1 and (vals[-1] - vals[0]) / max(abs(vals[-1]), 1e-9) > 0.05:
-            conflicts.append({"type": "observation_mismatch", "display": obs[0]["display"], "date": day,
-                              "values": vals, "severity": "medium", "item_ids": [o["id"] for o in obs],
-                              "message": f"{obs[0]['display']} on {day} reported as {vals} by different sources."})
-    return sorted(out, key=lambda o: (o["category"], o["display"], o.get("effective") or ""), reverse=False)
+        clash = [o for o in obs if any(differ(o, x) for x in obs if x is not o)]
+        if clash:
+            vals = sorted({o["value"] for o in clash})
+            conflicts.append({"type": "observation_mismatch", "display": clash[0]["display"], "date": day,
+                              "values": vals, "severity": "medium", "item_ids": [o["id"] for o in clash],
+                              "message": f"{clash[0]['display']} on {day} reported as {vals} by different sources."})
+    return sorted(out, key=lambda o: (o["category"], o["display"], dates.day(o.get("effective")) or "",
+                                      dates.moment(o.get("effective"))))
 
 
 # --------------------------------------------------------------------------- generic

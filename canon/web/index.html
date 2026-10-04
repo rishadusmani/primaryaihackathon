@@ -438,8 +438,9 @@
   const statusCell = (s) => `<span class="status ${{ active: "", resolved: "off", stopped: "off", unknown: "warn", on_hold: "warn" }[s] ?? "off"}">${esc(s)}</span>`;
   // id -> [label, count(rec), header cells, rows(rec) -> [{cells, sources, confidence, extra}]]
   // Dated statements, oldest first; shown only when something changed over time.
+  const when = (d) => d ? d.replace("T", " ") : d;  // "2026-03-02T16:40-05:00" -> "2026-03-02 16:40-05:00"
   const historyLine = (h, fmt) => h?.length > 1 && new Set(h.map(fmt)).size > 1
-    ? `<div class="sub" style="margin-bottom:8px">History: ${h.map((x) => `${esc(x.date || "undated")} ${esc(fmt(x))}`).join(" → ")}</div>` : "";
+    ? `<div class="sub" style="margin-bottom:8px">History: ${h.map((x) => `${esc(when(x.date) || "undated")} ${esc(fmt(x))}`).join(" → ")}</div>` : "";
   const TABS = {
     problems: ["Problems", (r) => r.conditions.length, ["Problem", "ICD-10", "SNOMED", "Status", "Since"], (r) => r.conditions.map((c) => ({
       cells: [esc(c.display) + live(c) + (c.evidence === "claims_only" ? ` <span class="chip" title="Only appears on a billing claim">claims only</span>` : ""),
@@ -459,7 +460,7 @@
         ? `<span class="trend">${cur.value > prev.value ? "▲" : cur.value < prev.value ? "▼" : "▬"} from ${esc(prev.value)}</span>` : `<span class="muted">–</span>`;
       return { cells: [esc(cur.display) + live(cur),
           `<b>${esc(cur.value ?? cur.value_text)}</b> ${unit(cur.unit)}${cur.original ? `<div class="sub">reported as ${esc(cur.original.value)} ${esc(cur.original.unit)}</div>` : ""}`,
-          trend, cur.interpretation ? `<span class="flag-${esc(cur.interpretation)}">${esc(cur.interpretation)}</span>` : "–", esc(cur.effective || ""), `<code>${esc(cur.codes.loinc)}</code>`],
+          trend, cur.interpretation ? `<span class="flag-${esc(cur.interpretation)}">${esc(cur.interpretation)}</span>` : "–", esc(when(cur.effective) || ""), `<code>${esc(cur.codes.loinc)}</code>`],
         sources: list.flatMap((o) => o.sources), confidence: cur.confidence,
         extra: list.length > 1 ? `<div class="sub" style="margin-bottom:8px">Readings: ${list.map((o) => `${esc(o.effective)} ${esc(o.value ?? o.value_text)} ${unit(o.unit)}`).join(" · ")}</div>` : "" };
     }) ],

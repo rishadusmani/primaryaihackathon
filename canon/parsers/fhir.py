@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 
+from .. import dates
 from ..model import fact
 
 
@@ -34,13 +35,12 @@ def _status(cc: dict | str | None) -> str | None:
 
 
 def _date(*vals) -> str | None:
+    """First date among FHIR date/dateTime/Period values, kept to its precision and zone (see canon.dates)."""
     for v in vals:
-        if isinstance(v, str) and v:
-            return v[:10]
         if isinstance(v, dict):
-            d = v.get("start") or v.get("end")
-            if d:
-                return d[:10]
+            v = v.get("start") or v.get("end")
+        if isinstance(v, str) and v:
+            return dates.from_iso(v)
     return None
 
 
@@ -81,6 +81,7 @@ def parse(content: str | dict) -> list[dict]:
     created = (_date(data.get("timestamp")) or
                next((_date(r.get("date")) for r in resources if r.get("resourceType") == "Composition"), None) or
                _date((data.get("meta") or {}).get("lastUpdated")))
+    created = created and created[:10]  # a document date; times only order clinical statements
     if created:
         facts.append(fact("document", locator="Bundle.timestamp" if data.get("timestamp") else "Bundle",
                           method="structured", generated=created))
