@@ -249,5 +249,56 @@ class VaccineTest(unittest.TestCase):
         self.assertEqual(self.imms("HPI: Rabies exposure from dog bite, rabies vaccine given."), [("rabies", "90")])
 
 
+class ExpansionRound3Test(unittest.TestCase):
+    def conds(self, note):
+        return [(f["text"], f["mapped_code"]) for f in text.parse(note) if f["kind"] == "condition"]
+
+    def test_coverage(self):
+        self.assertGreaterEqual(len(T.CONDITIONS), 410)
+        self.assertGreaterEqual(len(T.MEDICATIONS), 600)
+        self.assertGreaterEqual(len(T.OBSERVATIONS), 175)
+        self.assertGreaterEqual(len(T.VACCINES), 38)
+
+    def test_conditions(self):
+        for text_, icd in [("hidradenitis suppurativa", "L73.2"), ("Barrett's esophagus", "K22.70"),
+                           ("myasthenia gravis", "G70.00"), ("MGUS", "D47.2"), ("Graves' disease", "E05.00"),
+                           ("plantar fasciitis", "M72.20"), ("overactive bladder", "N32.81"),
+                           ("metabolic syndrome", "E88.810"), ("Meniere's disease", "H81.09")]:
+            self.assertEqual(T.lookup_condition(text=text_)["icd10"], icd, text_)
+
+    def test_specific_phrases_win_over_their_parts(self):
+        for note, expected in [("Assessment: Aspiration pneumonia.", ("aspiration pneumonia", "J69.0")),
+                               ("Assessment: Postpartum depression.", ("postpartum depression", "F53.0")),
+                               ("Assessment: Psoriatic arthritis.", ("psoriatic arthritis", "L40.50")),
+                               ("Assessment: Cluster headache.", ("cluster headache", "G44.009"))]:
+            with self.subTest(note=note):
+                self.assertEqual(self.conds(note), [expected])
+
+    def test_new_terms_respect_negation_and_relatives(self):
+        self.assertEqual(self.conds("ROS: No palpitations, no syncope, no hematuria."), [])
+        self.assertEqual(self.conds("Family history: Father had myasthenia gravis."), [])
+        self.assertEqual(self.conds("Assessment: Rule out appendicitis."), [])
+
+    def test_medications(self):
+        for text_, ingredient in [("Dupixent 300 mg SC q2wk", "dupilumab"), ("Rinvoq 15 mg daily", "upadacitinib"),
+                                  ("Ingrezza 80 mg daily", "valbenazine"), ("Jakafi 10 mg BID", "ruxolitinib"),
+                                  ("Uloric 40 mg daily", "febuxostat"), ("Gemtesa 75 mg daily", "vibegron")]:
+            self.assertEqual(T.lookup_medication(text=text_)["ingredient"], ingredient, text_)
+
+    def test_labs(self):
+        got = {(f["code"], f["unit"]) for f in text.parse(
+            "Labs:\nIgA level 210 mg/dL\nRheumatoid factor 12 IU/mL\nHIV viral load 40 copies/mL\n"
+            "Urine osmolality 450 mOsm/kg\nBase excess -2 mmol/L\n") if f["kind"] == "observation"}
+        self.assertEqual(got, {("2458-8", "mg/dL"), ("11572-5", "IU/mL"), ("20447-9", "copies/mL"),
+                               ("2695-5", "mOsm/kg"), ("1925-7", "mmol/L")})
+
+    def test_travel_vaccines(self):
+        imms = [(f["text"], f["code"]) for f in text.parse(
+            "Immunizations: Vaxchora and Ixchiq given before travel. Pentacel at 2 months.") if f["kind"] == "immunization"]
+        self.assertEqual(sorted(imms), [("chikungunya live", "317"), ("cholera", "26"), ("dtap-ipv-hib", "120")])
+        self.assertEqual([f for f in text.parse("HPI: Returned from Brazil, dengue last year.")
+                          if f["kind"] == "immunization"], [])
+
+
 if __name__ == "__main__":
     unittest.main()
