@@ -40,7 +40,7 @@ class RuleCueTest(unittest.TestCase):
         ("Diabetes runs in the family.", {}, ["relative"]),
         ("Asthma vs COPD, PFTs pending.", {}, ["hedged", "hedged"]),
         ("Anxiety likely situational.", {}, ["hedged"]),
-        ("Asthma exacerbation, no wheezing today.", {"asthma": "active"}, []),
+        ("Asthma exacerbation, no wheezing today.", {"asthma": "active"}, ["negated"]),  # wheezing, not asthma
         ("HTN, DM2, HLD - stable.", {"htn": "active", "dm2": "active", "hld": "active"}, []),
     ]
 

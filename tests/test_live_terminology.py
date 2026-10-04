@@ -178,8 +178,8 @@ class DemoWalkthroughTest(LiveTestCase):
         with mock.patch.dict(os.environ, {"CANON_LIVE_TERMINOLOGY": "0"}):
             rec = self.run_demo()
         self.check(rec, [w for w in playground.WALKTHROUGH if not w.get("live")])
-        self.assertFalse(self.find(rec, "medications", "rxnorm", "1656339"))
-        self.assertTrue(any("Entresto" in str(u.get("raw")) for u in rec.get("unmapped", [])))
+        self.assertTrue(self.find(rec, "medications", "rxnorm", "1656339"))  # a combination in Canon's own table
+        self.assertEqual(rec.get("unmapped", []), [])
 
     def test_combination_dose_kept_whole(self):
         rec = self.run_demo()

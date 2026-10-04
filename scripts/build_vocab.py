@@ -9,7 +9,7 @@ and synonyms are curated here; official names come from the source of truth:
 - LOINC:      NLM Clinical Tables  (clinicaltables.nlm.nih.gov/api/loinc_items)
 - ICD-10-CM:  NLM Clinical Tables  (current billable codes only)
 - SNOMED CT:  tx.fhir.org $lookup  (International Edition; must be active)
-- RxNorm:     NLM RxNav            (ingredient IN, or PIN when no IN exists;
+- RxNorm:     NLM RxNav            (ingredient IN, or PIN when no IN exists, or MIN for a combination;
                                     every brand synonym must map to that ingredient)
 - Drug class: NLM RxClass          (FDA Established Pharmacologic Class; ATC level 4 fallback)
 - CVX:        tx.fhir.org $lookup  (CDC vaccine codes; must be active)
@@ -809,11 +809,222 @@ CONDITIONS = [
     ("41040004", "Q90.9", ["down syndrome", "trisomy 21"], []),
     ("202882003", "M72.20", ["plantar fasciitis"], []),
     ("109378008", "C45.9", ["mesothelioma"], []),
+    # --- Expansion round 4 ---
+    ("87557004", "N39.41", ["urge incontinence"], []),
+    ("139394000", "R35.1", ["nocturia"], []),
+    ("51070004", "I86.1", ["varicocele"], []),
+    ("302233006", "I70.1", ["renal artery stenosis"], []),
+    ("51387008", "E87.20", ["acidosis", "metabolic acidosis"], []),
+    ("21420006", "E87.3", ["alkalosis", "metabolic alkalosis"], []),
+    ("4996001", "E83.39", ["hypophosphatemia", "hypophosphataemia"], []),
+    ("119247004", "E88.09", ["hypoalbuminemia", "hypoalbuminaemia"], []),
+    ("248342006", "R63.6", ["underweight"], []),
+    ("64226004", "K52.9", ["colitis"], []),
+    ("235753003", "K52.839", ["microscopic colitis"], []),
+    ("47367009", "K86.81", ["exocrine pancreatic insufficiency", "pancreatic insufficiency"], []),
+    ("82403002", "K83.09", ["cholangitis"], []),
+    ("30188007", "E88.01", ["alpha-1 antitrypsin deficiency", "alpha 1 antitrypsin deficiency"], []),
+    ("16761005", "K20.90", ["esophagitis", "oesophagitis"], []),
+    ("13200003", "K27.9", ["peptic ulcer", "peptic ulcer disease"], []),
+    ("396347007", "K42.9", ["umbilical hernia"], []),
+    ("236037000", "K43.2", ["incisional hernia"], []),
+    ("47639008", "L05.91", ["pilonidal cyst"], []),
+    ("93163002", "D17.9", ["lipoma"], []),
+    ("33659008", "L91.0", ["keloid"], []),
+    ("400097005", "L60.0", ["ingrown toenail", "ingrown nail"], []),
+    ("84849002", "B35.4", ["tinea corporis", "ringworm"], []),
+    ("399029005", "B35.6", ["tinea cruris", "jock itch"], []),
+    ("56454009", "B36.0", ["tinea versicolor", "pityriasis versicolor"], []),
+    ("4776004", "L43.9", ["lichen planus"], []),
+    ("312230002", "R61", ["hyperhidrosis", "excessive sweating"], []),
+    ("22066006", "H50.9", ["strabismus"], []),
+    ("387742006", "H53.009", ["amblyopia", "lazy eye"], []),
+    ("65636009", "H18.609", ["keratoconus"], []),
+    ("41256004", "H52.4", ["presbyopia"], []),
+    ("57190000", "H52.10", ["myopia", "nearsightedness"], []),
+    ("24982008", "H53.2", ["diplopia", "double vision"], []),
+    ("66760008", "H46.9", ["optic neuritis"], []),
+    ("60700002", "H90.5", ["sensorineural hearing loss"], []),
+    ("18070006", "H61.20", ["cerumen impaction", "impacted cerumen", "impacted earwax"], []),
+    ("72863001", "R06.83", ["snoring"], []),
+    ("68235000", "R09.81", ["nasal congestion"], []),
+    ("87433001", "J43.9", ["emphysema"], []),
+    ("63480004", "J42", ["chronic bronchitis"], []),
+    ("196075003", "R09.1", ["pleurisy", "pleuritic chest pain"], []),
+    ("46621007", "J98.11", ["atelectasis"], []),
+    ("56018004", "R06.2", ["wheezing"], []),
+    ("401314000", "I21.4", ["non-st elevation myocardial infarction"], []),
+    ("111287006", "I36.1", ["tricuspid regurgitation"], []),
+    ("9651007", "I45.81", ["long qt syndrome", "prolonged qt"], []),
+    ("8186001", "I51.7", ["cardiomegaly"], []),
+    ("410429000", "I46.9", ["cardiac arrest"], []),
+    ("27942005", "R57.9", [], ["shock"]),
+    ("89138009", "R57.0", ["cardiogenic shock"], []),
+    ("76571007", "R65.21", ["septic shock"], []),
+    ("443482000", "I16.0", ["hypertensive urgency"], []),
+    ("16402000", "D57.3", ["sickle cell trait"], []),
+    ("2897005", "D69.3", ["immune thrombocytopenia", "idiopathic thrombocytopenic purpura"], []),
+    ("35240004", "E61.1", ["iron deficiency"], []),
+    ("6631009", "D75.839", ["thrombocytosis"], []),
+    ("84828003", "D72.819", ["leukopenia"], []),
+    ("48813009", "D72.810", ["lymphopenia", "lymphocytopenia"], []),
+    ("16294009", "R16.1", ["splenomegaly"], []),
+    ("30746006", "R59.9", ["lymphadenopathy"], []),
+    ("109994006", "D47.3", ["essential thrombocythemia", "essential thrombocytosis"], []),
+    ("52967002", "D47.4", ["myelofibrosis"], []),
+    ("109969005", "C83.30", ["diffuse large b-cell lymphoma", "dlbcl"], []),
+    ("308121000", "C82.90", ["follicular lymphoma"], []),
+    ("230736007", "G45.4", ["transient global amnesia"], []),
+    ("40956001", "G61.0", ["guillain-barre syndrome", "guillain barre syndrome", "guillain-barré syndrome"], []),
+    ("128209004", "G61.81", ["chronic inflammatory demyelinating polyneuropathy", "cidp"], []),
+    ("15802004", "G24.9", ["dystonia"], []),
+    ("568005", "F95.9", ["tic disorder"], []),
+    ("52702003", "G93.32", ["chronic fatigue syndrome", "myalgic encephalomyelitis"], []),
+    ("40425004", "F07.81", ["post-concussion syndrome", "postconcussion syndrome"], []),
+    ("54404000", "M54.12", ["cervical radiculopathy"], []),
+    ("128196005", "M54.16", ["lumbar radiculopathy"], []),
+    ("85007004", "G57.10", ["meralgia paresthetica"], []),
+    ("87486003", "R47.01", ["aphasia"], []),
+    ("8011004", "R47.1", ["dysarthria"], []),
+    ("50582007", "G81.90", ["hemiplegia"], []),
+    ("429998004", "F01.50", ["vascular dementia"], []),
+    ("230270009", "G31.09", ["frontotemporal dementia"], []),
+    ("69322001", "F29", ["psychosis", "psychotic disorder"], []),
+    ("6471006", "R45.851", ["suicidal ideation", "suicidal thoughts"], []),
+    ("110359009", "F79", ["intellectual disability"], []),
+    ("70691001", "F40.00", ["agoraphobia"], []),
+    ("17155009", "F63.3", ["trichotillomania"], []),
+    ("18941000", "F91.3", ["oppositional defiant disorder"], []),
+    ("399114005", "M75.00", ["frozen shoulder", "adhesive capsulitis"], []),
+    ("202855006", "M77.10", ["lateral epicondylitis", "tennis elbow"], []),
+    ("203045001", "M72.0", ["dupuytren's contracture", "dupuytren contracture"], []),
+    ("445008009", "M67.40", ["ganglion cyst"], []),
+    ("122480009", "M20.10", ["hallux valgus", "bunion"], []),
+    ("30085007", "G57.60", ["morton's neuroma", "morton neuroma"], []),
+    ("240131006", "M62.82", ["rhabdomyolysis"], []),
+    ("397758007", "M87.9", ["osteonecrosis", "avascular necrosis"], []),
+    ("2089002", "M88.9", ["paget's disease of bone"], []),
+    ("274152003", "M43.10", ["spondylolisthesis"], []),
+    ("396230008", "M33.90", ["dermatomyositis"], []),
+    ("31384009", "M33.20", ["polymyositis"], []),
+    ("195353004", "M31.30", ["granulomatosis with polyangiitis", "wegener's granulomatosis"], []),
+    ("82119001", "E06.9", ["thyroiditis"], []),
+    ("74728003", "E23.0", ["hypopituitarism"], []),
+    ("4754008", "N62", ["gynecomastia", "gynaecomastia"], []),
+    ("399939002", "L68.0", ["hirsutism"], []),
+    ("763325000", "E88.819", ["insulin resistance"], []),
+    ("80394007", "R73.9", ["hyperglycemia", "hyperglycaemia"], []),
+    ("236407003", "N02.8", ["iga nephropathy"], []),
+    ("38481006", "I12.9", ["hypertensive nephropathy", "hypertensive kidney disease"], []),
+    ("31822004", "N34.2", ["urethritis"], []),
+    ("31070006", "N45.1", ["epididymitis"], []),
+    ("2904007", "N46.9", ["male infertility"], []),
+    ("73391008", "N87.9", ["cervical dysplasia"], []),
+    ("76742009", "N95.0", ["postmenopausal bleeding"], []),
+    ("82639001", "N94.3", ["premenstrual syndrome"], []),
+    ("27431007", "N60.19", ["fibrocystic breast disease", "fibrocystic breasts"], []),
+    ("33839006", "A60.00", ["genital herpes"], []),
+    ("52486002", "M72.6", ["necrotizing fasciitis"], []),
+    ("5758002", "R78.81", ["bacteremia", "bacteraemia"], []),
+    ("7180009", "G03.9", ["meningitis"], []),
+    ("45170000", "G04.90", ["encephalitis"], []),
+    ("12962009", "B39.9", ["histoplasmosis"], []),
+    ("60826002", "B38.9", ["coccidioidomycosis", "valley fever"], []),
+    ("65553006", "B44.9", ["aspergillosis"], []),
+    ("187192000", "B58.9", ["toxoplasmosis"], []),
+    ("58265007", "A07.1", ["giardiasis"], []),
+    ("30242009", "A38.9", ["scarlet fever"], []),
+    ("186772009", "A77.0", ["rocky mountain spotted fever"], []),
+    ("76902006", "A35", ["tetanus"], []),
+    ("38362002", "A90", ["dengue fever", "dengue"], []),
+    ("63650001", "A00.9", ["cholera"], []),
+    ("4834000", "A01.00", ["typhoid fever"], []),
+    ("35363006", "R10.83", ["infantile colic"], ["colic"]),
+    ("8004003", "K00.7", ["teething"], []),
+    ("91487003", "L22", ["diaper rash", "diaper dermatitis"], []),
+    ("248290002", "R62.50", ["developmental delay"], []),
+    ("8009008", "N39.44", ["nocturnal enuresis", "bedwetting"], []),
+    ("302690004", "F98.1", ["encopresis"], []),
+    ("400179000", "E30.1", ["precocious puberty"], []),
+    ("416010008", "Q54.9", ["hypospadias"], []),
+    ("204878001", "Q53.9", ["undescended testicle", "undescended testis", "cryptorchidism"], []),
+    ("13213009", "Q24.9", ["congenital heart disease"], []),
+    ("30288003", "Q21.0", ["ventricular septal defect"], ["vsd"]),
+    ("70142008", "Q21.10", ["atrial septal defect"], ["asd"]),
+    ("204317008", "Q21.12", ["patent foramen ovale"], ["pfo"]),
+    ("72352009", "Q23.81", ["bicuspid aortic valve"], []),
+    ("7305005", "Q25.1", ["coarctation of the aorta", "coarctation of aorta"], []),
+    ("86299006", "Q21.3", ["tetralogy of fallot"], []),
+    ("38804009", "Q96.9", ["turner syndrome", "turner's syndrome"], []),
+    ("22053006", "Q98.4", ["klinefelter syndrome"], []),
+    ("613003", "Q99.2", ["fragile x syndrome"], []),
+    ("398114001", "Q79.60", ["ehlers-danlos syndrome", "ehlers danlos syndrome"], []),
+    ("92824003", "Q85.01", ["neurofibromatosis type 1", "nf1"], []),
+    ("73297009", "G71.00", ["muscular dystrophy"], []),
+    ("91937001", "Z91.013", ["shellfish allergy", "seafood allergy"], []),
+    ("43724002", "R68.83", ["chills"], []),
+    ("367391008", "R53.81", ["malaise"], []),
+    ("422400008", "R11.10", ["vomiting"], []),
+    ("16331000", "R12", ["heartburn"], []),
+    ("116289008", "R14.0", ["bloating", "abdominal bloating"], []),
+    ("18165001", "R17", ["jaundice"], []),
+    ("2901004", "K92.1", ["melena", "melaena", "black stools"], []),
+    ("12063002", "K62.5", ["rectal bleeding", "bright red blood per rectum"], ["brbpr"]),
+    ("8765009", "K92.0", ["hematemesis", "haematemesis"], []),
+    ("49650001", "R30.0", ["dysuria", "painful urination"], []),
+    ("91019004", "R20.2", ["paresthesia", "paraesthesia", "tingling"], []),
+    ("26079004", "R25.1", ["tremor"], []),
+    ("398064005", "N31.9", ["neurogenic bladder"], []),
+    ("26614003", "N43.3", ["hydrocele"], []),
+    ("27503000", "E80.4", ["gilbert syndrome", "gilbert's syndrome"], []),
+    ("40070004", "B08.1", ["molluscum contagiosum"], []),
+    ("89105000", "L85.3", ["xerosis", "dry skin"], []),
+    ("1332435005", "J33.9", ["nasal polyps", "nasal polyp"], []),
+    ("301354004", "H92.09", ["otalgia", "ear pain"], []),
+    ("4557003", "I20.0", ["unstable angina"], []),
+    ("74883004", "I71.20", ["thoracic aortic aneurysm"], []),
+    ("62403005", "D55.0", ["g6pd deficiency", "glucose-6-phosphate dehydrogenase deficiency"], []),
+    ("73397007", "D75.829", ["heparin-induced thrombocytopenia", "heparin induced thrombocytopenia"], []),
+    ("386789004", "D72.10", ["eosinophilia"], []),
+    ("80515008", "R16.0", ["hepatomegaly"], []),
+    ("190818004", "C88.00", ["waldenstrom macroglobulinemia", "waldenström macroglobulinemia"], []),
+    ("1260050006", "C22.1", ["cholangiocarcinoma", "intrahepatic cholangiocarcinoma"], []),
+    ("94225005", "C79.31", ["brain metastases", "brain metastasis"], []),
+    ("94222008", "C79.51", ["bone metastases", "bone metastasis"], []),
+    ("94381002", "C78.7", ["liver metastases", "liver metastasis", "hepatic metastases"], []),
+    ("94391008", "C78.00", ["lung metastases", "lung metastasis", "pulmonary metastases"], []),
+    ("71760005", "M54.81", ["occipital neuralgia"], []),
+    ("6077001", "M21.379", ["foot drop"], []),
+    ("1539003", "M65.30", ["trigger finger"], []),
+    ("1290249005", "M71.20", ["baker's cyst", "popliteal cyst"], []),
+    ("53226007", "M21.40", ["flat feet", "flat foot", "pes planus"], []),
+    ("64109004", "M94.0", ["costochondritis"], []),
+    ("68962001", "M79.10", ["myalgia", "muscle pain"], []),
+    ("396234004", "M00.9", ["septic arthritis"], []),
+    ("398049005", "M35.1", ["mixed connective tissue disease"], ["mctd"]),
+    ("19034001", "N25.81", ["secondary hyperparathyroidism"], []),
+    ("55004003", "E22.2", ["siadh", "syndrome of inappropriate antidiuretic hormone"], []),
+    ("190966007", "E66.2", ["obesity hypoventilation syndrome"], []),
+    ("190634004", "E53.8", ["vitamin b12 deficiency", "b12 deficiency"], []),
+    ("784314006", "N80.03", ["adenomyosis"], []),
+    ("198130006", "N73.9", ["pelvic inflammatory disease"], []),
+    ("48194001", "O13.9", ["gestational hypertension", "pregnancy-induced hypertension"], []),
+    ("89164003", "N63.0", ["breast lump", "breast mass"], []),
+    ("266579006", "N61.0", ["mastitis"], []),
+    ("56335008", "A59.9", ["trichomoniasis"], []),
+    ("266108008", "B08.4", ["hand foot and mouth disease", "hand, foot and mouth disease"], []),
+    ("79974007", "A28.1", ["cat scratch disease", "cat-scratch disease"], []),
+    ("237836003", "R62.52", ["short stature"], []),
+    ("19346006", "Q87.40", ["marfan syndrome", "marfan's syndrome"], []),
+    ("1003755004", "Z91.040", ["latex allergy"], []),
+    ("13791008", "R53.1", ["weakness", "generalized weakness"], []),
+    ("162116003", "R35.0", ["urinary frequency"], []),
+    ("111516008", "H53.8", ["blurred vision", "blurry vision"], []),
 ]
 
 # --------------------------------------------------------------------------- #
 # Medications: ingredient key -> (scanned synonyms incl. brands, exact-only synonyms)
-# Single-ingredient drugs only; brands are verified to map to the ingredient.
+# Single-ingredient drugs (combinations are in COMBINATIONS); brands are verified to map to the ingredient.
 # --------------------------------------------------------------------------- #
 MEDICATIONS = {
     # Diabetes
@@ -1505,6 +1716,148 @@ MEDICATIONS = {
     "pyridoxine": ([], []),
     "ascorbic acid": ([], []),
     "zinc sulfate": ([], []),
+    # --- Expansion round 4 ---
+    # Eye
+    "latanoprost": (["xalatan"], []),
+    "timolol": ([], []),
+    "brimonidine": (["alphagan"], []),
+    "dorzolamide": ([], []),
+    "bimatoprost": (["lumigan"], []),
+    "travoprost": (["travatan"], []),
+    "olopatadine": (["pataday"], []),
+    "ketotifen": ([], []),
+    "lifitegrast": (["xiidra"], []),
+    "pilocarpine": ([], []),
+    "fluorometholone": ([], []),
+    # Dermatology
+    "hydroquinone": ([], []),
+    "imiquimod": ([], []),
+    "azelaic acid": ([], []),
+    "tapinarof": (["vtama"], []),
+    "chlorhexidine": (["peridex"], []),
+    "miconazole": ([], []),
+    "terconazole": ([], []),
+    # Women's health
+    "ulipristal": ([], []),
+    "etonogestrel": (["nexplanon"], []),
+    "ospemifene": (["osphena"], []),
+    "elagolix": (["orilissa"], []),
+    "relugolix": (["orgovyx"], []),
+    "methylergonovine": (["methergine"], []),
+    "terbutaline": ([], []),
+    # Urology
+    "pentosan polysulfate": (["elmiron"], []),
+    # Neurology
+    "riluzole": (["rilutek"], []),
+    "edaravone": (["radicava"], []),
+    "pyridostigmine": (["mestinon"], []),
+    "onabotulinumtoxinA": ([], []),
+    "ofatumumab": (["kesimpta"], []),
+    "siponimod": (["mayzent"], []),
+    "ozanimod": (["zeposia"], []),
+    "diroximel fumarate": (["vumerity"], []),
+    "cladribine": (["mavenclad"], []),
+    "alemtuzumab": (["lemtrada"], []),
+    "lecanemab": (["leqembi"], []),
+    "donanemab": (["kisunla"], []),
+    "safinamide": (["xadago"], []),
+    "istradefylline": (["nourianz"], []),
+    "pimavanserin": (["nuplazid"], []),
+    "trihexyphenidyl": ([], []),
+    "dihydroergotamine": ([], []),
+    "acetazolamide": ([], []),
+    # Psychiatry
+    "zuranolone": (["zurzuvae"], []),
+    # Infection
+    "cefprozil": ([], []),
+    "cefixime": (["suprax"], []),
+    "cefoxitin": ([], []),
+    "ceftaroline fosamil": (["teflaro"], []),
+    "dalbavancin": (["dalvance"], []),
+    "tedizolid": (["sivextro"], []),
+    "amikacin": ([], []),
+    "nitazoxanide": (["alinia"], []),
+    "fidaxomicin": (["dificid"], []),
+    "secnidazole": ([], []),
+    "micafungin": (["mycamine"], []),
+    "caspofungin": (["cancidas"], []),
+    "amphotericin B": ([], []),
+    "letermovir": (["prevymis"], []),
+    "tecovirimat": (["tpoxx"], []),
+    "ritonavir": (["norvir"], []),
+    "doravirine": (["pifeltro"], []),
+    "lenacapavir": (["sunlenca"], []),
+    "tenofovir alafenamide": (["vemlidy"], []),
+    # Cardiopulmonary
+    "sotagliflozin": (["inpefa"], []),
+    "bosentan": (["tracleer"], []),
+    "ambrisentan": (["letairis"], []),
+    "macitentan": (["opsumit"], []),
+    "riociguat": (["adempas"], []),
+    "treprostinil": (["tyvaso", "remodulin"], []),
+    "selexipag": (["uptravi"], []),
+    "sotatercept": (["winrevair"], []),
+    # Endocrine
+    "teprotumumab": (["tepezza"], []),
+    "lanreotide": (["somatuline"], []),
+    "pegvisomant": (["somavert"], []),
+    "somatropin": (["genotropin", "norditropin"], []),
+    "calcifediol": (["rayaldee"], []),
+    "pramlintide": (["symlin"], []),
+    "insulin glulisine": (["apidra"], []),
+    # Gastrointestinal
+    "tenapanor": (["ibsrela"], []),
+    "eluxadoline": (["viberzi"], []),
+    "alosetron": ([], []),
+    "mirikizumab": (["omvoh"], []),
+    "etrasimod": (["velsipity"], []),
+    "obeticholic acid": (["ocaliva"], []),
+    "resmetirom": (["rezdiffra"], []),
+    "vonoprazan": (["voquezna"], []),
+    # Hematology
+    "emicizumab": (["hemlibra"], []),
+    "luspatercept": (["reblozyl"], []),
+    "crizanlizumab": (["adakveo"], []),
+    "eltrombopag": (["promacta"], []),
+    "romiplostim": (["nplate"], []),
+    "avatrombopag": (["doptelet"], []),
+    "deferasirox": (["jadenu", "exjade"], []),
+    "ferrous gluconate": ([], []),
+    "anagrelide": ([], []),
+    # Oncology
+    "sacituzumab govitecan": ([], []),
+    "cetuximab": (["erbitux"], []),
+    "panitumumab": (["vectibix"], []),
+    "ramucirumab": (["cyramza"], []),
+    "alectinib": (["alecensa"], []),
+    "crizotinib": (["xalkori"], []),
+    "lorlatinib": (["lorbrena"], []),
+    "sotorasib": (["lumakras"], []),
+    "lapatinib": (["tykerb"], []),
+    "tucatinib": (["tukysa"], []),
+    "cabozantinib": (["cabometyx"], []),
+    "lenvatinib": (["lenvima"], []),
+    "sorafenib": (["nexavar"], []),
+    "sunitinib": (["sutent"], []),
+    "pazopanib": (["votrient"], []),
+    "axitinib": (["inlyta"], []),
+    "regorafenib": (["stivarga"], []),
+    "temozolomide": (["temodar"], []),
+    "irinotecan": ([], []),
+    "vincristine": ([], []),
+    "vinorelbine": ([], []),
+    "cytarabine": ([], []),
+    "azacitidine": (["vidaza"], []),
+    "decitabine": ([], []),
+    "bendamustine": ([], []),
+    "carfilzomib": (["kyprolis"], []),
+    "zanubrutinib": (["brukinsa"], []),
+    "obinutuzumab": (["gazyva"], []),
+    "brentuximab vedotin": (["adcetris"], []),
+    "degarelix": (["firmagon"], []),
+    "apalutamide": (["erleada"], []),
+    "darolutamide": (["nubeqa"], []),
+    "goserelin": (["zoladex"], []),
 }
 # --------------------------------------------------------------------------- #
 # Vaccines: name -> (CVX code, phrases). Matched only on lines that talk about vaccines
@@ -1549,6 +1902,84 @@ VACCINES = [
     ("chikungunya vlp", "329", ["vimkunya"]),
     ("tick-borne encephalitis", "222", ["tick-borne encephalitis", "tick borne encephalitis", "ticovac"]),
 ]
+
+# --------------------------------------------------------------------------- #
+# Combination products: RxNorm multiple-ingredient (MIN) name -> (scanned synonyms incl.
+# brands, exact-only synonyms). Keys are RxNorm's own MIN names (components in
+# alphabetical order); synonyms carry the order clinicians write. Every brand must map to
+# exactly the MIN's ingredients, and the drug class joins the components' classes.
+# A combination's synonyms are longer than its components' names, so "lisinopril-HCTZ"
+# matches the combination rather than lisinopril alone.
+# --------------------------------------------------------------------------- #
+COMBINATIONS = {
+    # Antibiotics and antivirals
+    "amoxicillin / clavulanate": (["amoxicillin clavulanate", "amoxicillin-clavulanate", "amox-clav", "augmentin"], []),
+    "sulfamethoxazole / trimethoprim": (["sulfamethoxazole-trimethoprim", "trimethoprim-sulfamethoxazole", "tmp-smx", "smx-tmp", "bactrim", "septra"], ["tmp smx", "smx tmp"]),
+    "piperacillin / tazobactam": (["piperacillin-tazobactam", "pip-tazo", "zosyn"], []),
+    "ampicillin / sulbactam": (["ampicillin-sulbactam", "unasyn"], []),
+    "avibactam / ceftazidime": (["ceftazidime-avibactam", "avycaz"], []),
+    "emtricitabine / tenofovir disoproxil": (["emtricitabine-tenofovir", "truvada"], []),
+    "bictegravir / emtricitabine / tenofovir alafenamide": (["biktarvy"], []),
+    "abacavir / dolutegravir / lamivudine": (["triumeq"], []),
+    "sofosbuvir / velpatasvir": (["sofosbuvir-velpatasvir", "epclusa"], []),
+    "glecaprevir / pibrentasvir": (["glecaprevir-pibrentasvir", "mavyret"], []),
+    "ledipasvir / sofosbuvir": (["ledipasvir-sofosbuvir", "harvoni"], []),
+    # Cardiovascular
+    "sacubitril / valsartan": (["sacubitril-valsartan", "entresto"], []),
+    "hydrochlorothiazide / lisinopril": (["lisinopril-hydrochlorothiazide", "lisinopril-hctz", "zestoretic"], []),
+    "hydrochlorothiazide / losartan": (["losartan-hydrochlorothiazide", "losartan-hctz", "hyzaar"], []),
+    "hydrochlorothiazide / valsartan": (["valsartan-hydrochlorothiazide", "valsartan-hctz"], []),
+    "hydrochlorothiazide / olmesartan": (["olmesartan-hydrochlorothiazide", "olmesartan-hctz"], []),
+    "hydrochlorothiazide / triamterene": (["triamterene-hydrochlorothiazide", "triamterene-hctz", "maxzide", "dyazide"], []),
+    "bisoprolol / hydrochlorothiazide": (["bisoprolol-hydrochlorothiazide", "bisoprolol-hctz"], []),
+    "amlodipine / benazepril": (["amlodipine-benazepril", "lotrel"], []),
+    "amlodipine / valsartan": (["amlodipine-valsartan", "exforge"], []),
+    "amlodipine / olmesartan": (["amlodipine-olmesartan", "azor"], []),
+    "amlodipine / atorvastatin": (["amlodipine-atorvastatin", "caduet"], []),
+    "ezetimibe / simvastatin": (["ezetimibe-simvastatin", "vytorin"], []),
+    # Diabetes
+    "metformin / sitagliptin": (["sitagliptin-metformin", "janumet"], []),
+    "empagliflozin / metformin": (["empagliflozin-metformin", "synjardy"], []),
+    "dapagliflozin / metformin": (["dapagliflozin-metformin", "xigduo"], []),
+    "empagliflozin / linagliptin": (["empagliflozin-linagliptin", "glyxambi"], []),
+    "glyburide / metformin": (["glyburide-metformin", "glucovance"], []),
+    "insulin degludec / liraglutide": (["xultophy"], []),
+    "insulin glargine / lixisenatide": (["soliqua"], []),
+    # Respiratory
+    "fluticasone / salmeterol": (["fluticasone-salmeterol", "advair", "wixela"], []),
+    "budesonide / formoterol": (["budesonide-formoterol", "symbicort", "breyna"], []),
+    "fluticasone / vilanterol": (["fluticasone-vilanterol", "breo", "breo ellipta"], []),
+    "umeclidinium / vilanterol": (["umeclidinium-vilanterol", "anoro", "anoro ellipta"], []),
+    "fluticasone / umeclidinium / vilanterol": (["fluticasone-umeclidinium-vilanterol", "trelegy", "trelegy ellipta"], []),
+    "formoterol / mometasone": (["mometasone-formoterol", "dulera"], []),
+    "albuterol / ipratropium": (["ipratropium-albuterol", "albuterol-ipratropium", "duoneb", "combivent"], []),
+    "azelastine / fluticasone": (["azelastine-fluticasone", "dymista"], []),
+    # Pain, neurology and psychiatry
+    "acetaminophen / hydrocodone": (["hydrocodone-acetaminophen", "hydrocodone/apap", "norco", "vicodin", "lortab"], []),
+    "acetaminophen / oxycodone": (["oxycodone-acetaminophen", "oxycodone/apap", "percocet", "endocet"], []),
+    "acetaminophen / codeine": (["acetaminophen-codeine", "tylenol with codeine", "tylenol #3"], []),
+    "buprenorphine / naloxone": (["buprenorphine-naloxone", "suboxone", "zubsolv"], []),
+    "carbidopa / levodopa": (["carbidopa-levodopa", "sinemet", "rytary"], []),
+    "bupropion / naltrexone": (["naltrexone-bupropion", "contrave"], []),
+    "olanzapine / samidorphan": (["lybalvi"], []),
+    "dextromethorphan / quinidine": (["nuedexta"], []),
+    # Women's health and urology
+    "drospirenone / ethinyl estradiol": (["drospirenone-ethinyl estradiol", "yaz", "yasmin"], []),
+    "ethinyl estradiol / norgestimate": (["norgestimate-ethinyl estradiol", "sprintec", "tri-sprintec", "ortho tri-cyclen"], []),
+    "ethinyl estradiol / levonorgestrel": (["levonorgestrel-ethinyl estradiol", "seasonique", "aviane"], []),
+    "ethinyl estradiol / norethindrone": (["norethindrone-ethinyl estradiol", "loestrin", "junel"], []),
+    "dutasteride / tamsulosin": (["dutasteride-tamsulosin", "jalyn"], []),
+    # Eye and other
+    "dorzolamide / timolol": (["dorzolamide-timolol", "cosopt"], []),
+    "brimonidine / timolol": (["brimonidine-timolol", "combigan"], []),
+    "aspirin / dipyridamole": (["aspirin-dipyridamole", "aggrenox"], []),
+    "hydralazine / isosorbide dinitrate": (["isosorbide dinitrate-hydralazine", "bidil"], []),
+    "bupropion / dextromethorphan": (["dextromethorphan-bupropion", "auvelity"], []),
+    "fluoxetine / olanzapine": (["olanzapine-fluoxetine", "symbyax"], []),
+    "tipiracil / trifluridine": (["trifluridine-tipiracil", "lonsurf"], []),
+    "ivacaftor / lumacaftor": (["orkambi"], []),
+    "calcium carbonate / cholecalciferol": (["calcium with vitamin d", "calcium-vitamin d"], []),
+}
 
 # Synonyms RxNorm doesn't index as names but that unambiguously mean the ingredient.
 # Where RxClass offers several classes and the default pick is misleading, name the one
@@ -1727,6 +2158,32 @@ def verify_medication(name: str) -> tuple[dict | None, list[str]]:
              "drug_class": cls, "synonyms": syns, "exact": exact}, problems)
 
 
+def verify_combination(name: str) -> tuple[dict | None, list[str]]:
+    """RxNorm MIN, brand checks and joined component classes for one COMBINATIONS entry."""
+    data = get_json("https://rxnav.nlm.nih.gov/REST/rxcui.json", name=name, search=0)
+    mins = [c for c in data.get("idGroup", {}).get("rxnormId", []) or [] if _rx_props(c)["tty"] == "MIN"]
+    if not mins:
+        return None, [f"RxNorm: no multiple-ingredient (MIN) concept named {name!r}"]
+    rxcui = mins[0]
+    related = get_json(f"https://rxnav.nlm.nih.gov/REST/rxcui/{rxcui}/related.json", tty="IN")
+    parts = {c["rxcui"]: c["name"] for g in related["relatedGroup"].get("conceptGroup", []) or []
+             for c in g.get("conceptProperties", []) or []}
+    problems = []
+    syns, exact = COMBINATIONS[name]
+    for alias in syns + exact:
+        found = rxnorm_alias_ingredients(alias)
+        if found and found != set(parts):
+            problems.append(f"RxNorm: {alias!r} -> {sorted(found)}, expected the ingredients of {name} {sorted(parts)}")
+    # Components RxClass has no class for yet (sacubitril, bictegravir) are left out of the joined class
+    classes_ = [c for c in (_default_class(c, "IN") for c in sorted(parts, key=parts.get)) if c]
+    if not classes_:
+        problems.append(f"RxClass: no usable class for any component of {name} ({rxcui})")
+        return None, problems
+    cls = " + ".join(dict.fromkeys(classes_))
+    return ({"ingredient": name, "rxnorm": rxcui, "rxnorm_name": name, "tty": "MIN", "drug_class": cls,
+             "components": sorted(parts.values()), "synonyms": syns, "exact": exact}, problems)
+
+
 def main() -> int:
     check_only = "--check" in sys.argv
     problems: list[str] = []
@@ -1784,6 +2241,13 @@ def main() -> int:
     check_collisions("medication", [(k, s + e) for k, (s, e) in MEDICATIONS.items()], problems)
     medications = []
     for row, issues in pool.map(verify_medication, list(MEDICATIONS)):
+        problems.extend(issues)
+        if row:
+            medications.append(row)
+
+    print(f"Verifying {len(COMBINATIONS)} combination products (RxNorm MIN)...")
+    check_collisions("medication", [(k, s + e) for k, (s, e) in {**MEDICATIONS, **COMBINATIONS}.items()], problems)
+    for row, issues in pool.map(verify_combination, list(COMBINATIONS)):
         problems.extend(issues)
         if row:
             medications.append(row)

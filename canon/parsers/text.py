@@ -352,10 +352,12 @@ def parse(content: str, *, method: str = "rule_nlp", review: list[dict] | None =
         if section in ("medications", "assessment", "body", "hpi", "problems") and not re.search(r"allerg", low):
             hits: list[tuple[int, int, str, str]] = []
             plain = _plain(low)
+            squeezed = re.sub(r" +", " ", plain)
             for phrase, ing in T.medication_synonyms():
-                if phrase not in plain:
+                if phrase not in squeezed:
                     continue
-                for mm in re.finditer(rf"(?<![a-z0-9]){re.escape(phrase)}(?![a-z0-9])", plain):
+                # " +" so "lisinopril / hctz" matches the combination "lisinopril hctz"
+                for mm in re.finditer(rf"(?<![a-z0-9]){re.escape(phrase).replace(chr(92) + ' ', ' +')}(?![a-z0-9])", plain):
                     if not any(a <= mm.start() < b for a, b, _, _ in hits) and \
                             not any(h[3] == ing for h in hits):
                         hits.append((mm.start(), mm.end(), phrase, ing))

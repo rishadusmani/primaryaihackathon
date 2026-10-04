@@ -51,7 +51,7 @@ LLM extraction is off.
 
 Then click **Load tricky note**: a cardiology note and a FHIR export written to fool keyword matchers. It's full of
 phrases like "influenza vaccine given", "low sodium diet", "potassium chloride 20 mEq" and "Troponin I 15 ng/L",
-plus codes that aren't in Canon's tables (Entresto, `I50.22`). A panel lists each phrase, what a context-free
+plus a code that isn't in Canon's tables (`I50.22`). A panel lists each phrase, what a context-free
 keyword matcher would code, and what Canon recorded. `tests/test_live_terminology.py` checks every one of those
 claims against the engine, so the demo can't drift from the code.
 
@@ -293,8 +293,8 @@ billing, SQLite). `python -m canon serve --require-auth` turns on keys and billi
 
 | | Codes | Systems |
 |---|---|---|
-| Conditions | 418 | ICD-10-CM + SNOMED CT |
-| Medications | 639 | RxNorm ingredients, with brand names and drug classes |
+| Conditions | 628 | ICD-10-CM + SNOMED CT |
+| Medications | 828 | RxNorm ingredients and 60 combination products (Augmentin, Entresto, Advair...), with brand names and drug classes |
 | Labs and vitals | 180 | LOINC, with a canonical UCUM unit and SI ↔ conventional conversions |
 | Vaccines | 40 | CVX |
 

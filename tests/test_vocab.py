@@ -300,5 +300,69 @@ class ExpansionRound3Test(unittest.TestCase):
                           if f["kind"] == "immunization"], [])
 
 
+class CombinationTest(unittest.TestCase):
+    def meds(self, note):
+        return [T.lookup_medication(text=f["text"])["ingredient"] for f in text.parse(note) if f["kind"] == "medication"]
+
+    def test_combinations_are_verified_and_loaded(self):
+        combos = [m for m in load("medications.json") if m["tty"] == "MIN"]
+        self.assertGreaterEqual(len(combos), 55)
+        for m in combos:
+            self.assertEqual(T.lookup_medication(code=m["rxnorm"])["ingredient"], m["ingredient"])
+            self.assertGreaterEqual(len(m["components"]), 2, m["ingredient"])
+
+    def test_brands_and_written_forms(self):
+        for text_, ingredient in [("Augmentin 875 mg BID", "amoxicillin / clavulanate"),
+                                  ("Entresto 49-51 mg BID", "sacubitril / valsartan"),
+                                  ("Bactrim DS 1 tab BID", "sulfamethoxazole / trimethoprim"),
+                                  ("Norco 5-325 mg q6h PRN", "acetaminophen / hydrocodone"),
+                                  ("Trelegy Ellipta 1 puff daily", "fluticasone / umeclidinium / vilanterol"),
+                                  ("Biktarvy 1 tab daily", "bictegravir / emtricitabine / tenofovir alafenamide")]:
+            self.assertEqual(T.lookup_medication(text=text_)["ingredient"], ingredient, text_)
+
+    def test_combination_wins_over_its_components(self):
+        for line in ["Medications:\n- Lisinopril-HCTZ 20-12.5 mg daily",
+                     "Medications:\n- Lisinopril / HCTZ 20/12.5 mg daily",
+                     "Medications:\n- Hydrocodone/APAP 5/325 mg q6h PRN"]:
+            with self.subTest(line=line):
+                self.assertEqual(len(self.meds(line)), 1)
+                self.assertIn(" / ", self.meds(line)[0])
+        self.assertEqual(sorted(self.meds("Medications:\n- Lisinopril 20 mg daily\n- HCTZ 25 mg daily")),
+                         ["hydrochlorothiazide", "lisinopril"])
+
+    def test_class_joins_components(self):
+        self.assertEqual(T.lookup_medication(text="Zestoretic")["drug_class"],
+                         "Thiazide Diuretic + Angiotensin Converting Enzyme Inhibitor")
+
+
+class ExpansionRound4Test(unittest.TestCase):
+    def conds(self, note):
+        return [(f["text"], f["mapped_code"]) for f in text.parse(note) if f["kind"] == "condition"]
+
+    def test_coverage(self):
+        self.assertGreaterEqual(len(T.CONDITIONS), 620)
+        self.assertGreaterEqual(len(T.MEDICATIONS), 820)
+
+    def test_conditions(self):
+        for text_, icd in [("brain metastases", "C79.31"), ("SIADH", "E22.2"), ("frozen shoulder", "M75.00"),
+                           ("non-ST elevation myocardial infarction", "I21.4"), ("patent foramen ovale", "Q21.12"), ("septic shock", "R65.21"),
+                           ("hand, foot and mouth disease", "B08.4"), ("heparin-induced thrombocytopenia", "D75.829")]:
+            self.assertEqual(T.lookup_condition(text=text_)["icd10"], icd, text_)
+
+    def test_ambiguous_words_stay_exact_only(self):
+        self.assertEqual(self.conds("HPI: Renal colic last week, passed a stone."), [])
+        self.assertEqual(self.conds("HPI: Shock wave lithotripsy in 2021."), [])
+        self.assertEqual(T.lookup_condition(text="colic")["icd10"], "R10.83")
+
+    def test_disease_and_vaccine_are_told_apart(self):
+        self.assertEqual(self.conds("HPI: Tetanus booster given today."), [])
+        self.assertEqual(self.conds("Assessment: Dengue fever after travel to Brazil."), [("dengue fever", "A90")])
+
+    def test_medications(self):
+        for text_, ingredient in [("Xalatan 1 drop qhs", "latanoprost"), ("Mestinon 60 mg TID", "pyridostigmine"),
+                                  ("Leqembi IV q2wk", "lecanemab"), ("Nexplanon implant", "etonogestrel")]:
+            self.assertEqual(T.lookup_medication(text=text_)["ingredient"], ingredient, text_)
+
+
 if __name__ == "__main__":
     unittest.main()
