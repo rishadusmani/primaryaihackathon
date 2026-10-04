@@ -81,6 +81,8 @@ class Canon:
         with live_terminology.budget():  # cap time spent on live NLM lookups for this document
             for f in facts:
                 items.append(normalize(f))
+        produced = next((it for k, it in items if k == "document" and it.get("generated")), None)
+        items = [(k, it) for k, it in items if k != "document"]
         if not any(k not in ("patient", "encounter") for k, _ in items):
             info.setdefault("warnings", []).append(
                 f"No clinical facts found in this document (parsed as {fmt}). Check the file or format.")
@@ -107,7 +109,12 @@ class Canon:
         dates = [it.get("date") or it.get("effective") for k, it in items if k in ("encounter", "observation",
                                                                                      "condition", "medication")]
         dates = [d for d in dates if d]
-        doc_date = Counter(dates).most_common(1)[0][0] if dates else None
+        # Clinical date first; when nothing in the document is dated, when it was produced (signed, exported...).
+        doc_date = Counter(dates).most_common(1)[0][0] if dates else (produced or {}).get("generated")
+        if produced:
+            info["generated"] = {"date": produced["generated"], "locator": produced["provenance"]["locator"]}
+        if doc_date:
+            info["date_basis"] = "clinical" if dates else "generated"
         info["pages"] = _pages(fmt, info)
         doc_id = new_id("doc")
         received = _now()
@@ -187,9 +194,10 @@ class Canon:
         unmapped: list[dict] = []
         sources = []
         for r in rows:
-            src = {"id": r["id"], "format": r["format"], "source_name": r["source_name"],
-                   "received_at": r["received_at"], "document_date": r["document_date"]}
-            sources.append({**src, "filename": r["filename"]})
+            src = {"id": r["id"], "format": r["format"], "source_name": r["source_name"], "filename": r["filename"],
+                   "received_at": r["received_at"], "document_date": r["document_date"],
+                   "date_basis": json.loads(r["info"] or "{}").get("date_basis")}
+            sources.append(dict(src))
             for kind, it in json.loads(r["items"]):
                 it["_source"] = src
                 (unmapped.append(it) if kind == "unmapped" else items.append((kind, it)))
@@ -234,7 +242,10 @@ class Canon:
             "stopped_medications": [{"ingredient": m["ingredient"], "stopped": m["last_changed"]}
                                     for m in rec["medications"] if m["status"] == "stopped"],
             "allergy_status": rec["allergy_status"],
-            "allergies": [{"substance": a["substance"], "reactions": a.get("reactions", [])} for a in rec["allergies"]],
+            "allergies": [{"substance": a["substance"], "reactions": a.get("reactions", [])}
+                          for a in rec["allergies"] if a["status"] == "active"],
+            "resolved_allergies": [{"substance": a["substance"], "status": a["status"], "since": a.get("resolved_on")}
+                                   for a in rec["allergies"] if a["status"] != "active"],
             "latest_labs": sorted(labs, key=lambda x: x["name"]),
             "latest_vitals": sorted(vitals, key=lambda x: x["name"]),
             "immunizations": [{"vaccine": i.get("vaccine"), "date": i.get("date")} for i in rec["immunizations"]],

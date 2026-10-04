@@ -60,6 +60,12 @@ def to_fhir_bundle(rec: dict) -> dict:
         entries.append({"resourceType": "AllergyIntolerance", "id": a["id"], "patient": ref,
                         "code": _cc({"snomed": a["codes"]["snomed_substance"]}, a["substance"]),
                         "reaction": [{"manifestation": [{"text": r}]} for r in a.get("reactions", [])],
+                        # FHIR ait-2: a refuted allergy carries verificationStatus and no clinicalStatus
+                        **({"verificationStatus": {"coding": [{
+                            "system": "http://terminology.hl7.org/CodeSystem/allergyintolerance-verification",
+                            "code": "refuted"}]}} if a["status"] == "refuted" else {"clinicalStatus": {"coding": [{
+                                "system": "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical",
+                                "code": a["status"]}]}}),
                         "extension": _ext(a)})
     if rec["allergy_status"] == "no_known_allergies":
         entries.append({"resourceType": "AllergyIntolerance", "id": f"nka-{pid}", "patient": ref,

@@ -35,10 +35,14 @@ def parse(content: str) -> list[dict]:
     lines: list[tuple[str, str | None, str]] = []
     nm1_ctx = None
     line_no = 0
+    created: dict[str, str | None] = {}
     for i, s in enumerate(segments):
         tag = s[0]
         g = lambda n: s[n] if n < len(s) else ""  # noqa: E731
-        if tag == "SBR":
+        if tag in ("ISA", "GS", "BHT"):  # interchange / group / transaction creation dates; BHT is most specific
+            raw = (g(9) if tag == "ISA" else g(4)).strip()
+            created[tag] = _date(("20" + raw) if tag == "ISA" and len(raw) == 6 else raw)
+        elif tag == "SBR":
             group = g(3) or group
         elif tag == "NM1":
             nm1_ctx = g(1)
@@ -73,6 +77,9 @@ def parse(content: str) -> list[dict]:
                 lines[-1] = (code, d, loc)
             claim_date = claim_date or d
 
+    tag = next((t for t in ("BHT", "GS", "ISA") if created.get(t)), None)
+    if tag:
+        facts.append(fact("document", locator=tag, method=m, generated=created[tag]))
     if patient:
         facts.append(fact("patient", locator="NM1*IL", method=m,
                           identifiers=[{"system": f"member:{payer or 'payer'}", "value": member_id}] if member_id

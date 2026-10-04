@@ -78,8 +78,9 @@ TOOLS = [
     },
     {
         "name": "get_conflicts",
-        "description": "Disagreements between sources (medication doses, allergies vs 'NKDA', demographics, lab "
-                       "values). Check before acting on any medication, allergy or identity fact.",
+        "description": "Disagreements between sources (medication doses, allergies vs 'NKDA', an allergy listed "
+                       "again after it was resolved, demographics, lab values) and undated sources that can't be "
+                       "placed in time. Check before acting on any medication, allergy or identity fact.",
         "input_schema": {"type": "object", "additionalProperties": False, "required": ["patient_id"],
                          "properties": {"patient_id": _PID}},
     },

@@ -56,7 +56,9 @@ def parse(content: str) -> list[dict]:
         f = lambda n: msg.field(seg, n)  # noqa: E731
         c = msg.comp
         snippet = msg.fs.join(seg[:9])
-        if name == "PID":
+        if name == "MSH" and _date(f(7)):
+            facts.append(fact("document", locator="MSH-7", method=m, generated=_date(f(7))))
+        elif name == "PID":
             ids = [{"system": c(r, 4) or c(r, 5) or None, "value": c(r, 1)} for r in msg.reps(f(3))]
             addr = f(11)
             facts.append(fact("patient", locator=loc, method=m, snippet=snippet,

@@ -28,6 +28,9 @@ gives it:
 | HL7 uses LOINC `2089-1`, the fax says "LDL" | Both collapse to `13457-7` |
 | Fax lists metformin 500 mg; the plan says "increase to 1000 mg"; the portal still says 500 mg | Current dose 1000 mg, the full change history, **and a `medication_discrepancy` conflict** |
 | Hospital CCD says NKDA; fax says penicillin (hives); derm letter says sulfa | `has_allergies` **plus an `allergy_vs_nkda` conflict** |
+| Allergist note: "penicillin allergy delabeled after negative amoxicillin challenge" | Penicillin `status: resolved` with its date; a later copied-forward list re-adding it raises `allergy_resolution_disputed` |
+| A fax with no visit date, only "Electronically signed 04/01/2026" | Dated by when it was generated (signature, fax header, PDF/CCD/FHIR/HL7/X12 timestamp), with `date_basis: generated` |
+| A document with no date anywhere lists an older dose | Ranked oldest, so it can't override dated notes, plus a low-severity `undated_source` flag |
 | Claim bills F41.1 (anxiety) with no clinical note | `evidence: claims_only`, `status: unknown` |
 | "Father had type 2 diabetes", "Denies chest pain" | Excluded (family history and negation handling) |
 | OCR noise: `Metformin 5OO mg`, `A1c 7.l` | Repaired, with lower confidence |
