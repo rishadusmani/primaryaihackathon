@@ -3295,6 +3295,446 @@
   }
  },
  {
+  "loinc": "53027-9",
+  "display": "Anti-CCP antibody",
+  "loinc_name": "Cyclic citrullinated peptide Ab [Units/volume] in Serum",
+  "category": "lab",
+  "unit": "U/mL",
+  "synonyms": [
+   "anti-ccp",
+   "anti ccp",
+   "ccp antibody",
+   "cyclic citrullinated peptide antibody"
+  ],
+  "exact": [],
+  "convert": {
+   "U/mL": 1,
+   "units/mL": 1
+  }
+ },
+ {
+  "loinc": "5130-0",
+  "display": "dsDNA antibody",
+  "loinc_name": "DNA double strand Ab [Units/volume] in Serum",
+  "category": "lab",
+  "unit": "[IU]/mL",
+  "synonyms": [
+   "anti-dsdna",
+   "anti dsdna",
+   "dsdna antibody",
+   "double stranded dna antibody"
+  ],
+  "exact": [],
+  "convert": {
+   "IU/mL": 1,
+   "[IU]/mL": 1,
+   "kIU/L": 1,
+   "kU/L": 1
+  }
+ },
+ {
+  "loinc": "13458-5",
+  "display": "VLDL cholesterol",
+  "loinc_name": "Cholesterol in VLDL [Mass/volume] in Serum or Plasma by calculation",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "vldl cholesterol",
+   "vldl"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1,
+   "mmol/L": 38.67
+  }
+ },
+ {
+  "loinc": "1869-7",
+  "display": "Apolipoprotein A-I",
+  "loinc_name": "Apolipoprotein A-I [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "apolipoprotein a1",
+   "apolipoprotein a-i",
+   "apo a1",
+   "apoa1"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1,
+   "g/L": 100
+  }
+ },
+ {
+  "loinc": "5671-3",
+  "display": "Lead, blood",
+  "loinc_name": "Lead [Mass/volume] in Blood",
+  "category": "lab",
+  "unit": "ug/dL",
+  "synonyms": [
+   "blood lead",
+   "lead level"
+  ],
+  "exact": [],
+  "convert": {
+   "ug/dL": 1,
+   "mcg/dL": 1,
+   "µg/dL": 1
+  }
+ },
+ {
+  "loinc": "62290-2",
+  "display": "1,25-dihydroxyvitamin D",
+  "loinc_name": "1,25-Dihydroxyvitamin D [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "pg/mL",
+  "synonyms": [
+   "1,25-dihydroxyvitamin d",
+   "1,25 dihydroxyvitamin d",
+   "calcitriol level"
+  ],
+  "exact": [],
+  "convert": {
+   "pg/mL": 1,
+   "pmol/L": 0.4166
+  }
+ },
+ {
+  "loinc": "6875-9",
+  "display": "CA 15-3",
+  "loinc_name": "Cancer Ag 15-3 [Units/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "U/mL",
+  "synonyms": [
+   "ca 15-3",
+   "ca15-3",
+   "cancer antigen 15-3"
+  ],
+  "exact": [],
+  "convert": {
+   "U/mL": 1,
+   "units/mL": 1
+  }
+ },
+ {
+  "loinc": "17842-6",
+  "display": "CA 27-29",
+  "loinc_name": "Cancer Ag 27-29 [Units/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "U/mL",
+  "synonyms": [
+   "ca 27-29",
+   "ca 27.29",
+   "cancer antigen 27-29"
+  ],
+  "exact": [],
+  "convert": {
+   "U/mL": 1,
+   "units/mL": 1
+  }
+ },
+ {
+  "loinc": "2889-4",
+  "display": "Protein, 24-hour urine",
+  "loinc_name": "Protein [Mass/time] in 24 hour Urine",
+  "category": "lab",
+  "unit": "mg/(24.h)",
+  "synonyms": [
+   "24 hour urine protein",
+   "24-hour urine protein",
+   "24h urine protein"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/(24.h)": 1,
+   "mg/24h": 1,
+   "mg/24 h": 1,
+   "mg/24hr": 1,
+   "mg/day": 1,
+   "g/(24.h)": 1000,
+   "g/24h": 1000,
+   "g/24 h": 1000,
+   "g/24hr": 1000,
+   "g/day": 1000
+  }
+ },
+ {
+  "loinc": "71695-1",
+  "display": "Immature granulocytes",
+  "loinc_name": "Immature granulocytes/Leukocytes in Blood by Automated count",
+  "category": "lab",
+  "unit": "%",
+  "synonyms": [
+   "immature granulocytes",
+   "immature grans"
+  ],
+  "exact": [],
+  "convert": {
+   "%": 1,
+   "percent": 1,
+   "pct": 1
+  }
+ },
+ {
+  "loinc": "4049-3",
+  "display": "Theophylline level",
+  "loinc_name": "Theophylline [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ug/mL",
+  "synonyms": [
+   "theophylline level"
+  ],
+  "exact": [],
+  "convert": {
+   "ug/mL": 1,
+   "mcg/mL": 1,
+   "µg/mL": 1,
+   "ug/mL FEU": 1,
+   "mcg/mL FEU": 1,
+   "µg/mL FEU": 1,
+   "mg/L": 1,
+   "mg/L FEU": 1
+  }
+ },
+ {
+  "loinc": "14836-1",
+  "display": "Methotrexate level",
+  "loinc_name": "Methotrexate [Moles/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "umol/L",
+  "synonyms": [
+   "methotrexate level"
+  ],
+  "exact": [],
+  "convert": {
+   "umol/L": 1,
+   "µmol/L": 1,
+   "μmol/L": 1,
+   "micromol/L": 1
+  }
+ },
+ {
+  "loinc": "6948-4",
+  "display": "Lamotrigine level",
+  "loinc_name": "lamoTRIgine [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ug/mL",
+  "synonyms": [
+   "lamotrigine level",
+   "lamictal level"
+  ],
+  "exact": [],
+  "convert": {
+   "ug/mL": 1,
+   "mcg/mL": 1,
+   "µg/mL": 1,
+   "ug/mL FEU": 1,
+   "mcg/mL FEU": 1,
+   "µg/mL FEU": 1,
+   "mg/L": 1,
+   "mg/L FEU": 1
+  }
+ },
+ {
+  "loinc": "8098-6",
+  "display": "Thyroglobulin antibody",
+  "loinc_name": "Thyroglobulin Ab [Units/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "[IU]/mL",
+  "synonyms": [
+   "thyroglobulin antibody",
+   "thyroglobulin antibodies",
+   "anti-thyroglobulin"
+  ],
+  "exact": [],
+  "convert": {
+   "IU/mL": 1,
+   "[IU]/mL": 1,
+   "kIU/L": 1,
+   "kU/L": 1
+  }
+ },
+ {
+  "loinc": "31017-7",
+  "display": "tTG IgA",
+  "loinc_name": "Tissue transglutaminase IgA Ab [Units/volume] in Serum",
+  "category": "lab",
+  "unit": "U/mL",
+  "synonyms": [
+   "ttg iga",
+   "tissue transglutaminase iga",
+   "anti-ttg iga",
+   "tissue transglutaminase antibody"
+  ],
+  "exact": [],
+  "convert": {
+   "U/mL": 1,
+   "units/mL": 1
+  }
+ },
+ {
+  "loinc": "33358-3",
+  "display": "M-spike",
+  "loinc_name": "Protein.monoclonal [Mass/volume] in Serum or Plasma by Electrophoresis",
+  "category": "lab",
+  "unit": "g/dL",
+  "synonyms": [
+   "m-spike",
+   "m spike",
+   "monoclonal protein",
+   "paraprotein"
+  ],
+  "exact": [],
+  "convert": {
+   "g/dL": 1,
+   "gm/dL": 1,
+   "g/L": 0.1
+  }
+ },
+ {
+  "loinc": "48378-4",
+  "display": "Free kappa/lambda ratio",
+  "loinc_name": "Kappa light chains.free/Lambda light chains.free [Mass Ratio] in Serum",
+  "category": "lab",
+  "unit": "{ratio}",
+  "synonyms": [
+   "kappa/lambda ratio",
+   "kappa lambda ratio",
+   "free light chain ratio",
+   "flc ratio"
+  ],
+  "exact": [],
+  "convert": {
+   "{ratio}": 1,
+   "ratio": 1
+  }
+ },
+ {
+  "loinc": "1971-1",
+  "display": "Bilirubin, indirect",
+  "loinc_name": "Bilirubin.indirect [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "indirect bilirubin",
+   "unconjugated bilirubin"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1,
+   "umol/L": 0.05848,
+   "µmol/L": 0.05848,
+   "μmol/L": 0.05848,
+   "micromol/L": 0.05848
+  }
+ },
+ {
+  "loinc": "1759-0",
+  "display": "Albumin/globulin ratio",
+  "loinc_name": "Albumin/Globulin [Mass Ratio] in Serum or Plasma",
+  "category": "lab",
+  "unit": "{ratio}",
+  "synonyms": [
+   "albumin/globulin ratio",
+   "albumin globulin ratio",
+   "a/g ratio"
+  ],
+  "exact": [],
+  "convert": {
+   "{ratio}": 1,
+   "ratio": 1
+  }
+ },
+ {
+  "loinc": "3097-3",
+  "display": "BUN/creatinine ratio",
+  "loinc_name": "Urea nitrogen/Creatinine [Mass Ratio] in Serum or Plasma",
+  "category": "lab",
+  "unit": "{ratio}",
+  "synonyms": [
+   "bun/creatinine ratio",
+   "bun creatinine ratio",
+   "bun/cr ratio"
+  ],
+  "exact": [],
+  "convert": {
+   "{ratio}": 1,
+   "ratio": 1
+  }
+ },
+ {
+  "loinc": "13964-2",
+  "display": "Methylmalonic acid",
+  "loinc_name": "Methylmalonate [Moles/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "nmol/L",
+  "synonyms": [
+   "methylmalonic acid",
+   "mma level"
+  ],
+  "exact": [],
+  "convert": {
+   "nmol/L": 1,
+   "umol/L": 1000,
+   "µmol/L": 1000,
+   "μmol/L": 1000,
+   "micromol/L": 1000
+  }
+ },
+ {
+  "loinc": "3034-6",
+  "display": "Transferrin",
+  "loinc_name": "Transferrin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "transferrin"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1,
+   "g/L": 100
+  }
+ },
+ {
+  "loinc": "9269-2",
+  "display": "Glasgow Coma Scale",
+  "loinc_name": "Glasgow coma score total",
+  "category": "vital",
+  "unit": "{score}",
+  "synonyms": [
+   "glasgow coma scale",
+   "glasgow coma score"
+  ],
+  "exact": [
+   "gcs"
+  ],
+  "convert": {
+   "{score}": 1,
+   "/10": 1
+  }
+ },
+ {
+  "loinc": "19935-6",
+  "display": "Peak expiratory flow",
+  "loinc_name": "Maximum expiratory gas flow Respiratory system airway by Peak flow meter",
+  "category": "vital",
+  "unit": "L/min",
+  "synonyms": [
+   "peak expiratory flow",
+   "peak flow"
+  ],
+  "exact": [
+   "pefr"
+  ],
+  "convert": {
+   "L/min": 1,
+   "lpm": 1,
+   "liters/min": 1
+  }
+ },
+ {
   "loinc": "9279-1",
   "loinc_name": "Respiratory rate",
   "synonyms": [
@@ -3316,11 +3756,22 @@
    "pulse ox",
    "pulse oximetry",
    "o2 sat",
-   "spo2"
+   "spo2",
+   "arterial oxygen saturation"
   ],
   "exact": [
    "sao2"
   ],
+  "extends": true
+ },
+ {
+  "loinc": "13457-7",
+  "loinc_name": "Cholesterol in LDL [Mass/volume] in Serum or Plasma by calculation",
+  "synonyms": [
+   "direct ldl",
+   "ldl direct"
+  ],
+  "exact": [],
   "extends": true
  },
  {

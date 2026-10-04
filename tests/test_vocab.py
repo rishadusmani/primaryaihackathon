@@ -364,5 +364,37 @@ class ExpansionRound4Test(unittest.TestCase):
             self.assertEqual(T.lookup_medication(text=text_)["ingredient"], ingredient, text_)
 
 
+class ExpansionRound5Test(unittest.TestCase):
+    def conds(self, note):
+        return [(f["text"], f["mapped_code"]) for f in text.parse(note) if f["kind"] == "condition"]
+
+    def test_coverage(self):
+        self.assertGreaterEqual(len(T.CONDITIONS), 750)
+        self.assertGreaterEqual(len(T.MEDICATIONS), 920)
+        self.assertGreaterEqual(len(T.OBSERVATIONS), 200)
+
+    def test_conditions(self):
+        for text_, icd in [("CKD stage 3b", "N18.32"), ("NASH", "K75.81"), ("long COVID", "U09.9"),
+                           ("diabetic foot ulcer", "E11.621"), ("Kawasaki disease", "M30.3"), ("DCIS", "D05.10"),
+                           ("trochanteric bursitis", "M70.60"), ("elevated PSA", "R97.20")]:
+            self.assertEqual(T.lookup_condition(text=text_)["icd10"], icd, text_)
+
+    def test_nausea_and_vomiting_is_one_finding(self):
+        self.assertEqual(self.conds("Assessment: Nausea and vomiting for 2 days."), [("nausea and vomiting", "R11.2")])
+
+    def test_combinations(self):
+        for text_, ingredient in [("Lomotil 2.5 mg QID PRN", "atropine / diphenoxylate"),
+                                  ("Malarone 1 tab daily", "atovaquone / proguanil"),
+                                  ("Descovy for PrEP", "emtricitabine / tenofovir alafenamide"),
+                                  ("Fioricet 1-2 tabs q4h PRN", "acetaminophen / butalbital / caffeine")]:
+            self.assertEqual(T.lookup_medication(text=text_)["ingredient"], ingredient, text_)
+
+    def test_labs(self):
+        got = {(f["code"], f.get("unit")) for f in text.parse(
+            "Labs:\nAnti-CCP 45 U/mL\nTransferrin 210 mg/dL\n24 hour urine protein 450 mg/24h\n"
+            "Kappa/lambda ratio 1.2\nDirect LDL 128 mg/dL\n") if f["kind"] == "observation"}
+        self.assertEqual({c for c, _ in got}, {"53027-9", "3034-6", "2889-4", "48378-4", "13457-7"})
+
+
 if __name__ == "__main__":
     unittest.main()
