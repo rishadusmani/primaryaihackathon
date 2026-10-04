@@ -61,6 +61,22 @@
   ]
  },
  {
+  "vaccine": "menabcwy penbraya",
+  "cvx": "316",
+  "cvx_display": "Meningococcal polysaccharide (MenACWY-TT conjugate), (MenB), PF",
+  "synonyms": [
+   "penbraya"
+  ]
+ },
+ {
+  "vaccine": "menabcwy penmenvy",
+  "cvx": "328",
+  "cvx_display": "Meningococcal oligosaccharide (MenACWY), (MenB), PF",
+  "synonyms": [
+   "penmenvy"
+  ]
+ },
+ {
   "vaccine": "meningococcal b",
   "cvx": "164",
   "cvx_display": "meningococcal B, unspecified",
@@ -97,6 +113,26 @@
   "cvx_display": "DTaP,IPV,Hib,HepB",
   "synonyms": [
    "vaxelis"
+  ]
+ },
+ {
+  "vaccine": "dtap-ipv-hib",
+  "cvx": "120",
+  "cvx_display": "DTaP-Hib-IPV",
+  "synonyms": [
+   "pentacel",
+   "dtap-ipv-hib",
+   "dtap-ipv/hib"
+  ]
+ },
+ {
+  "vaccine": "dtap-ipv",
+  "cvx": "130",
+  "cvx_display": "DTaP-IPV",
+  "synonyms": [
+   "kinrix",
+   "quadracel",
+   "dtap-ipv"
   ]
  },
  {
@@ -158,6 +194,15 @@
   "synonyms": [
    "nirsevimab",
    "beyfortus"
+  ]
+ },
+ {
+  "vaccine": "rsv monoclonal antibody clesrovimab",
+  "cvx": "332",
+  "cvx_display": "RSV, mAb, clesrovimab-cfor, 0.7 mL, neonate and infant, PF",
+  "synonyms": [
+   "clesrovimab",
+   "enflonsia"
   ]
  },
  {
@@ -227,6 +272,60 @@
   "cvx_display": "BCG",
   "synonyms": [
    "bcg"
+  ]
+ },
+ {
+  "vaccine": "cholera",
+  "cvx": "26",
+  "cvx_display": "cholera, unspecified formulation",
+  "synonyms": [
+   "cholera",
+   "vaxchora"
+  ]
+ },
+ {
+  "vaccine": "anthrax",
+  "cvx": "319",
+  "cvx_display": "Anthrax vaccine, unspecified",
+  "synonyms": [
+   "anthrax",
+   "biothrax",
+   "cyfendus"
+  ]
+ },
+ {
+  "vaccine": "dengue",
+  "cvx": "330",
+  "cvx_display": "Dengue fever, unspecified",
+  "synonyms": [
+   "dengue",
+   "dengvaxia"
+  ]
+ },
+ {
+  "vaccine": "chikungunya live",
+  "cvx": "317",
+  "cvx_display": "Chikungunya live attenuated vaccine, 0.5 mL, PF",
+  "synonyms": [
+   "ixchiq"
+  ]
+ },
+ {
+  "vaccine": "chikungunya vlp",
+  "cvx": "329",
+  "cvx_display": "Chikungunya, VLP, recombinant, 0.8 mL, PF",
+  "synonyms": [
+   "vimkunya"
+  ]
+ },
+ {
+  "vaccine": "tick-borne encephalitis",
+  "cvx": "222",
+  "cvx_display": "Tick-borne encephalitis, unspecified",
+  "synonyms": [
+   "tick-borne encephalitis",
+   "tick borne encephalitis",
+   "ticovac"
   ]
  }
 ]

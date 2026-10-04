@@ -454,7 +454,8 @@ DISEASE_NAMED_VACCINE_PHRASES = {
     "varicella", "chickenpox", "hepatitis a", "hep a", "hpv", "human papillomavirus", "meningococcal", "meningococcal b",
     "polio", "rotavirus", "rsv", "respiratory syncytial virus", "mpox", "monkeypox", "smallpox", "typhoid",
     "yellow fever", "rabies", "japanese encephalitis", "measles mumps rubella", "measles mumps and rubella",
-    "tetanus diphtheria", "haemophilus influenzae type b",
+    "tetanus diphtheria", "haemophilus influenzae type b", "cholera", "anthrax", "dengue",
+    "tick-borne encephalitis", "tick borne encephalitis",
 }
 
 

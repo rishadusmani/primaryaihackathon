@@ -2772,6 +2772,529 @@
   }
  },
  {
+  "loinc": "2458-8",
+  "display": "IgA",
+  "loinc_name": "IgA [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "iga level",
+   "immunoglobulin a",
+   "serum iga"
+  ],
+  "exact": [
+   "iga"
+  ],
+  "convert": {
+   "mg/dL": 1,
+   "g/L": 100
+  }
+ },
+ {
+  "loinc": "2465-3",
+  "display": "IgG",
+  "loinc_name": "IgG [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "igg level",
+   "immunoglobulin g",
+   "serum igg"
+  ],
+  "exact": [
+   "igg"
+  ],
+  "convert": {
+   "mg/dL": 1,
+   "g/L": 100
+  }
+ },
+ {
+  "loinc": "2472-9",
+  "display": "IgM",
+  "loinc_name": "IgM [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "igm level",
+   "immunoglobulin m",
+   "serum igm"
+  ],
+  "exact": [
+   "igm"
+  ],
+  "convert": {
+   "mg/dL": 1,
+   "g/L": 100
+  }
+ },
+ {
+  "loinc": "19113-0",
+  "display": "IgE",
+  "loinc_name": "IgE [Units/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "[IU]/mL",
+  "synonyms": [
+   "ige level",
+   "immunoglobulin e",
+   "total ige",
+   "serum ige"
+  ],
+  "exact": [
+   "ige"
+  ],
+  "convert": {
+   "IU/mL": 1,
+   "[IU]/mL": 1,
+   "kIU/L": 1,
+   "kU/L": 1
+  }
+ },
+ {
+  "loinc": "4485-9",
+  "display": "Complement C3",
+  "loinc_name": "Complement C3 [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "complement c3",
+   "c3 complement",
+   "c3 level"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1,
+   "g/L": 100
+  }
+ },
+ {
+  "loinc": "4498-2",
+  "display": "Complement C4",
+  "loinc_name": "Complement C4 [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/dL",
+  "synonyms": [
+   "complement c4",
+   "c4 complement",
+   "c4 level"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/dL": 1,
+   "g/L": 100
+  }
+ },
+ {
+  "loinc": "11572-5",
+  "display": "Rheumatoid factor",
+  "loinc_name": "Rheumatoid factor [Units/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "[IU]/mL",
+  "synonyms": [
+   "rheumatoid factor"
+  ],
+  "exact": [
+   "rf"
+  ],
+  "convert": {
+   "IU/mL": 1,
+   "[IU]/mL": 1,
+   "kIU/L": 1,
+   "kU/L": 1
+  }
+ },
+ {
+  "loinc": "8099-4",
+  "display": "TPO antibodies",
+  "loinc_name": "Thyroperoxidase Ab [Units/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "[IU]/mL",
+  "synonyms": [
+   "tpo antibodies",
+   "tpo antibody",
+   "thyroid peroxidase antibodies",
+   "anti-tpo",
+   "thyroperoxidase antibody"
+  ],
+  "exact": [],
+  "convert": {
+   "IU/mL": 1,
+   "[IU]/mL": 1,
+   "kIU/L": 1,
+   "kU/L": 1
+  }
+ },
+ {
+  "loinc": "3053-6",
+  "display": "T3, total",
+  "loinc_name": "Triiodothyronine (T3) [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "ng/dL",
+  "synonyms": [
+   "total t3",
+   "t3 total",
+   "triiodothyronine"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/dL": 1,
+   "nmol/L": 65.1
+  }
+ },
+ {
+  "loinc": "1992-7",
+  "display": "Calcitonin",
+  "loinc_name": "Calcitonin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "pg/mL",
+  "synonyms": [
+   "calcitonin level",
+   "serum calcitonin"
+  ],
+  "exact": [],
+  "convert": {
+   "pg/mL": 1,
+   "ng/L": 1
+  }
+ },
+ {
+  "loinc": "13967-5",
+  "display": "SHBG",
+  "loinc_name": "Sex hormone binding globulin [Moles/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "nmol/L",
+  "synonyms": [
+   "shbg",
+   "sex hormone binding globulin"
+  ],
+  "exact": [],
+  "convert": {
+   "nmol/L": 1
+  }
+ },
+ {
+  "loinc": "16935-9",
+  "display": "Hepatitis B surface antibody",
+  "loinc_name": "Hepatitis B virus surface Ab [Units/volume] in Serum",
+  "category": "lab",
+  "unit": "m[IU]/mL",
+  "synonyms": [
+   "hepatitis b surface antibody",
+   "hep b surface antibody",
+   "hbsab",
+   "anti-hbs"
+  ],
+  "exact": [],
+  "convert": {
+   "mIU/mL": 1,
+   "m[IU]/mL": 1
+  }
+ },
+ {
+  "loinc": "36916-5",
+  "display": "Free kappa light chains",
+  "loinc_name": "Kappa light chains.free [Mass/volume] in Serum",
+  "category": "lab",
+  "unit": "mg/L",
+  "synonyms": [
+   "free kappa light chains",
+   "kappa free light chains",
+   "free kappa"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/L": 1,
+   "mg/L FEU": 1,
+   "mg/dL": 10
+  }
+ },
+ {
+  "loinc": "33944-0",
+  "display": "Free lambda light chains",
+  "loinc_name": "Lambda light chains.free [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/L",
+  "synonyms": [
+   "free lambda light chains",
+   "lambda free light chains",
+   "free lambda"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/L": 1,
+   "mg/L FEU": 1,
+   "mg/dL": 10
+  }
+ },
+ {
+  "loinc": "1952-1",
+  "display": "Beta-2 microglobulin",
+  "loinc_name": "Beta-2-Microglobulin [Mass/volume] in Serum or Plasma",
+  "category": "lab",
+  "unit": "mg/L",
+  "synonyms": [
+   "beta-2 microglobulin",
+   "beta 2 microglobulin",
+   "b2 microglobulin"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/L": 1,
+   "mg/L FEU": 1,
+   "ug/mL": 1,
+   "mcg/mL": 1,
+   "µg/mL": 1,
+   "ug/mL FEU": 1,
+   "mcg/mL FEU": 1,
+   "µg/mL FEU": 1
+  }
+ },
+ {
+  "loinc": "1925-7",
+  "display": "Base excess",
+  "loinc_name": "Base excess in Arterial blood by calculation",
+  "category": "lab",
+  "unit": "mmol/L",
+  "synonyms": [
+   "base excess"
+  ],
+  "exact": [],
+  "convert": {
+   "mmol/L": 1,
+   "mEq/L": 1
+  }
+ },
+ {
+  "loinc": "20563-3",
+  "display": "Carboxyhemoglobin",
+  "loinc_name": "Carboxyhemoglobin/Hemoglobin.total in Blood",
+  "category": "lab",
+  "unit": "%",
+  "synonyms": [
+   "carboxyhemoglobin",
+   "carboxyhaemoglobin",
+   "cohb"
+  ],
+  "exact": [],
+  "convert": {
+   "%": 1,
+   "percent": 1,
+   "pct": 1
+  }
+ },
+ {
+  "loinc": "3520-4",
+  "display": "Cyclosporine level",
+  "loinc_name": "cycloSPORINE [Mass/volume] in Blood",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "cyclosporine level",
+   "cyclosporine trough",
+   "ciclosporin level"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "50544-6",
+  "display": "Everolimus level",
+  "loinc_name": "Everolimus [Mass/volume] in Blood",
+  "category": "lab",
+  "unit": "ng/mL",
+  "synonyms": [
+   "everolimus level",
+   "everolimus trough"
+  ],
+  "exact": [],
+  "convert": {
+   "ng/mL": 1,
+   "ug/L": 1,
+   "mcg/L": 1,
+   "µg/L": 1
+  }
+ },
+ {
+  "loinc": "764-1",
+  "display": "Band neutrophils",
+  "loinc_name": "Band form neutrophils/Leukocytes in Blood by Manual count",
+  "category": "lab",
+  "unit": "%",
+  "synonyms": [
+   "band neutrophils",
+   "band forms"
+  ],
+  "exact": [
+   "bands"
+  ],
+  "convert": {
+   "%": 1,
+   "percent": 1,
+   "pct": 1
+  }
+ },
+ {
+  "loinc": "14196-0",
+  "display": "Reticulocyte count, absolute",
+  "loinc_name": "Reticulocytes [#/volume] in Blood",
+  "category": "lab",
+  "unit": "10*3/uL",
+  "synonyms": [
+   "absolute reticulocyte count",
+   "reticulocyte count absolute"
+  ],
+  "exact": [],
+  "convert": {
+   "10*3/uL": 1,
+   "10^3/uL": 1,
+   "x10^3/uL": 1,
+   "x10e3/uL": 1,
+   "K/uL": 1,
+   "K/mcL": 1,
+   "thou/uL": 1,
+   "10*9/L": 1,
+   "10^9/L": 1,
+   "x10^9/L": 1,
+   "x10e9/L": 1,
+   "10*6/uL": 1000,
+   "10^6/uL": 1000,
+   "x10^6/uL": 1000,
+   "x10e6/uL": 1000,
+   "M/uL": 1000,
+   "mil/uL": 1000
+  }
+ },
+ {
+  "loinc": "11011-4",
+  "display": "HCV viral load",
+  "loinc_name": "Hepatitis C virus RNA [Units/volume] (viral load) in Serum or Plasma by NAA with probe detection",
+  "category": "lab",
+  "unit": "[IU]/mL",
+  "synonyms": [
+   "hcv viral load",
+   "hepatitis c viral load",
+   "hcv rna"
+  ],
+  "exact": [],
+  "convert": {
+   "IU/mL": 1,
+   "[IU]/mL": 1,
+   "kIU/L": 1,
+   "kU/L": 1
+  }
+ },
+ {
+  "loinc": "20447-9",
+  "display": "HIV viral load",
+  "loinc_name": "HIV 1 RNA [#/volume] (viral load) in Serum or Plasma by NAA with probe detection",
+  "category": "lab",
+  "unit": "{copies}/mL",
+  "synonyms": [
+   "hiv viral load",
+   "hiv rna",
+   "hiv-1 rna"
+  ],
+  "exact": [],
+  "convert": {
+   "copies/mL": 1,
+   "{copies}/mL": 1,
+   "cp/mL": 1
+  }
+ },
+ {
+  "loinc": "2695-5",
+  "display": "Osmolality, urine",
+  "loinc_name": "Osmolality of Urine",
+  "category": "lab",
+  "unit": "mosm/kg",
+  "synonyms": [
+   "urine osmolality",
+   "osmolality urine"
+  ],
+  "exact": [],
+  "convert": {
+   "mOsm/kg": 1,
+   "mosm/kg": 1,
+   "mmol/kg": 1
+  }
+ },
+ {
+  "loinc": "2890-2",
+  "display": "Protein/creatinine ratio, urine",
+  "loinc_name": "Protein/Creatinine [Mass Ratio] in Urine",
+  "category": "lab",
+  "unit": "mg/g",
+  "synonyms": [
+   "urine protein creatinine ratio",
+   "protein/creatinine ratio",
+   "upcr"
+  ],
+  "exact": [],
+  "convert": {
+   "mg/g": 1,
+   "mg/g creat": 1,
+   "mg/gCr": 1
+  }
+ },
+ {
+  "loinc": "8478-0",
+  "display": "Mean arterial pressure",
+  "loinc_name": "Mean blood pressure",
+  "category": "vital",
+  "unit": "mm[Hg]",
+  "synonyms": [
+   "mean arterial pressure",
+   "mean blood pressure"
+  ],
+  "exact": [
+   "map"
+  ],
+  "convert": {
+   "mm[Hg]": 1,
+   "mmHg": 1
+  }
+ },
+ {
+  "loinc": "3150-0",
+  "display": "FiO2",
+  "loinc_name": "Inhaled oxygen concentration",
+  "category": "vital",
+  "unit": "%",
+  "synonyms": [
+   "inhaled oxygen concentration",
+   "fio2"
+  ],
+  "exact": [],
+  "convert": {
+   "%": 1,
+   "percent": 1,
+   "pct": 1
+  }
+ },
+ {
+  "loinc": "3151-8",
+  "display": "Oxygen flow rate",
+  "loinc_name": "Inhaled oxygen flow rate",
+  "category": "vital",
+  "unit": "L/min",
+  "synonyms": [
+   "oxygen flow rate",
+   "o2 flow rate",
+   "oxygen flow"
+  ],
+  "exact": [],
+  "convert": {
+   "L/min": 1,
+   "lpm": 1,
+   "liters/min": 1
+  }
+ },
+ {
   "loinc": "9279-1",
   "loinc_name": "Respiratory rate",
   "synonyms": [

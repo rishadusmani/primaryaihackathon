@@ -3311,5 +3311,1298 @@
    "hypocalcaemia"
   ],
   "exact": []
+ },
+ {
+  "icd10": "L73.2",
+  "display": "Hidradenitis suppurativa",
+  "snomed": "59393003",
+  "snomed_display": "Hidradenitis suppurativa",
+  "synonyms": [
+   "hidradenitis suppurativa",
+   "hidradenitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "L63.9",
+  "display": "Alopecia areata, unspecified",
+  "snomed": "68225006",
+  "snomed_display": "Alopecia areata",
+  "synonyms": [
+   "alopecia areata"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "L82.1",
+  "display": "Other seborrheic keratosis",
+  "snomed": "394726009",
+  "snomed_display": "Seborrheic keratosis",
+  "synonyms": [
+   "seborrheic keratosis",
+   "seborrhoeic keratosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "L57.0",
+  "display": "Actinic keratosis",
+  "snomed": "201101007",
+  "snomed_display": "Actinic keratosis",
+  "synonyms": [
+   "actinic keratosis",
+   "solar keratosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "L01.00",
+  "display": "Impetigo, unspecified",
+  "snomed": "48277006",
+  "snomed_display": "Impetigo",
+  "synonyms": [
+   "impetigo"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R21",
+  "display": "Rash and other nonspecific skin eruption",
+  "snomed": "271807003",
+  "snomed_display": "Eruption",
+  "synonyms": [
+   "skin rash",
+   "rash"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I89.0",
+  "display": "Lymphedema, not elsewhere classified",
+  "snomed": "234097001",
+  "snomed_display": "Lymphedema",
+  "synonyms": [
+   "lymphedema",
+   "lymphoedema"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I80.9",
+  "display": "Phlebitis and thrombophlebitis of unspecified site",
+  "snomed": "64156001",
+  "snomed_display": "Thrombophlebitis",
+  "synonyms": [
+   "thrombophlebitis",
+   "superficial thrombophlebitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I71.00",
+  "display": "Dissection of unspecified site of aorta",
+  "snomed": "308546005",
+  "snomed_display": "Dissection of aorta",
+  "synonyms": [
+   "aortic dissection",
+   "dissection of aorta"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I65.29",
+  "display": "Occlusion and stenosis of unspecified carotid artery",
+  "snomed": "64586002",
+  "snomed_display": "Carotid artery stenosis",
+  "synonyms": [
+   "carotid artery stenosis",
+   "carotid stenosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I34.1",
+  "display": "Nonrheumatic mitral (valve) prolapse",
+  "snomed": "409712001",
+  "snomed_display": "Mitral valve prolapse",
+  "synonyms": [
+   "mitral valve prolapse"
+  ],
+  "exact": [
+   "mvp"
+  ]
+ },
+ {
+  "icd10": "I45.6",
+  "display": "Pre-excitation syndrome",
+  "snomed": "74390002",
+  "snomed_display": "Wolff-Parkinson-White pattern",
+  "synonyms": [
+   "wolff-parkinson-white",
+   "wolff parkinson white"
+  ],
+  "exact": [
+   "wpw"
+  ]
+ },
+ {
+  "icd10": "I49.5",
+  "display": "Sick sinus syndrome",
+  "snomed": "36083008",
+  "snomed_display": "Sick sinus syndrome",
+  "synonyms": [
+   "sick sinus syndrome"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R00.1",
+  "display": "Bradycardia, unspecified",
+  "snomed": "48867003",
+  "snomed_display": "Bradycardia",
+  "synonyms": [
+   "bradycardia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R00.0",
+  "display": "Tachycardia, unspecified",
+  "snomed": "3424008",
+  "snomed_display": "Tachycardia",
+  "synonyms": [
+   "tachycardia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R00.2",
+  "display": "Palpitations",
+  "snomed": "80313002",
+  "snomed_display": "Palpitations",
+  "synonyms": [
+   "palpitations"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R55",
+  "display": "Syncope and collapse",
+  "snomed": "271594007",
+  "snomed_display": "Syncope",
+  "synonyms": [
+   "syncope",
+   "fainting"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I95.1",
+  "display": "Orthostatic hypotension",
+  "snomed": "28651003",
+  "snomed_display": "Orthostatic hypotension",
+  "synonyms": [
+   "orthostatic hypotension",
+   "postural hypotension"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I38",
+  "display": "Endocarditis, valve unspecified",
+  "snomed": "56819008",
+  "snomed_display": "Endocarditis",
+  "synonyms": [
+   "endocarditis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I31.39",
+  "display": "Other pericardial effusion (noninflammatory)",
+  "snomed": "373945007",
+  "snomed_display": "Pericardial effusion",
+  "synonyms": [
+   "pericardial effusion"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I27.81",
+  "display": "Cor pulmonale (chronic)",
+  "snomed": "83291003",
+  "snomed_display": "Cor pulmonale",
+  "synonyms": [
+   "cor pulmonale"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I85.00",
+  "display": "Esophageal varices without bleeding",
+  "snomed": "28670008",
+  "snomed_display": "Esophageal varices",
+  "synonyms": [
+   "esophageal varices",
+   "oesophageal varices"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E78.2",
+  "display": "Mixed hyperlipidemia",
+  "snomed": "267434003",
+  "snomed_display": "Mixed hyperlipidemia",
+  "synonyms": [
+   "mixed hyperlipidemia",
+   "combined hyperlipidemia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R05.3",
+  "display": "Chronic cough",
+  "snomed": "68154008",
+  "snomed_display": "Chronic cough",
+  "synonyms": [
+   "chronic cough"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R04.2",
+  "display": "Hemoptysis",
+  "snomed": "66857006",
+  "snomed_display": "Hemoptysis",
+  "synonyms": [
+   "hemoptysis",
+   "haemoptysis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "J03.90",
+  "display": "Acute tonsillitis, unspecified",
+  "snomed": "90176007",
+  "snomed_display": "Tonsillitis",
+  "synonyms": [
+   "tonsillitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "J04.0",
+  "display": "Acute laryngitis",
+  "snomed": "45913009",
+  "snomed_display": "Laryngitis",
+  "synonyms": [
+   "laryngitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "J69.0",
+  "display": "Pneumonitis due to inhalation of food and vomit",
+  "snomed": "422588002",
+  "snomed_display": "Aspiration pneumonia",
+  "synonyms": [
+   "aspiration pneumonia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R91.1",
+  "display": "Solitary pulmonary nodule",
+  "snomed": "427359005",
+  "snomed_display": "Solitary nodule of lung",
+  "synonyms": [
+   "pulmonary nodule",
+   "lung nodule",
+   "solitary pulmonary nodule"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "J96.90",
+  "display": "Respiratory failure, unspecified, unspecified whether with hypoxia or hypercapnia",
+  "snomed": "409622000",
+  "snomed_display": "Respiratory failure",
+  "synonyms": [
+   "respiratory failure"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "J80",
+  "display": "Acute respiratory distress syndrome",
+  "snomed": "67782005",
+  "snomed_display": "Acute respiratory distress syndrome",
+  "synonyms": [
+   "acute respiratory distress syndrome"
+  ],
+  "exact": [
+   "ards"
+  ]
+ },
+ {
+  "icd10": "R09.02",
+  "display": "Hypoxemia",
+  "snomed": "389087006",
+  "snomed_display": "Hypoxemia",
+  "synonyms": [
+   "hypoxemia",
+   "hypoxaemia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "H01.009",
+  "display": "Unspecified blepharitis unspecified eye, unspecified eyelid",
+  "snomed": "41446000",
+  "snomed_display": "Blepharitis",
+  "synonyms": [
+   "blepharitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "H81.09",
+  "display": "Meniere's disease, unspecified ear",
+  "snomed": "13445001",
+  "snomed_display": "Ménière's disease",
+  "synonyms": [
+   "meniere's disease",
+   "meniere disease",
+   "ménière's disease"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K22.70",
+  "display": "Barrett's esophagus without dysplasia",
+  "snomed": "302914006",
+  "snomed_display": "Barrett's esophagus",
+  "synonyms": [
+   "barrett's esophagus",
+   "barrett esophagus",
+   "barrett's oesophagus"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K20.0",
+  "display": "Eosinophilic esophagitis",
+  "snomed": "235599003",
+  "snomed_display": "Eosinophilic esophagitis",
+  "synonyms": [
+   "eosinophilic esophagitis",
+   "eosinophilic oesophagitis"
+  ],
+  "exact": [
+   "eoe"
+  ]
+ },
+ {
+  "icd10": "K22.0",
+  "display": "Achalasia of cardia",
+  "snomed": "45564002",
+  "snomed_display": "Achalasia of esophagus",
+  "synonyms": [
+   "achalasia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K60.2",
+  "display": "Anal fissure, unspecified",
+  "snomed": "30037006",
+  "snomed_display": "Anal fissure",
+  "synonyms": [
+   "anal fissure"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K76.82",
+  "display": "Hepatic encephalopathy",
+  "snomed": "13920009",
+  "snomed_display": "Hepatic encephalopathy",
+  "synonyms": [
+   "hepatic encephalopathy"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R18.8",
+  "display": "Other ascites",
+  "snomed": "389026000",
+  "snomed_display": "Ascites",
+  "synonyms": [
+   "ascites"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K76.6",
+  "display": "Portal hypertension",
+  "snomed": "34742003",
+  "snomed_display": "Portal hypertension",
+  "synonyms": [
+   "portal hypertension"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K56.609",
+  "display": "Unspecified intestinal obstruction, unspecified as to partial versus complete obstruction",
+  "snomed": "81060008",
+  "snomed_display": "Intestinal obstruction",
+  "synonyms": [
+   "bowel obstruction",
+   "small bowel obstruction",
+   "intestinal obstruction"
+  ],
+  "exact": [
+   "sbo"
+  ]
+ },
+ {
+  "icd10": "K37",
+  "display": "Unspecified appendicitis",
+  "snomed": "74400008",
+  "snomed_display": "Appendicitis",
+  "synonyms": [
+   "appendicitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R13.10",
+  "display": "Dysphagia, unspecified",
+  "snomed": "40739000",
+  "snomed_display": "Dysphagia",
+  "synonyms": [
+   "dysphagia",
+   "difficulty swallowing"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "D70.9",
+  "display": "Neutropenia, unspecified",
+  "snomed": "165517008",
+  "snomed_display": "Neutropenia",
+  "synonyms": [
+   "neutropenia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "D72.829",
+  "display": "Elevated white blood cell count, unspecified",
+  "snomed": "111583006",
+  "snomed_display": "Leukocytosis",
+  "synonyms": [
+   "leukocytosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "D56.9",
+  "display": "Thalassemia, unspecified",
+  "snomed": "40108008",
+  "snomed_display": "Thalassemia",
+  "synonyms": [
+   "thalassemia",
+   "thalassaemia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "D68.00",
+  "display": "Von Willebrand disease, unspecified",
+  "snomed": "128105004",
+  "snomed_display": "von Willebrand disorder",
+  "synonyms": [
+   "von willebrand disease"
+  ],
+  "exact": [
+   "vwd"
+  ]
+ },
+ {
+  "icd10": "D68.61",
+  "display": "Antiphospholipid syndrome",
+  "snomed": "26843008",
+  "snomed_display": "Antiphospholipid syndrome",
+  "synonyms": [
+   "antiphospholipid syndrome",
+   "antiphospholipid antibody syndrome"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E87.0",
+  "display": "Hyperosmolality and hypernatremia",
+  "snomed": "771115008",
+  "snomed_display": "Hypernatremia",
+  "synonyms": [
+   "hypernatremia",
+   "hypernatraemia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E79.0",
+  "display": "Hyperuricemia without signs of inflammatory arthritis and tophaceous disease",
+  "snomed": "35885006",
+  "snomed_display": "Hyperuricemia",
+  "synonyms": [
+   "hyperuricemia",
+   "hyperuricaemia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E26.9",
+  "display": "Hyperaldosteronism, unspecified",
+  "snomed": "88213004",
+  "snomed_display": "Hyperaldosteronism",
+  "synonyms": [
+   "hyperaldosteronism",
+   "primary aldosteronism"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "D35.00",
+  "display": "Benign neoplasm of unspecified adrenal gland",
+  "snomed": "302835009",
+  "snomed_display": "Pheochromocytoma",
+  "synonyms": [
+   "pheochromocytoma",
+   "phaeochromocytoma"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E22.1",
+  "display": "Hyperprolactinemia",
+  "snomed": "237662005",
+  "snomed_display": "Hyperprolactinemia",
+  "synonyms": [
+   "hyperprolactinemia",
+   "hyperprolactinaemia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "D35.2",
+  "display": "Benign neoplasm of pituitary gland",
+  "snomed": "254956000",
+  "snomed_display": "Pituitary adenoma",
+  "synonyms": [
+   "pituitary adenoma"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E04.9",
+  "display": "Nontoxic goiter, unspecified",
+  "snomed": "3716002",
+  "snomed_display": "Goiter",
+  "synonyms": [
+   "goiter",
+   "goitre"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E05.00",
+  "display": "Thyrotoxicosis with diffuse goiter without thyrotoxic crisis or storm",
+  "snomed": "353295004",
+  "snomed_display": "Graves' disease",
+  "synonyms": [
+   "graves disease",
+   "graves' disease"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E29.1",
+  "display": "Testicular hypofunction",
+  "snomed": "48130008",
+  "snomed_display": "Hypogonadism",
+  "synonyms": [
+   "hypogonadism",
+   "low testosterone"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M85.80",
+  "display": "Other specified disorders of bone density and structure, unspecified site",
+  "snomed": "312894000",
+  "snomed_display": "Osteopenia",
+  "synonyms": [
+   "osteopenia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M71.9",
+  "display": "Bursopathy, unspecified",
+  "snomed": "84017003",
+  "snomed_display": "Bursitis",
+  "synonyms": [
+   "bursitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M77.9",
+  "display": "Enthesopathy, unspecified",
+  "snomed": "34840004",
+  "snomed_display": "Tendinitis",
+  "synonyms": [
+   "tendinitis",
+   "tendonitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M48.00",
+  "display": "Spinal stenosis, site unspecified",
+  "snomed": "76107001",
+  "snomed_display": "Spinal stenosis",
+  "synonyms": [
+   "spinal stenosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M35.00",
+  "display": "Sjogren syndrome, unspecified",
+  "snomed": "83901003",
+  "snomed_display": "Sjögren's syndrome",
+  "synonyms": [
+   "sjogren's syndrome",
+   "sjogren syndrome",
+   "sjögren's syndrome"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "L40.50",
+  "display": "Arthropathic psoriasis, unspecified",
+  "snomed": "156370009",
+  "snomed_display": "Psoriatic arthritis",
+  "synonyms": [
+   "psoriatic arthritis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G50.0",
+  "display": "Trigeminal neuralgia",
+  "snomed": "31681005",
+  "snomed_display": "Trigeminal neuralgia",
+  "synonyms": [
+   "trigeminal neuralgia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G70.00",
+  "display": "Myasthenia gravis without (acute) exacerbation",
+  "snomed": "91637004",
+  "snomed_display": "Myasthenia gravis",
+  "synonyms": [
+   "myasthenia gravis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G12.21",
+  "display": "Amyotrophic lateral sclerosis",
+  "snomed": "86044005",
+  "snomed_display": "Amyotrophic lateral sclerosis",
+  "synonyms": [
+   "amyotrophic lateral sclerosis",
+   "lou gehrig's disease"
+  ],
+  "exact": [
+   "als"
+  ]
+ },
+ {
+  "icd10": "G10",
+  "display": "Huntington's disease",
+  "snomed": "58756001",
+  "snomed_display": "Huntington's chorea",
+  "synonyms": [
+   "huntington's disease",
+   "huntington disease"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G47.419",
+  "display": "Narcolepsy without cataplexy",
+  "snomed": "60380001",
+  "snomed_display": "Narcolepsy",
+  "synonyms": [
+   "narcolepsy"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G91.9",
+  "display": "Hydrocephalus, unspecified",
+  "snomed": "230745008",
+  "snomed_display": "Hydrocephalus",
+  "synonyms": [
+   "hydrocephalus"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F05",
+  "display": "Delirium due to known physiological condition",
+  "snomed": "2776000",
+  "snomed_display": "Delirium",
+  "synonyms": [
+   "delirium"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R56.9",
+  "display": "Unspecified convulsions",
+  "snomed": "91175000",
+  "snomed_display": "Seizure",
+  "synonyms": [
+   "seizure",
+   "seizures"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G44.009",
+  "display": "Cluster headache syndrome, unspecified, not intractable",
+  "snomed": "193031009",
+  "snomed_display": "Cluster headache",
+  "synonyms": [
+   "cluster headache",
+   "cluster headaches"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B02.29",
+  "display": "Other postherpetic nervous system involvement",
+  "snomed": "2177002",
+  "snomed_display": "Postherpetic neuralgia",
+  "synonyms": [
+   "postherpetic neuralgia",
+   "post-herpetic neuralgia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G80.9",
+  "display": "Cerebral palsy, unspecified",
+  "snomed": "128188000",
+  "snomed_display": "Cerebral palsy",
+  "synonyms": [
+   "cerebral palsy"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R48.0",
+  "display": "Dyslexia and alexia",
+  "snomed": "59770006",
+  "snomed_display": "Dyslexia",
+  "synonyms": [
+   "dyslexia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R33.9",
+  "display": "Retention of urine, unspecified",
+  "snomed": "267064002",
+  "snomed_display": "Retention of urine",
+  "synonyms": [
+   "urinary retention"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R80.9",
+  "display": "Proteinuria, unspecified",
+  "snomed": "29738008",
+  "snomed_display": "Proteinuria",
+  "synonyms": [
+   "proteinuria"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "N41.9",
+  "display": "Inflammatory disease of prostate, unspecified",
+  "snomed": "9713002",
+  "snomed_display": "Prostatitis",
+  "synonyms": [
+   "prostatitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "O00.90",
+  "display": "Unspecified ectopic pregnancy without intrauterine pregnancy",
+  "snomed": "34801009",
+  "snomed_display": "Ectopic pregnancy",
+  "synonyms": [
+   "ectopic pregnancy"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "O03.9",
+  "display": "Complete or unspecified spontaneous abortion without complication",
+  "snomed": "17369002",
+  "snomed_display": "Miscarriage",
+  "synonyms": [
+   "miscarriage",
+   "spontaneous abortion"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "O21.0",
+  "display": "Mild hyperemesis gravidarum",
+  "snomed": "14094001",
+  "snomed_display": "Hyperemesis gravidarum",
+  "synonyms": [
+   "hyperemesis gravidarum"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F53.0",
+  "display": "Postpartum depression",
+  "snomed": "58703003",
+  "snomed_display": "Postpartum depression",
+  "synonyms": [
+   "postpartum depression",
+   "postnatal depression"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B37.9",
+  "display": "Candidiasis, unspecified",
+  "snomed": "78048006",
+  "snomed_display": "Candidiasis",
+  "synonyms": [
+   "candidiasis",
+   "yeast infection"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B54",
+  "display": "Unspecified malaria",
+  "snomed": "61462000",
+  "snomed_display": "Malaria",
+  "synonyms": [
+   "malaria"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R60.9",
+  "display": "Edema, unspecified",
+  "snomed": "267038008",
+  "snomed_display": "Edema",
+  "synonyms": [
+   "edema",
+   "oedema",
+   "swelling of legs"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "Q05.9",
+  "display": "Spina bifida, unspecified",
+  "snomed": "67531005",
+  "snomed_display": "Spina bifida",
+  "synonyms": [
+   "spina bifida"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R62.51",
+  "display": "Failure to thrive (child)",
+  "snomed": "54840006",
+  "snomed_display": "Failure to thrive",
+  "synonyms": [
+   "failure to thrive"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "L89.90",
+  "display": "Pressure ulcer of unspecified site, unspecified stage",
+  "snomed": "1163215007",
+  "snomed_display": "Pressure injury",
+  "synonyms": [
+   "pressure ulcer",
+   "pressure injury",
+   "decubitus ulcer",
+   "bed sore"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "L29.9",
+  "display": "Pruritus, unspecified",
+  "snomed": "418363000",
+  "snomed_display": "Itching of skin",
+  "synonyms": [
+   "pruritus",
+   "itching"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I49.3",
+  "display": "Ventricular premature depolarization",
+  "snomed": "251175005",
+  "snomed_display": "Ventricular premature complex",
+  "synonyms": [
+   "premature ventricular contractions",
+   "ventricular premature beats",
+   "pvcs"
+  ],
+  "exact": [
+   "pvc"
+  ]
+ },
+ {
+  "icd10": "R01.1",
+  "display": "Cardiac murmur, unspecified",
+  "snomed": "88610006",
+  "snomed_display": "Heart murmur",
+  "synonyms": [
+   "heart murmur",
+   "cardiac murmur"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I87.2",
+  "display": "Venous insufficiency (chronic) (peripheral)",
+  "snomed": "20696009",
+  "snomed_display": "Peripheral venous insufficiency",
+  "synonyms": [
+   "chronic venous insufficiency",
+   "venous insufficiency"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "I96",
+  "display": "Gangrene, not elsewhere classified",
+  "snomed": "372070002",
+  "snomed_display": "Gangrenous disorder",
+  "synonyms": [
+   "gangrene"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R04.0",
+  "display": "Epistaxis",
+  "snomed": "249366005",
+  "snomed_display": "Bleeding from nose",
+  "synonyms": [
+   "epistaxis",
+   "nosebleed"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K31.84",
+  "display": "Gastroparesis",
+  "snomed": "235675006",
+  "snomed_display": "Gastroparesis syndrome",
+  "synonyms": [
+   "gastroparesis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "B96.81",
+  "display": "Helicobacter pylori [H. pylori] as the cause of diseases classified elsewhere",
+  "snomed": "721730009",
+  "snomed_display": "Infection caused by Helicobacter pylori",
+  "synonyms": [
+   "h. pylori infection",
+   "helicobacter pylori infection",
+   "h pylori infection"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "K57.30",
+  "display": "Diverticulosis of large intestine without perforation or abscess without bleeding",
+  "snomed": "733657002",
+  "snomed_display": "Diverticulosis of colon",
+  "synonyms": [
+   "diverticulosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "E73.9",
+  "display": "Lactose intolerance, unspecified",
+  "snomed": "782415009",
+  "snomed_display": "Intolerance to lactose",
+  "synonyms": [
+   "lactose intolerance"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "D45",
+  "display": "Polycythemia vera",
+  "snomed": "109992005",
+  "snomed_display": "Polycythemia vera (clinical)",
+  "synonyms": [
+   "polycythemia vera"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "D51.0",
+  "display": "Vitamin B12 deficiency anemia due to intrinsic factor deficiency",
+  "snomed": "84027009",
+  "snomed_display": "Pernicious anemia",
+  "synonyms": [
+   "pernicious anemia",
+   "pernicious anaemia"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "D68.51",
+  "display": "Activated protein C resistance",
+  "snomed": "421527008",
+  "snomed_display": "Resistance to activated protein C due to factor V Leiden mutation",
+  "synonyms": [
+   "factor v leiden"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "D47.2",
+  "display": "Monoclonal gammopathy",
+  "snomed": "277577000",
+  "snomed_display": "Monoclonal gammopathy of uncertain significance",
+  "synonyms": [
+   "monoclonal gammopathy of undetermined significance",
+   "monoclonal gammopathy of uncertain significance",
+   "monoclonal gammopathy"
+  ],
+  "exact": [
+   "mgus"
+  ]
+ },
+ {
+  "icd10": "D46.9",
+  "display": "Myelodysplastic syndrome, unspecified",
+  "snomed": "109995007",
+  "snomed_display": "Myelodysplastic syndrome (clinical)",
+  "synonyms": [
+   "myelodysplastic syndrome"
+  ],
+  "exact": [
+   "mds"
+  ]
+ },
+ {
+  "icd10": "E88.810",
+  "display": "Metabolic syndrome",
+  "snomed": "237602007",
+  "snomed_display": "Metabolic syndrome X",
+  "synonyms": [
+   "metabolic syndrome"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M75.100",
+  "display": "Unspecified rotator cuff tear or rupture of unspecified shoulder, not specified as traumatic",
+  "snomed": "926335004",
+  "snomed_display": "Rupture of rotator cuff of shoulder",
+  "synonyms": [
+   "rotator cuff tear"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M41.9",
+  "display": "Scoliosis, unspecified",
+  "snomed": "298382003",
+  "snomed_display": "Scoliosis deformity of spine",
+  "synonyms": [
+   "scoliosis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M11.20",
+  "display": "Other chondrocalcinosis, unspecified site",
+  "snomed": "201637001",
+  "snomed_display": "Chondrocalcinosis caused by pyrophosphate crystals",
+  "synonyms": [
+   "pseudogout",
+   "cppd disease"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M25.50",
+  "display": "Pain in unspecified joint",
+  "snomed": "57676002",
+  "snomed_display": "Pain of joint",
+  "synonyms": [
+   "arthralgia",
+   "joint pain"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M25.569",
+  "display": "Pain in unspecified knee",
+  "snomed": "1003722009",
+  "snomed_display": "Pain of knee region",
+  "synonyms": [
+   "knee pain"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M25.519",
+  "display": "Pain in unspecified shoulder",
+  "snomed": "45326000",
+  "snomed_display": "Pain of shoulder region",
+  "synonyms": [
+   "shoulder pain"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M25.559",
+  "display": "Pain in unspecified hip",
+  "snomed": "49218002",
+  "snomed_display": "Pain of hip region",
+  "synonyms": [
+   "hip pain"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "R25.2",
+  "display": "Cramp and spasm",
+  "snomed": "55300003",
+  "snomed_display": "Cramp",
+  "synonyms": [
+   "muscle cramps",
+   "muscle cramp"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "F95.2",
+  "display": "Tourette's disorder",
+  "snomed": "5158005",
+  "snomed_display": "Gilles de la Tourette's syndrome",
+  "synonyms": [
+   "tourette syndrome",
+   "tourette's syndrome",
+   "tourette's disorder"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "G31.84",
+  "display": "Mild cognitive impairment of uncertain or unknown etiology",
+  "snomed": "386805003",
+  "snomed_display": "Mild neurocognitive disorder",
+  "synonyms": [
+   "mild cognitive impairment"
+  ],
+  "exact": [
+   "mci"
+  ]
+ },
+ {
+  "icd10": "N32.81",
+  "display": "Overactive bladder",
+  "snomed": "786457000",
+  "snomed_display": "Overactive urinary bladder",
+  "synonyms": [
+   "overactive bladder"
+  ],
+  "exact": [
+   "oab"
+  ]
+ },
+ {
+  "icd10": "R31.9",
+  "display": "Hematuria, unspecified",
+  "snomed": "34436003",
+  "snomed_display": "Blood in urine",
+  "synonyms": [
+   "hematuria",
+   "haematuria"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "Q90.9",
+  "display": "Down syndrome, unspecified",
+  "snomed": "41040004",
+  "snomed_display": "Complete trisomy 21 syndrome",
+  "synonyms": [
+   "down syndrome",
+   "trisomy 21"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "M72.20",
+  "display": "Plantar fascial fibromatosis, unspecified foot",
+  "snomed": "202882003",
+  "snomed_display": "Plantar fasciitis",
+  "synonyms": [
+   "plantar fasciitis"
+  ],
+  "exact": []
+ },
+ {
+  "icd10": "C45.9",
+  "display": "Mesothelioma, unspecified",
+  "snomed": "109378008",
+  "snomed_display": "Mesothelioma (malignant, clinical disorder)",
+  "synonyms": [
+   "mesothelioma"
+  ],
+  "exact": []
  }
 ]
