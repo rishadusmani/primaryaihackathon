@@ -47,6 +47,13 @@ class TerminologyTest(unittest.TestCase):
         self.assertEqual(T.parse_frequency("1 tab PO BID")["per_day"], 2)
         self.assertEqual(T.parse_frequency("every 2 weeks")["code"], "Q2WK")
         self.assertTrue(T.parse_frequency("q6h prn pain")["prn"])
+        # a multi-dose phrase wins over the bare "daily"/"weekly" inside it
+        for phrase, code in (("twice daily", "BID"), ("1000 mg twice daily", "BID"), ("two times daily", "BID"),
+                             ("2x daily", "BID"), ("three times daily", "TID"), ("thrice daily", "TID"),
+                             ("4 times daily", "QID"), ("twice weekly", "BIW"), ("3 times weekly", "TIW"),
+                             ("daily", "QD"), ("once daily", "QD"), ("weekly", "QWK"),
+                             ("daily and at bedtime", "QD")):
+            self.assertEqual(T.parse_frequency(phrase)["code"], code, phrase)
 
 
 class TextExtractionTest(unittest.TestCase):
@@ -120,6 +127,7 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(meds["albuterol"]["status"], "stopped")
         self.assertEqual(meds["dupilumab"]["frequency"]["code"], "Q2WK")
         self.assertEqual(meds["dupilumab"]["route"], "subcutaneous")
+        self.assertEqual(meds["metformin"]["frequency"]["code"], "BID")
 
     def test_conflicts_surface(self):
         types = {c["type"] for c in self.rec["conflicts"]}

@@ -173,16 +173,22 @@ def lookup_medication(text: str | None = None, code: str | None = None) -> dict 
 
 
 FREQUENCIES = [
-    # (regex, code, per_day, display)
+    # (regex, code, per_day, display). Order breaks ties between separate mentions; a pattern matched inside a
+    # longer match of another ("daily" in "twice daily", "weekly" in "twice weekly") does not count.
     (r"\b(q\.?d\.?|daily|once (a )?day|once daily|every day|qam|q ?am|every morning|1 ?x ?(a |per )?day)\b",
      "QD", 1, "once daily"),
-    (r"\b(b\.?i\.?d\.?|twice (a )?day|twice daily|2 ?x ?(a |per )?day|every 12 ?(h|hours|hrs)|q12h)\b",
-     "BID", 2, "twice daily"),
-    (r"\b(t\.?i\.?d\.?|three times (a )?day|three times daily|3 ?x ?(a |per )?day|q8h|every 8 ?(h|hours))\b",
-     "TID", 3, "three times daily"),
-    (r"\b(q\.?i\.?d\.?|four times (a )?day|four times daily|q6h|every 6 ?(h|hours))\b", "QID", 4, "four times daily"),
+    (r"\b(b\.?i\.?d\.?|(twice|two times|2 times) (a |per )?day|(twice|two times|2 times) daily|2 ?x ?(a |per )?day|"
+     r"2 ?x daily|every 12 ?(h|hours|hrs)|q12h)\b", "BID", 2, "twice daily"),
+    (r"\b(t\.?i\.?d\.?|(three|3) times (a |per )?day|(three|3) times daily|thrice daily|3 ?x ?(a |per )?day|"
+     r"3 ?x daily|q8h|every 8 ?(h|hours))\b", "TID", 3, "three times daily"),
+    (r"\b(q\.?i\.?d\.?|(four|4) times (a |per )?day|(four|4) times daily|4 ?x daily|q6h|every 6 ?(h|hours))\b",
+     "QID", 4, "four times daily"),
     (r"\b(q\.?h\.?s\.?|at bedtime|nightly|every night|qpm|q ?pm|every evening)\b", "QHS", 1, "at bedtime"),
     (r"\b(weekly|once (a )?week|every week|q ?week|qwk)\b", "QWK", 1 / 7, "once weekly"),
+    (r"\b((twice|two times|2 times) (a |per )?week|(twice|two times|2 times) weekly|2 ?x ?(a |per )?week|"
+     r"2 ?x weekly|biw)\b", "BIW", 2 / 7, "twice weekly"),
+    (r"\b((three|3) times (a |per )?week|(three|3) times weekly|3 ?x ?(a |per )?week|3 ?x weekly|tiw)\b",
+     "TIW", 3 / 7, "three times weekly"),
     (r"\b(every (2|two) weeks|q2 ?weeks|biweekly|q14d)\b", "Q2WK", 1 / 14, "every 2 weeks"),
     (r"\b(p\.?r\.?n\.?|as needed|when needed)\b", "PRN", None, "as needed"),
 ]
@@ -192,19 +198,21 @@ def parse_frequency(text: str | None) -> dict | None:
     if not text:
         return None
     t = text.lower()
-    found = None
-    prn = False
-    for rx, code, per_day, disp in FREQUENCIES:
-        if re.search(rx, t):
-            if code == "PRN":
-                prn = True
-            elif not found:
-                found = {"code": code, "per_day": per_day, "display": disp}
-    if not found and not prn:
+    hits = [(m.start(), m.end(), i) for i, (rx, *_) in enumerate(FREQUENCIES) for m in re.finditer(rx, t)]
+    # "twice daily" is BID, not BID plus the QD pattern's "daily" inside it
+    hits = [h for h in hits if not any(o[2] != h[2] and o[0] <= h[0] and h[1] <= o[1] and o[1] - o[0] > h[1] - h[0]
+                                       for o in hits)]
+    codes = {i for _, _, i in hits}
+    prn = any(FREQUENCIES[i][1] == "PRN" for i in codes)
+    first = min((i for i in codes if FREQUENCIES[i][1] != "PRN"), default=None)
+    if first is None and not prn:
         return None
-    found = found or {"code": "PRN", "per_day": None, "display": "as needed"}
-    if prn and found["code"] != "PRN":
-        found = {**found, "prn": True, "display": found["display"] + " as needed"}
+    if first is None:
+        return {"code": "PRN", "per_day": None, "display": "as needed"}
+    _, code, per_day, disp = FREQUENCIES[first]
+    found = {"code": code, "per_day": per_day, "display": disp}
+    if prn:
+        found = {**found, "prn": True, "display": disp + " as needed"}
     return found
 
 

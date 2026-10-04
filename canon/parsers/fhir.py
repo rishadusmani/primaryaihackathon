@@ -60,8 +60,8 @@ def _dose(d: dict) -> tuple[str | None, str | None, str | None]:
         n, per, unit = rep["frequency"], rep.get("period", 1), rep["periodUnit"]
         if unit == "d" and per == 1:
             freq = {1: "daily", 2: "BID", 3: "TID", 4: "QID"}.get(n, f"{n}x per day")
-        elif unit == "wk" and per == 1 and n == 1:
-            freq = "weekly"
+        elif unit == "wk" and per == 1 and n in (1, 2, 3):
+            freq = {1: "weekly", 2: "twice weekly", 3: "three times weekly"}[n]
         else:
             freq = f"{n} per {per} {unit}"
     code = _text((d.get("timing") or {}).get("code"))
