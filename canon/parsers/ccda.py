@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 import xml.etree.ElementTree as ET
 
+from .. import dates
 from ..model import fact
 
 SECTIONS = {
@@ -28,12 +29,7 @@ def _date(s: str | None) -> str | None:
     return f"{m.group(1)}-{m.group(2)}-{m.group(3)}" if m else None
 
 
-def _stamp(s: str | None) -> str | None:
-    """A clinical timestamp, YYYYMMDD[HHMM...] -> "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM" (local, as sent)."""
-    m = re.match(r"(\d{4})(\d{2})(\d{2})(?:(\d{2})(\d{2}))?", s or "")
-    if not m:
-        return None
-    return f"{m.group(1)}-{m.group(2)}-{m.group(3)}" + (f"T{m.group(4)}:{m.group(5)}" if m.group(4) else "")
+_stamp = dates.from_compact  # a clinical timestamp, kept to the precision (and zone) it was sent with
 
 
 def _eff(el: ET.Element | None) -> str | None:

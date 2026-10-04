@@ -8,6 +8,14 @@ from . import terminology as T
 UCUM = "http://unitsofmeasure.org"
 
 
+def _dt(s: str) -> str:
+    """A FHIR dateTime. FHIR requires a zone whenever a time is given, so a local time with no zone exports as
+    its day; an instant exports in full."""
+    if len(s) > 16:
+        return f"{s[:16]}:00{s[16:]}"
+    return s[:10]
+
+
 def _cc(codes: dict, display: str | None) -> dict:
     coding = []
     for k, system in (("icd10", T.ICD10), ("snomed", T.SNOMED), ("loinc", T.LOINC), ("rxnorm", T.RXNORM),
@@ -43,7 +51,7 @@ def to_fhir_bundle(rec: dict) -> dict:
                         **({"clinicalStatus": {"coding": [{
                             "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
                             "code": status}]}} if status else {}),
-                        **({"onsetDateTime": c["onset"]} if c.get("onset") else {}),
+                        **({"onsetDateTime": _dt(c["onset"])} if c.get("onset") else {}),
                         "extension": _ext(c)})
     for m in rec["medications"]:
         dosage = {}
@@ -54,7 +62,7 @@ def to_fhir_bundle(rec: dict) -> dict:
                         "status": {"active": "active", "stopped": "stopped", "on_hold": "on-hold"}.get(
                             m["status"], "unknown"),
                         "medicationCodeableConcept": _cc(m["codes"], m["ingredient"]), **dosage,
-                        **({"effectiveDateTime": m["last_changed"]} if m.get("last_changed") else {}),
+                        **({"effectiveDateTime": _dt(m["last_changed"])} if m.get("last_changed") else {}),
                         "extension": _ext(m)})
     for a in rec["allergies"]:
         entries.append({"resourceType": "AllergyIntolerance", "id": a["id"], "patient": ref,
@@ -77,7 +85,7 @@ def to_fhir_bundle(rec: dict) -> dict:
                                          "code": "laboratory" if o["category"] == "lab" else "vital-signs"}]}],
                "code": _cc(o["codes"], o["display"]), "extension": _ext(o)}
         if o.get("effective"):
-            res["effectiveDateTime"] = o["effective"]
+            res["effectiveDateTime"] = _dt(o["effective"])
         if o.get("value") is not None:
             res["valueQuantity"] = {"value": o["value"], "unit": o["unit"], "system": UCUM, "code": o["unit"]}
             if o.get("qualifier"):
@@ -93,10 +101,10 @@ def to_fhir_bundle(rec: dict) -> dict:
     for pr in rec["procedures"]:
         entries.append({"resourceType": "Procedure", "id": pr["id"], "status": "completed", "subject": ref,
                         "code": _cc(pr.get("codes", {}), pr.get("display")),
-                        **({"performedDateTime": pr["date"]} if pr.get("date") else {})})
+                        **({"performedDateTime": _dt(pr["date"])} if pr.get("date") else {})})
     for im in rec["immunizations"]:
         entries.append({"resourceType": "Immunization", "id": im["id"], "status": "completed", "patient": ref,
                         "vaccineCode": _cc(im["codes"], im.get("vaccine")),
-                        **({"occurrenceDateTime": im["date"]} if im.get("date") else {})})
+                        **({"occurrenceDateTime": _dt(im["date"])} if im.get("date") else {})})
     return {"resourceType": "Bundle", "type": "collection",
             "entry": [{"fullUrl": f"urn:uuid:{e['id']}", "resource": e} for e in entries]}

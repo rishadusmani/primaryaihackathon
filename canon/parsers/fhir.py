@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 
+from .. import dates
 from ..model import fact
 
 
@@ -34,13 +35,12 @@ def _status(cc: dict | str | None) -> str | None:
 
 
 def _date(*vals) -> str | None:
-    """First date among FHIR date/dateTime/Period values: "YYYY-MM-DD", or "YYYY-MM-DDTHH:MM" when it has a
-    time of day (local time as written; any offset is dropped, like the date)."""
+    """First date among FHIR date/dateTime/Period values, kept to its precision and zone (see canon.dates)."""
     for v in vals:
         if isinstance(v, dict):
             v = v.get("start") or v.get("end")
         if isinstance(v, str) and v:
-            return v[:16] if len(v) >= 16 and v[10] == "T" else v[:10]
+            return dates.from_iso(v)
     return None
 
 

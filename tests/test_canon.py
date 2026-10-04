@@ -106,7 +106,8 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(cr[0]["value"], 0.9)
         self.assertEqual({s["format"] for s in cr[0]["sources"]}, {"text", "hl7v2"})
         a1c = [o for o in self.rec["observations"] if o["codes"]["loinc"] == "4548-4"]
-        self.assertEqual([o["effective"] for o in a1c], ["2025-06-10", "2025-09-15", "2026-03-02"])
+        # the fax and HL7 copies of the 2026-03-02 result merge; the HL7 one carries the collection time
+        self.assertEqual([o["effective"] for o in a1c], ["2025-06-10", "2025-09-15", "2026-03-02T08:30"])
 
     def test_alternate_loinc_collapses(self):
         ldl = [o for o in self.rec["observations"] if o["codes"]["loinc"] == "13457-7"]
@@ -273,13 +274,46 @@ class ChronologyTest(unittest.TestCase):
         rec = c.record(pid)
         met = next(m for m in rec["medications"] if m["ingredient"] == "metformin")
         self.assertEqual(met["dose"], "1000 mg")
-        self.assertEqual([h.get("at") for h in met["history"]], ["2026-03-02T08:05", "2026-03-02T16:40"])
+        self.assertEqual([h["date"] for h in met["history"]], ["2026-03-02T08:05", "2026-03-02T16:40"])
         self.assertNotIn("medication_discrepancy", {x["type"] for x in rec["conflicts"]})  # a change, not a clash
 
     def test_same_day_without_times_is_still_a_conflict(self):
         c, pid = self.notes(HEAD + "Admission 03/02/2026 08:05\nMedications:\nMetformin 500 mg daily\n",
                             HEAD + "Date of service: 03/02/2026\nMedications:\nMetformin 1000 mg twice daily\n")
         self.assertIn("medication_discrepancy", {x["type"] for x in c.record(pid)["conflicts"]})
+
+    @staticmethod
+    def med_bundle(when: str, mg: int) -> str:
+        return json.dumps({"resourceType": "Bundle", "type": "collection", "entry": [{"resource": {
+            "resourceType": "MedicationStatement", "id": "m1", "status": "active", "effectiveDateTime": when,
+            "medicationCodeableConcept": {"text": f"metformin {mg} mg tablet"},
+            "dosage": [{"doseAndRate": [{"doseQuantity": {"value": mg, "unit": "mg"}}]}]}}]})
+
+    def test_zoned_times_compare_as_instants(self):
+        c, pid = self.notes(HEAD + "Date of service: 2026-01-10\nAllergies: NKDA\n")
+        # 22:00+01:00 is 21:00 UTC: earlier than 21:40 UTC, though its clock reads later
+        c.ingest(self.med_bundle("2026-03-02T22:00:00+01:00", 1000), filename="a.json", patient_id=pid)
+        c.ingest(self.med_bundle("2026-03-02T21:40:00Z", 500), filename="b.json", patient_id=pid)
+        rec = c.record(pid)
+        met = next(m for m in rec["medications"] if m["ingredient"] == "metformin")
+        self.assertEqual((met["dose"], met["last_changed"]), ("500 mg", "2026-03-02T21:40+00:00"))
+        self.assertNotIn("medication_discrepancy", {x["type"] for x in rec["conflicts"]})
+
+    def test_zoned_and_local_times_are_not_ordered(self):
+        c, pid = self.notes(HEAD + "Discharge 03/02/2026 4:40 PM\nMedications:\nMetformin 1000 mg twice daily\n")
+        c.ingest(self.med_bundle("2026-03-02T21:40:00Z", 500), filename="portal.json", patient_id=pid)
+        # 16:40 local vs 21:40 UTC: same moment or five hours apart, depending on the unknown zone
+        self.assertIn("medication_discrepancy", {x["type"] for x in c.record(pid)["conflicts"]})
+
+    def test_missing_time_is_not_invented(self):
+        c, pid = self.notes(HEAD + "Date of service: 03/02/2026\nMedications:\nMetformin 500 mg daily\n",
+                            HEAD + "Discharge 03/02/2026 4:40 PM\nMedications:\nMetformin 1000 mg twice daily\n")
+        rec = c.record(pid)
+        met = next(m for m in rec["medications"] if m["ingredient"] == "metformin")
+        self.assertEqual([h["date"] for h in met["history"]], ["2026-03-02", "2026-03-02T16:40"])
+        self.assertIn("medication_discrepancy", {x["type"] for x in rec["conflicts"]})
+        fhir = next(e["resource"] for e in c.fhir(pid)["entry"] if e["resource"]["id"] == met["id"])
+        self.assertEqual(fhir["effectiveDateTime"], "2026-03-02")  # FHIR needs a zone with a time
 
     def test_later_list_contradicting_an_explicit_change_is_flagged(self):
         c, pid = self.notes(HEAD + "Visit 03/02/2026 08:00\nPlan: increase metformin to 1000 mg twice daily\n",
@@ -302,7 +336,7 @@ class ChronologyTest(unittest.TestCase):
         c.ingest("Test,Result,Unit,Date\nGlucose,180,mg/dL,2026-03-02 16:00\n", filename="pm.csv", patient_id=pid)
         self.assertNotIn("observation_mismatch", {x["type"] for x in c.record(pid)["conflicts"]})
         glucose = next(lab for lab in c.summary(pid)["latest_labs"] if lab["name"].lower().startswith("glucose"))
-        self.assertEqual((glucose["value"], glucose["at"], glucose["trend"]), (180, "2026-03-02T16:00", "up"))
+        self.assertEqual((glucose["value"], glucose["date"], glucose["trend"]), (180, "2026-03-02T16:00", "up"))
         c.ingest("Test,Result,Unit,Date\nGlucose,120,mg/dL,2026-03-02\n", filename="untimed.csv", patient_id=pid)
         self.assertIn("observation_mismatch", {x["type"] for x in c.record(pid)["conflicts"]})
 

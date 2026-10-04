@@ -8,7 +8,7 @@ import re
 from collections import Counter
 from datetime import datetime, timezone
 
-from . import parsers
+from . import dates, parsers
 from .fhir_export import to_fhir_bundle
 from .normalize import normalize
 from . import live_terminology
@@ -106,15 +106,15 @@ class Canon:
             doc["duplicate"] = True
             return {"document": doc, "patient_id": pid, "match": match}
 
-        dates = [it.get("date") or it.get("effective") for k, it in items if k in ("encounter", "observation",
-                                                                                     "condition", "medication")]
-        dates = [d for d in dates if d]
+        days = [dates.day(it.get("date") or it.get("effective")) for k, it in items
+                if k in ("encounter", "observation", "condition", "medication")]
+        days = [d for d in days if d]
         # Clinical date first; when nothing in the document is dated, when it was produced (signed, exported...).
-        doc_date = Counter(dates).most_common(1)[0][0] if dates else (produced or {}).get("generated")
+        doc_date = Counter(days).most_common(1)[0][0] if days else (produced or {}).get("generated")
         if produced:
             info["generated"] = {"date": produced["generated"], "locator": produced["provenance"]["locator"]}
         if doc_date:
-            info["date_basis"] = "clinical" if dates else "generated"
+            info["date_basis"] = "clinical" if days else "generated"
         info["pages"] = _pages(fmt, info)
         doc_id = new_id("doc")
         received = _now()
@@ -219,11 +219,10 @@ class Canon:
             series.setdefault(o["display"], []).append(o)
         labs, vitals = [], []
         for name, obs in series.items():
-            obs = sorted(obs, key=lambda o: (o["effective"], o.get("at") or ""))
+            obs = sorted(obs, key=lambda o: (dates.day(o["effective"]), dates.moment(o["effective"])))
             cur = obs[-1]
             entry = {"name": name, "loinc": cur["codes"]["loinc"], "value": cur["value"], "unit": cur["unit"],
-                     "date": cur["effective"], **({"at": cur["at"]} if cur.get("at") else {}),
-                     "interpretation": cur.get("interpretation")}
+                     "date": cur["effective"], "interpretation": cur.get("interpretation")}
             if len(obs) > 1:
                 prev = obs[-2]
                 delta = round(cur["value"] - prev["value"], 2)
