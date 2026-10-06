@@ -294,9 +294,9 @@ billing, SQLite). `python -m canon serve --require-auth` turns on keys and billi
 
 | | Codes | Systems |
 |---|---|---|
-| Conditions | 628 | ICD-10-CM + SNOMED CT |
-| Medications | 828 | RxNorm ingredients and 60 combination products (Augmentin, Entresto, Advair...), with brand names and drug classes |
-| Labs and vitals | 180 | LOINC, with a canonical UCUM unit and SI ↔ conventional conversions |
+| Conditions | 757 | ICD-10-CM + SNOMED CT |
+| Medications | 925 | RxNorm ingredients and 113 combination products (Augmentin, Entresto, Advair...), with brand names and drug classes |
+| Labs and vitals | 204 | LOINC, with a canonical UCUM unit and SI ↔ conventional conversions |
 | Vaccines | 40 | CVX |
 
 - **Where it lives:** the hand-written tables in `terminology.py` cover the core primary-care concepts and win on any conflict. `canon/vocab/*.json` extends them.
@@ -315,7 +315,7 @@ billing, SQLite). `python -m canon serve --require-auth` turns on keys and billi
 
 ### Reference ranges
 
-89 of the 180 labs and vitals carry an adult reference range, so values are flagged `low`/`high`/`normal`.
+89 of the 204 labs and vitals carry an adult reference range, so values are flagged `low`/`high`/`normal`.
 A flag sent by the source (e.g. HL7 `OBX-8`) always wins.
 
 - **Source:** ranges added by the vocabulary come from the
