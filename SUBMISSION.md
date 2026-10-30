@@ -67,13 +67,13 @@ Python (standard library only for the core: zero runtime dependencies), Supabase
 ## Links
 - Repository: https://github.com/rishadusmani/primaryaihackathon
 - Live demo: https://primaryaihackathon.vercel.app (opens with the 7-document sample patient already normalized; no sign-in needed)
-- **Judge API key:** `cn_live_primaryaisupabasehackathon`
+- **Judge API key:** shared privately with the judges. Replace `cn_live_YOUR_KEY` below with your own key.
   - Dashboard: https://primaryaihackathon.vercel.app/dashboard, sign in with the key above
-  - Try the API: `curl -H "Authorization: Bearer cn_live_primaryaisupabasehackathon" https://primaryaihackathon.vercel.app/v1/patients`
-  - Upload a document: `curl -X POST "https://primaryaihackathon.vercel.app/v1/documents?filename=note.txt" -H "Authorization: Bearer cn_live_primaryaisupabasehackathon" --data-binary @note.txt`
+  - Try the API: `curl -H "Authorization: Bearer cn_live_YOUR_KEY" https://primaryaihackathon.vercel.app/v1/patients`
+  - Upload a document: `curl -X POST "https://primaryaihackathon.vercel.app/v1/documents?filename=note.txt" -H "Authorization: Bearer cn_live_YOUR_KEY" --data-binary @note.txt`
   - The key is unmetered: upload as much as you like, it's never billed.
   - Connect an agent (Claude, OpenAI, Gemini, Cursor): https://primaryaihackathon.vercel.app/connect, paste the key under "Already have a key?"
-  - Use it from Claude over MCP: `claude mcp add --transport http canon https://primaryaihackathon.vercel.app/mcp --header "Authorization: Bearer cn_live_primaryaisupabasehackathon"`
+  - Use it from Claude over MCP: `claude mcp add --transport http canon https://primaryaihackathon.vercel.app/mcp --header "Authorization: Bearer cn_live_YOUR_KEY"`
 - Your own key: `curl -X POST https://primaryaihackathon.vercel.app/v1/signup -H 'Content-Type: application/json' -d '{"name":"Judge","email":"you@example.com"}'`. New accounts have no free pages: reads work right away, and uploads need a subscription through the returned Checkout link (Stripe test card `4242 4242 4242 4242`).
 - API health: https://primaryaihackathon.vercel.app/healthz
 - Demo video with voice-over (2:54): https://github.com/rishadusmani/primaryaihackathon/blob/main/docs/canon-demo.mp4 (opens with an agent handing Canon Maria Chen's 7 records and summarizing the record it gets back, then the web demo recorded on the live site, connecting an agent over MCP, a REST call and an MCP tool call, and the usage dashboard; ends on a QR code to /connect, the `claude mcp add` command and a prompt to try; upload to YouTube or Loom if the form needs a streaming link)
