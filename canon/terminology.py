@@ -506,7 +506,7 @@ for _c in _load_vocab("conditions.json"):
     else:
         CONDITIONS[_icd][2].extend(s for s in _c["synonyms"] if s not in CONDITIONS[_icd][2])
     _SNOMED_TO_ICD.setdefault(_c["snomed"], _icd)
-    _index([_c["display"], _c["snomed_display"], *_c["synonyms"]], _c["exact"], _icd, _COND_SYN, _COND_EXACT)
+    _index([_c["display"], *_c["synonyms"]], _c["exact"], _icd, _COND_SYN, _COND_EXACT)
 
 for _m in _load_vocab("medications.json"):
     _ing = _m["ingredient"]

@@ -2494,8 +2494,9 @@ def main() -> int:
         if icd_name is None:
             problems.append(f"ICD-10-CM {icd_code} (for {sct_name}): not a current billable code")
             continue
-        conditions.append({"icd10": icd_code, "display": icd_name, "snomed": sct, "snomed_display": sct_name,
-                           "synonyms": syns, "exact": exact})
+        # The SNOMED code is verified above, but its description is not written out: SNOMED CT
+        # descriptions are licensed content, and this file is redistributed with the source.
+        conditions.append({"icd10": icd_code, "display": icd_name, "snomed": sct, "synonyms": syns, "exact": exact})
 
     print(f"Verifying {len(MEDICATIONS)} RxNorm ingredients, brands and ATC classes...")
     check_collisions("medication", [(k, s + e) for k, (s, e) in MEDICATIONS.items()], problems)
