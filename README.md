@@ -44,10 +44,10 @@ be mapped is dropped: it lands in `unmapped[]` with a reason.
 
 ## Try it in the browser
 
-Open **https://primaryaihackathon.vercel.app** (or `python -m canon serve` → http://localhost:8080), click
+Run `python -m canon serve`, open http://localhost:8080, click
 **Load sample patient**, and explore conflicts, coded problems, reconciled medications and lab trends. Click any
 item to see the exact source line it came from. The page uses the public playground API
-(`POST /v1/playground/normalize`), which processes documents in memory only: nothing is stored or billed, and
+(`POST /v1/playground/normalize`), which processes documents in memory only: nothing is stored, and
 LLM extraction is off.
 
 Then click **Load tricky note**: a cardiology note and a FHIR export written to fool keyword matchers. It's full of
@@ -66,14 +66,14 @@ python -m canon normalize samples/maria_chen/*
 python -m canon normalize --view record samples/maria_chen/*
 python -m canon normalize --view fhir   samples/maria_chen/*
 
-# Tests (add CANON_TEST_DATABASE_URL=postgresql://... to also run them on Postgres)
+# Tests
 python -m unittest discover -s tests -v
 ```
 
 ### HTTP API
 
 ```bash
-python -m canon serve --port 8080          # sandbox: no auth, no billing
+python -m canon serve --port 8080          # open on localhost; set CANON_API_KEYS to require a key
 
 curl -X POST 'localhost:8080/v1/documents?filename=labs.hl7' --data-binary @samples/maria_chen/02_quest_labs.hl7
 curl localhost:8080/v1/patients/<patient_id>/summary
@@ -94,75 +94,26 @@ curl localhost:8080/v1/audit/verify               # tamper-evident access log
 | `GET /v1/patients/{id}/fhir` | FHIR R4 Bundle export |
 | `GET /v1/tools`, `POST /v1/tools/{name}` | Agent tool schemas and execution |
 | `POST /mcp` | MCP server (Streamable HTTP) exposing the same tools |
-| `GET /v1/audit`, `GET /v1/audit/verify` | Hash-chained log of every ingest and record read (append-only in Postgres) |
-| `POST /v1/signup`, `GET /v1/account` | Create an account + API key; status and usage |
-| `POST /v1/billing/checkout`, `POST /v1/billing/portal` | Stripe Checkout / Billing Portal links |
-| `POST /v1/stripe/webhook`, `GET /v1/billing/sync` | Stripe events; cron retry for usage reporting |
-| `GET /v1/usage?days=30` | This account's agent usage: requests, errors, latency, documents, patients, LLM tokens |
-| `GET /dashboard` | Customer usage dashboard (HTML) |
-| `GET /connect` | Create an API key and connect an MCP client (HTML) |
+| `GET /v1/audit`, `GET /v1/audit/verify` | Hash-chained log of every ingest and record read |
 
-### Usage dashboard
+**Authentication.** Without configuration the API is open, so it binds to
+`127.0.0.1` by default. To expose it, set `CANON_API_KEYS="key1,key2"`; every API
+and MCP call then needs `Authorization: Bearer <key>`. The web demo, `/about`,
+the playground and `/healthz` stay public.
 
-Open `/dashboard` (e.g. `http://localhost:8080/dashboard`) and sign in with an
-API key. Customers see only their own account's usage over the last 7, 30 or 90 days:
-
-- requests, error rate, p50/p95 latency, documents ingested, distinct patients
-  accessed, and LLM tokens spent reading scanned documents
-- requests per day (successful vs. errors), with a table view
-- a breakdown by endpoint and agent tool (`patients.summary`, `tool.get_conflicts`, ...)
-- HTTP API vs. MCP traffic, and the 50 most recent requests
-
-Every authenticated agent request is one row in `api_requests`, keyed by account.
-Account, billing and `/v1/usage` calls are not counted. This is observability,
-separate from the billable `usage_events`. MCP tool calls are metered to the MCP
-server's account in its own database. On Postgres, apply
-`migrations/002_api_requests.sql` after `001_init.sql`, and (when the API connects as `canon_app`)
-`migrations/003_app_role_api_requests.sql` after `002_app_role.sql`.
-
-### Hosting on Vercel
-
-`app.py` exposes the API as a WSGI `app` for Vercel's Python runtime (`vercel.json`
-selects the `python` preset). Deploy with `vercel deploy --prod`. It runs in one of
-two modes:
-
-- **Production** (`DATABASE_URL` set): Supabase Postgres, per-customer API keys
-  and Stripe billing. See [Hosting and billing](#hosting-vercel--supabase-and-billing-stripe).
-- **Demo** (no `DATABASE_URL`): SQLite in `/tmp`, which is per instance and wiped
-  on cold starts (usage history and the dashboard reset with it). Each new instance reloads `samples/maria_chen`, so patient IDs
-  change between instances and uploads are not kept. Set `CANON_API_KEYS` to
-  require a static bearer key (otherwise the demo is open). Set
-  `CANON_SEED_SAMPLES=0` to skip the sample load.
+**Deploying.** `App.wsgi` is a standard WSGI app, so any WSGI server works, for example
+`gunicorn 'canon.api:App().wsgi'`. Data lives in one SQLite file (`--db`, or `CANON_DB`).
 
 ### For agents
 
-**Get a key and connect in the browser:** [`/connect`](https://primaryaihackathon.vercel.app/connect)
-creates an API key and gives one-click or copy-paste setup for Claude Code, Claude Desktop,
-Cursor and VS Code, with a button that tests the connection.
-
-**Remote MCP** (hosted, nothing to install). The API serves MCP over Streamable HTTP
-at `POST /mcp`, using the same API key, data, billing and usage metering as the REST API:
+**Remote MCP.** The HTTP API serves MCP over Streamable HTTP at `POST /mcp`, with
+the same data as the REST API. The server is stateless and answers each POST with JSON.
 
 ```bash
-claude mcp add --transport http canon https://primaryaihackathon.vercel.app/mcp \
-  --header "Authorization: Bearer cn_live_..."
+claude mcp add --transport http canon http://127.0.0.1:8080/mcp
+# with CANON_API_KEYS set:
+claude mcp add --transport http canon https://<your-host>/mcp --header "Authorization: Bearer <key>"
 ```
-
-Any client that speaks Streamable HTTP and can send an `Authorization` header works:
-
-```bash
-gemini mcp add --scope user --transport http canon https://primaryaihackathon.vercel.app/mcp \
-  --header "Authorization: Bearer cn_live_..."                        # Gemini CLI
-export CANON_API_KEY=cn_live_...
-codex mcp add canon --url https://primaryaihackathon.vercel.app/mcp \
-  --bearer-token-env-var CANON_API_KEY                                # OpenAI Codex CLI
-```
-
-From code: the Claude API MCP connector (`mcp_servers` + `mcp_toolset`), OpenAI's Responses API
-(`{"type": "mcp", "server_url": ..., "headers": ...}`), the OpenAI Agents SDK
-(`MCPServerStreamableHttp`) and the Google Gen AI SDK (an MCP `ClientSession` passed as a tool).
-[`/connect`](https://primaryaihackathon.vercel.app/connect) has copy-paste versions of each. The server is stateless and answers each
-POST with JSON, with no sessions or SSE stream, so it runs fine on serverless.
 
 **Local MCP** (stdio, your own SQLite file):
 
@@ -192,8 +143,8 @@ repairs common OCR errors. Scanned (image-only) PDFs are handled the cheapest wa
   OCR text instead of the PDF.
 - **On the server.** A scanned PDF uploaded to the API is sent to Claude when `anthropic`
   is installed and credentials are set (`use_llm=1` forces it for any text/PDF). The default
-  model is Claude Haiku 4.5, the cheapest (`CANON_LLM_MODEL` overrides it). A full OCR engine
-  is too large for a Vercel function, so there is no server-side OCR. The model must
+  model is Claude Haiku 4.5, the cheapest (`CANON_LLM_MODEL` overrides it). There is no
+  server-side OCR engine, to keep the install free of dependencies. The model must
 return schema-valid JSON with a verbatim evidence quote for each fact. Quotes
 are checked against the source, and codes are assigned by Canon's terminology
 layer, never trusted from the model.
@@ -221,62 +172,11 @@ restore what the rules dropped but never adds a condition the rules didn't find.
 fails, the rules' result stands and the document gets a warning. Tokens are counted in
 `llm_usage`. `CANON_ASSERTION=0` turns it off.
 
-## Hosting (Vercel + Supabase) and billing (Stripe)
+## Patient data
 
-The hosted API runs as one Python serverless function on Vercel (`app.py`,
-WSGI) in production mode. Data lives in Supabase Postgres in a private `canon` schema
-(`migrations/001_init.sql`, already applied to the `primaryaihackathon`
-Supabase project). Customers pay per normalized page through Stripe
-usage-based billing.
-
-**How customers use it**
-
-```bash
-curl -X POST https://<app>/v1/signup -d '{"name":"Acme Clinic","email":"ops@acme.com"}'
-# -> {"api_key": "cn_live_...", "checkout_url": "https://checkout.stripe.com/...", ...}
-
-curl -X POST https://<app>/v1/documents -H "Authorization: Bearer cn_live_..." --data-binary @labs.hl7
-curl https://<app>/v1/account -H "Authorization: Bearer cn_live_..."            # status + usage
-curl -X POST https://<app>/v1/billing/portal -H "Authorization: Bearer cn_live_..." # invoices, card, cancel
-```
-
-* Every account's patients, documents and audit entries are isolated from every other account.
-* API keys are stored only as SHA-256 hashes.
-* Billing is per page: real pages for PDFs, ~3,000-character pages for text/OCR uploads, and 1 per
-  structured document (HL7, FHIR, C-CDA, X12, CSV), which have no pages. `CANON_LLM_PAGE_UNITS` (default 1)
-  can make pages read by Claude (scanned faxes) count as more than one unit.
-* There is no free tier by default (`CANON_FREE_PAGES=0`): ingest returns `402 payment_required` until the
-  customer finishes Stripe Checkout. While Stripe isn't configured, ingest isn't gated.
-* Accounts with status `sandbox` (the demo, and deliberately exempted accounts such as the hackathon judges)
-  are never gated or billed; their pages are still recorded for the dashboard.
-  Reads are never blocked.
-* Each new document (duplicates are free) sends one Stripe meter event with its page count, idempotent by usage id.
-  Failed sends are retried by a daily Vercel cron (`/v1/billing/sync`).
-* Stripe webhooks activate accounts (`checkout.session.completed`) and handle `past_due` / `canceled`.
-
-**Deploy checklist** (one time)
-
-1. **Stripe**: create the meter and metered price (default $0.05 per page):
-   `STRIPE_SECRET_KEY=sk_test_... python -m canon.billing setup --price-cents 5` → note `price_id`.
-   To create them by hand instead: a meter with event name `canon_document_normalized`, Sum aggregation,
-   customer key `stripe_customer_id` and value key `value`; then a monthly usage-based price on it per unit (page).
-   Then add a webhook endpoint `https://<app>/v1/stripe/webhook` for `checkout.session.completed`,
-   `customer.subscription.created|updated|deleted` and `invoice.payment_failed` → note its `whsec_` secret.
-   Finally, enable the Customer Portal (Settings → Billing → Customer portal).
-2. **Supabase**: copy the *Transaction pooler* connection string
-   (Project Settings → Database → Connect, port 6543) for `DATABASE_URL`.
-3. **Vercel**: import this repo (framework preset *Other*) and set the variables in
-   `.env.example` (`DATABASE_URL`, `STRIPE_*`, `CANON_PUBLIC_URL`, `CRON_SECRET`), then deploy.
-4. Smoke test: `curl https://<app>/healthz` should show `"billing_enabled": true`. Then sign up and complete a test Checkout with card `4242 4242 4242 4242`.
-
-Use Stripe test keys until you're ready, then swap in live keys and re-run `setup` in live mode.
-
-> **PHI warning:** Don't send real patient data to the hosted service until BAAs are in place with
-> every processor in the path (Vercel Enterprise, Supabase HIPAA add-on, Anthropic if LLM extraction
-> is on). Until then use synthetic data like `samples/`.
-
-Local development stays dependency-free: `python -m canon serve` runs in sandbox mode (no auth, no
-billing, SQLite). `python -m canon serve --require-auth` turns on keys and billing locally.
+Use synthetic data like `samples/` for testing. Before you process real patient
+data, make sure your deployment meets your legal duties (for example HIPAA). If
+LLM extraction or assertion review is on, documents go to Anthropic or OpenAI.
 
 ## Supported inputs
 
@@ -371,11 +271,8 @@ canon/
   fhir_export.py   canonical → FHIR R4
   tools.py         agent tool definitions + dispatcher
   api.py           HTTP API      mcp_server.py   MCP over stdio
-  store.py         SQLite / Postgres + hash-chained audit log
-  billing.py       accounts, API keys, quota, Stripe metering + webhooks
-  usage.py         per-request API metering + aggregates for /v1/usage
-  dashboard.html   customer usage dashboard served at /dashboard
-app.py             Vercel entry point         migrations/   Postgres schema
+  store.py         SQLite + hash-chained audit log
+  web/             browser demo and about page
 scripts/build_vocab.py  regenerates and verifies canon/vocab/ online
 samples/maria_chen/  one patient across 7 messy sources
 samples/tricky_cardiology/  the tricky-note demo (traps for keyword matchers)
@@ -384,7 +281,14 @@ tests/               end-to-end and unit tests
 
 ## Status and next steps
 
-This is a hackathon prototype. Production would load full
+Canon started as a hackathon prototype. Production use would load full
 UMLS/RxNorm/LOINC/SNOMED vocabularies behind the same functions. Next steps:
 a probabilistic patient-matching index, 835/NCPDP claims, a review UI for
 conflicts and unmapped facts, and per-agent delegated access grants on reads.
+
+Contributions are welcome. Run `python -m unittest discover -s tests` before you open a pull request.
+
+## License
+
+MIT. See [LICENSE](LICENSE). The vocabulary content keeps its own terms; see
+[Data sources and attributions](#data-sources-and-attributions).

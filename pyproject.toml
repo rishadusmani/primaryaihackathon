@@ -2,8 +2,10 @@
 name = "canon"
 version = "0.1.0"
 description = "Universal clinical data normalization for AI agents"
+readme = "README.md"
+license = {text = "MIT"}
 requires-python = ">=3.10"
-dependencies = ["psycopg[binary]>=3.2"]  # Postgres backend; Vercel installs from here, not requirements.txt
+dependencies = []
 
 [project.optional-dependencies]
 llm = ["anthropic>=1.11"]
@@ -19,4 +21,4 @@ build-backend = "setuptools.build_meta"
 include = ["canon*"]
 
 [tool.setuptools.package-data]
-canon = ["vocab/*.json", "dashboard.html", "web/*.html"]
+canon = ["vocab/*.json", "web/*.html"]
