@@ -1,19 +1,14 @@
-"""HTTP API. One framework-free `App`, served by http.server locally and as a
-WSGI app on Vercel (app.py).
+"""HTTP API. One framework-free `App`, served by http.server (`python -m canon serve`)
+or by any WSGI server through `App.wsgi`.
 
 Public
     GET  /                               web demo (normalizes documents in the browser session, stores nothing)
     GET  /about                          why Canon exists (static HTML)
-    GET  /connect                        create an API key and connect an MCP client (HTML; calls /v1/signup)
     GET  /v1/playground/samples          the 7-document sample patient (?set=tricky: the tricky-note demo)
-    POST /v1/playground/normalize        {documents: [...]} -> records; stateless, unbilled, no model calls on visitor input
+    POST /v1/playground/normalize        {documents: [...]} -> records; stateless, no model calls on visitor input
     GET  /healthz
-    POST /v1/signup                      {name, email} -> account + API key (shown once) + checkout link
-    POST /v1/stripe/webhook              Stripe events (signature verified)
-    GET  /v1/billing/sync                cron: retry unsent usage (Authorization: Bearer $CRON_SECRET)
-    GET  /dashboard                      customer usage dashboard (HTML; signs in with the API key)
 
-Authenticated (Authorization: Bearer cn_live_...)
+API (Authorization: Bearer <key> when CANON_API_KEYS is set)
     POST /v1/documents                   raw body (any format) or JSON {content, encoding, ...}
     GET  /v1/documents/{id}[?items=1]
     GET  /v1/patients
@@ -21,65 +16,30 @@ Authenticated (Authorization: Bearer cn_live_...)
     GET  /v1/tools?format=anthropic|openai|mcp      POST /v1/tools/{name}
     POST /mcp                            MCP (Streamable HTTP, stateless, JSON responses)
     GET  /v1/audit[?patient_id=]
-    GET  /v1/account                     status + usage
-    GET  /v1/usage?days=30               this account's agent requests, errors, latency, LLM tokens
-    POST /v1/billing/checkout            -> Stripe Checkout URL
-    POST /v1/billing/portal              -> Stripe Billing Portal URL
 
-CANON_SANDBOX=1 disables per-customer auth and billing (local development and the
-ephemeral demo deployment). In sandbox mode, CANON_API_KEYS="key1:label,key2:label"
-optionally requires one of those static keys.
+CANON_API_KEYS="key1,key2" makes the API require one of those keys. Without it the
+API is open, so bind it to localhost or put it behind your own auth.
 """
 
 from __future__ import annotations
 
 import argparse
 import base64
-import html
+import hmac
 import json
 import os
 import re
 import threading
-import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
-from . import playground, usage
-from .billing import Billing, BillingError
-from .service import SANDBOX_ACCOUNT, Canon, CanonError
+from . import playground
+from .service import Canon, CanonError
 from .store import Store
 from .mcp_server import handle as mcp_handle
 from .tools import TOOLS_BY_NAME, anthropic_tools, call_tool, mcp_tools, openai_tools
 
 MAX_BODY = 25 * 1024 * 1024
-INGEST_TOOLS = {"ingest_document"}
-DASHBOARD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dashboard.html")
-
-
-def _operation(method: str, path: str) -> str | None:
-    """Stable operation name for API metering (e.g. patients.summary, tool.get_conflicts);
-    None for account and billing calls, which are not agent work."""
-    if path == "/v1/documents":
-        return "documents.ingest" if method == "POST" else "unknown_route"
-    if re.fullmatch(r"/v1/documents/[\w-]+", path):
-        return "documents.get"
-    if path == "/v1/patients":
-        return "patients.list"
-    m = re.fullmatch(r"/v1/patients/[\w-]+/(record|summary|observations|fhir)", path)
-    if m:
-        return f"patients.{m.group(1)}"
-    if path == "/v1/tools":
-        return "tools.list"
-    m = re.fullmatch(r"/v1/tools/(\w+)", path)
-    if m and method == "POST":
-        return f"tool.{m.group(1)}" if m.group(1) in TOOLS_BY_NAME else "unknown_route"
-    if path in ("/v1/audit", "/v1/audit/verify"):
-        return path[4:].replace("/", ".")
-    if path in ("/v1/account", "/v1/usage") or path.startswith("/v1/billing/"):
-        return None
-    if path == "/mcp":  # metered per tool call, channel "mcp", by mcp_server.handle
-        return None
-    return "unknown_route"
 
 
 class Response:
@@ -100,12 +60,6 @@ def _err(status: int, code: str, message: str, **extra) -> Response:
     return Response(status, {"error": {"code": code, "message": message, **extra}})
 
 
-def _page(title: str, msg: str) -> Response:
-    return Response(200, f"<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width'>"
-                         f"<title>{html.escape(title)}</title><body style='font:16px system-ui;max-width:40em;"
-                         f"margin:4em auto;padding:0 1em'><h1>{html.escape(title)}</h1><p>{html.escape(msg)}</p>")
-
-
 _PAGES: dict[str, str] = {}
 
 
@@ -117,16 +71,13 @@ def _web_page(name: str) -> str:
 
 
 class App:
-    def __init__(self, store: Store | None = None, billing: Billing | None = None, sandbox: bool | None = None):
+    def __init__(self, store: Store | None = None, api_keys: set[str] | None = None):
         self.store = store or Store()
-        self.billing = billing or Billing(self.store)
-        self.sandbox = (os.environ.get("CANON_SANDBOX") == "1") if sandbox is None else sandbox
+        self.canon = Canon(self.store)
         self.lock = threading.Lock()
-        raw = os.environ.get("CANON_API_KEYS", "")
-        self.static_keys = {k.strip() for k, _, _ in (p.partition(":") for p in raw.split(",")) if k.strip()}
-        if self.sandbox:
-            self.store.execute("INSERT INTO accounts (id, name, status, created_at) VALUES (?,?,?,?) "
-                               "ON CONFLICT DO NOTHING", (SANDBOX_ACCOUNT, "Sandbox", "sandbox", "1970-01-01T00:00:00Z"))
+        if api_keys is None:
+            api_keys = {k.strip() for k in os.environ.get("CANON_API_KEYS", "").split(",") if k.strip()}
+        self.api_keys = api_keys
 
     # ------------------------------------------------------------------ entry point
     def handle(self, method: str, raw_path: str, headers: dict[str, str], body: bytes) -> Response:
@@ -137,31 +88,12 @@ class App:
         if len(body) > MAX_BODY:
             return _err(413, "too_large", "Request exceeds 25 MB.")
         with self.lock:
-            self._metering: dict | None = None  # set by _route once the caller is authenticated
-            started = time.perf_counter()
             try:
-                r = self._route(method, path, q, h, body)
-            except (CanonError, BillingError) as e:
-                r = _err(e.status, e.code, e.message, **getattr(e, "extra", {}))
+                return self._route(method, path, q, h, body)
+            except CanonError as e:
+                return _err(e.status, e.code, e.message)
             except (ValueError, KeyError, json.JSONDecodeError) as e:
-                r = _err(400, "bad_request", str(e))
-            if self._metering:
-                self._meter(method, path, len(body), r, (time.perf_counter() - started) * 1000)
-            return r
-
-    def _meter(self, method: str, path: str, bytes_in: int, r: Response, latency_ms: float) -> None:
-        op = _operation(method, path)
-        if op is None:
-            return
-        m = re.fullmatch(r"/v1/patients/([\w-]+)/\w+", path)
-        data = r.data or {}
-        pid = m.group(1) if m else self._metering.get("patient_id") or data.get("patient_id")
-        try:
-            usage.record(self.store, account_id=self._metering["account_id"], channel="api", operation=op,
-                         status=r.status, latency_ms=latency_ms, bytes_in=bytes_in, bytes_out=len(r.body),
-                         patient_id=pid if isinstance(pid, str) else None, body=data)
-        except Exception:  # metering must never break the request
-            pass
+                return _err(400, "bad_request", str(e))
 
     # ------------------------------------------------------------------ routing
     def _route(self, method: str, path: str, q: dict, h: dict, body: bytes) -> Response:
@@ -170,8 +102,6 @@ class App:
             return Response(200, _web_page("index.html"))
         if method == "GET" and path == "/about":
             return Response(200, _web_page("about.html"))
-        if method == "GET" and path == "/connect":
-            return Response(200, _web_page("connect.html"))
         if method == "GET" and path == "/v1/playground/samples":
             if q.get("set") == "tricky":
                 return Response(200, {"documents": playground.samples("tricky"), "walkthrough": playground.walkthrough()})
@@ -179,71 +109,22 @@ class App:
         if method == "POST" and path == "/v1/playground/normalize":
             return Response(200, playground.normalize(json.loads(body or b"{}").get("documents")))
         if method == "GET" and path == "/healthz":
-            return Response(200, {"ok": True, "service": "canon", "sandbox": self.sandbox,
-                                  "billing_enabled": self.billing.stripe.enabled,
-                                  "docs": "https://github.com/rishadusmani/primaryaihackathon"})
-        if method == "POST" and path == "/v1/signup":
-            if self.sandbox:
-                return _err(400, "sandbox", "Signup is disabled in sandbox mode.")
-            j = json.loads(body or b"{}")
-            account, key = self.billing.create_account(j.get("name", "").strip(), (j.get("email") or None))
-            out = {"account": self.billing.account(account["id"]), "api_key": key,
-                   "note": "Store this key now; it is not shown again."}
-            if self.billing.stripe.enabled and self.billing.price_id:
-                row = dict(self.store.one("SELECT * FROM accounts WHERE id=?", (account["id"],)))
-                out["checkout_url"] = self.billing.checkout_url(row)
-            return Response(201, out)
-        if method == "POST" and path == "/v1/stripe/webhook":
-            return Response(200, self.billing.handle_webhook(body, h.get("stripe-signature", "")))
-        if method == "GET" and path == "/v1/billing/sync":
-            secret = os.environ.get("CRON_SECRET")
-            if not secret or h.get("authorization") != f"Bearer {secret}":
-                return _err(401, "unauthorized", "Cron secret required.")
-            return Response(200, self.billing.sync_unreported())
-        if method == "GET" and path == "/dashboard":  # static page; its data calls carry the key
-            with open(DASHBOARD, encoding="utf-8") as fh:
-                return Response(200, fh.read(), "text/html; charset=utf-8")
-        if method == "GET" and path == "/billing/success":
-            return _page("Subscription started", "Your Canon subscription is active. You can close this tab.")
-        if method == "GET" and path == "/billing/cancel":
-            return _page("Checkout canceled", "No charge was made. You can restart checkout from the API.")
-        if method == "GET" and path == "/billing/return":
-            return _page("Billing updated", "You can close this tab.")
+            return Response(200, {"ok": True, "service": "canon", "auth": bool(self.api_keys)})
         if path == "/mcp" and method != "POST":  # stateless server: no SSE stream, no sessions to delete
             return Response(405, {"error": {"code": "method_not_allowed", "message": "POST JSON-RPC to /mcp"}},
                             headers={"Allow": "POST"})
 
-        # --- authenticated
-        account = self._authenticate(h)
-        if account is None:
-            r = _err(401, "unauthorized", "Missing or invalid API key (Authorization: Bearer cn_live_...).")
+        # --- API
+        if self.api_keys and not self._authorized(h):
+            r = _err(401, "unauthorized", "Missing or invalid API key (Authorization: Bearer <key>).")
             r.headers["WWW-Authenticate"] = 'Bearer realm="canon"'
             return r
-        self._metering = {"account_id": account["id"]}
-        canon = Canon(self.store, account["id"])
-        canon.on_document_ingested = self.billing.record_usage
-        actor = "sandbox" if self.sandbox else f"key:{account['id']}"
+        canon = self.canon
+        actor = "api"
 
         if method == "POST" and path == "/mcp":
-            return self._mcp(canon, account, actor, body)
-        if method == "GET" and path == "/v1/account":
-            return Response(200, self.billing.account(account["id"]))
-        if method == "GET" and path == "/v1/usage":
-            try:
-                out = usage.summarize(self.store, account["id"], int(q.get("days", 30)))
-            except ValueError:
-                raise
-            except Exception:  # e.g. Postgres without migrations/002_api_requests.sql
-                return _err(503, "usage_unavailable", "Usage metering is not set up on this server.")
-            out["account"] = self.billing.account(account["id"])
-            return Response(200, out)
-        if method == "POST" and path == "/v1/billing/checkout":
-            return Response(200, {"checkout_url": self.billing.checkout_url(account)})
-        if method == "POST" and path == "/v1/billing/portal":
-            return Response(200, {"portal_url": self.billing.portal_url(account)})
-
+            return self._mcp(canon, actor, body)
         if method == "POST" and path == "/v1/documents":
-            self.billing.check_can_ingest(account)
             ct = h.get("content-type", "")
             if "application/json" in ct and b'"content"' in body[:4096]:
                 j = json.loads(body)
@@ -282,21 +163,17 @@ class App:
             name = m.group(1)
             if name not in TOOLS_BY_NAME:
                 return _err(404, "unknown_tool", name)
-            if name in INGEST_TOOLS:
-                self.billing.check_can_ingest(account)
             args = json.loads(body or b"{}")
-            if isinstance(args, dict):
-                self._metering["patient_id"] = args.get("patient_id")
             out = call_tool(canon, name, args, actor=actor)
             return Response(200 if "error" not in out else 400, out)
         if method == "GET" and path == "/v1/audit":
             return Response(200, {"entries": canon.audit_log(q.get("patient_id"), min(int(q.get("limit", 100)), 1000))})
         if method == "GET" and path == "/v1/audit/verify":
-            v = self.store.verify_audit_chain()  # the chain spans all tenants; expose only the verdict
+            v = self.store.verify_audit_chain()
             return Response(200, {"valid": v["valid"], "entries_checked": v["entries_checked"]})
         return _err(404, "not_found", f"No route {method} {path}")
 
-    def _mcp(self, canon: Canon, account: dict, actor: str, body: bytes) -> Response:
+    def _mcp(self, canon: Canon, actor: str, body: bytes) -> Response:
         """MCP Streamable HTTP: one JSON-RPC message (or a batch) per POST, answered as JSON.
         Notifications alone get 202 with no body."""
         try:
@@ -304,26 +181,18 @@ class App:
         except (json.JSONDecodeError, UnicodeDecodeError):
             return Response(400, {"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": "Parse error"}})
 
-        def guard(name: str) -> None:
-            if name in INGEST_TOOLS:
-                self.billing.check_can_ingest(account)
-
         if isinstance(msg, list):
-            out = [r for r in (mcp_handle(canon, m, actor, guard) for m in msg) if r is not None]
+            out = [r for r in (mcp_handle(canon, m, actor) for m in msg) if r is not None]
         else:
-            out = mcp_handle(canon, msg, actor, guard)
+            out = mcp_handle(canon, msg, actor)
         if not out:
             return Response(202, "", "text/plain")
         return Response(200, out)
 
-    def _authenticate(self, h: dict) -> dict | None:
+    def _authorized(self, h: dict) -> bool:
         auth = h.get("authorization", "")
-        token = auth[7:].strip() if auth.startswith("Bearer ") else None
-        if self.sandbox:
-            if self.static_keys and token not in self.static_keys:
-                return None
-            return dict(self.store.one("SELECT * FROM accounts WHERE id=?", (SANDBOX_ACCOUNT,)))
-        return self.billing.authenticate(token)
+        token = auth[7:].strip() if auth.startswith("Bearer ") else ""
+        return any(hmac.compare_digest(token, k) for k in self.api_keys)
 
     # ------------------------------------------------------------------ adapters
     def wsgi(self, environ, start_response):
@@ -335,7 +204,7 @@ class App:
         path = environ.get("PATH_INFO", "/") + (("?" + environ["QUERY_STRING"]) if environ.get("QUERY_STRING") else "")
         r = self.handle(environ["REQUEST_METHOD"], path, headers, body)
         reason = {200: "OK", 201: "Created", 202: "Accepted", 400: "Bad Request", 401: "Unauthorized",
-                  402: "Payment Required", 404: "Not Found", 405: "Method Not Allowed", 409: "Conflict",
+                  404: "Not Found", 405: "Method Not Allowed", 409: "Conflict",
                   413: "Payload Too Large", 422: "Unprocessable Entity", 502: "Bad Gateway", 503: "Service Unavailable"}.get(r.status, "")
         start_response(f"{r.status} {reason}", [("Content-Type", r.content_type), ("Content-Length", str(len(r.body))),
                                                 *r.headers.items()])
@@ -375,10 +244,8 @@ class App:
         return Handler
 
 
-def serve(host: str = "127.0.0.1", port: int = 8080, db: str | None = "canon.db",
-          sandbox: bool | None = None) -> ThreadingHTTPServer:
-    app = App(Store(db), sandbox=sandbox)
-    return ThreadingHTTPServer((host, port), app.http_handler())
+def serve(host: str = "127.0.0.1", port: int = 8080, db: str = "canon.db") -> ThreadingHTTPServer:
+    return ThreadingHTTPServer((host, port), App(Store(db)).http_handler())
 
 
 def main() -> None:
@@ -386,11 +253,9 @@ def main() -> None:
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=8080)
     ap.add_argument("--db", default=os.environ.get("CANON_DB", "canon.db"))
-    ap.add_argument("--require-auth", action="store_true", help="Require API keys (default: sandbox, no auth)")
     a = ap.parse_args()
-    sandbox = not a.require_auth and os.environ.get("CANON_SANDBOX") != "0"
-    httpd = serve(a.host, a.port, None if os.environ.get("DATABASE_URL") else a.db, sandbox=sandbox)
-    print(f"Canon listening on http://{a.host}:{a.port}  auth={'sandbox (none)' if sandbox else 'API keys'}")
+    httpd = serve(a.host, a.port, a.db)
+    print(f"Canon listening on http://{a.host}:{a.port}")
     httpd.serve_forever()
 
 
