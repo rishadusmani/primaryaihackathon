@@ -254,7 +254,7 @@ This product uses publicly available data from the U.S. National Library of Medi
 - **ICD-10-CM:** published by the CDC (public domain), searched through NLM's Clinical Table Search Service.
 - **LOINC:** This material contains content from LOINC® (https://loinc.org). LOINC is copyright © Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under the license at https://loinc.org/terms-of-use. LOINC® is a registered United States trademark of Regenstrief Institute, Inc.
 - **UCUM:** unit codes are subject to a license from Regenstrief Institute, Inc. and The UCUM Organization, available at https://unitsofmeasure.org. The UCUM table and UCUM codes are copyright © 1995-2009, Regenstrief Institute, Inc. and the Unified Codes for Units of Measures (UCUM) Organization.
-- **SNOMED CT:** SNOMED CT® is a registered trademark of SNOMED International. Codes are built in only; they are checked when the vocabulary is built, never looked up live.
+- **SNOMED CT:** SNOMED CT® is a registered trademark of SNOMED International. Only the concept codes are included, never SNOMED's descriptions, which are licensed content: each condition is displayed with its ICD-10-CM title. Codes are checked when the vocabulary is built (they must be active) and are never looked up live. Using SNOMED CT in production requires a license from SNOMED International or your country's National Release Center (free in member countries such as the US via a UMLS account).
 - **Reference ranges:** [ABIM Laboratory Test Reference Ranges, January 2026](https://www.abim.org/media/e2wdwdqu/laboratory-reference-ranges.pdf).
 
 ## Layout
