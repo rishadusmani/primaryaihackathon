@@ -145,6 +145,23 @@ class Canon:
         return {"patient_id": new_id("pat"), "method": "new_patient", "confidence": 1.0, "created": True}
 
     # ------------------------------------------------------------------ reads
+    def search(self, patient_id: str, query: str, **filters) -> dict:
+        from .search import search_patient
+        result = search_patient(self, patient_id, query, **filters)
+        self.store.audit(ts=_now(), event="chart.searched", actor="api", account_id=self.account_id,
+                         patient_id=patient_id, detail={"results": result["total"]})
+        return result
+
+    def document_text(self, patient_id: str, document_id: str) -> dict:
+        from .search import source_text
+        row = self.store.one("SELECT * FROM documents WHERE account_id=? AND patient_id=? AND id=?",
+                             (self.account_id, patient_id, document_id))
+        if not row:
+            raise CanonError("not_found", "No document found in this patient's chart.", 404)
+        self.store.audit(ts=_now(), event="document.read", actor="api", account_id=self.account_id,
+                         patient_id=patient_id, document_id=document_id, detail={"view": "source_text"})
+        return {**self.get_document(document_id), **source_text(row)}
+
     def get_document(self, doc_id: str, include_items: bool = False) -> dict:
         r = self.store.one("SELECT * FROM documents WHERE id=? AND account_id=?", (doc_id, self.account_id))
         if not r:
