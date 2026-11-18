@@ -56,6 +56,34 @@ plus a code that isn't in Canon's tables (`I50.22`). A panel lists each phrase, 
 keyword matcher would code, and what Canon recorded. `tests/test_live_terminology.py` checks every one of those
 claims against the engine, so the demo can't drift from the code.
 
+### Patient chart search
+
+Open **http://localhost:8080/chart-search** after starting `python -m canon serve`.
+The demo uses the two bundled fictional patients. Search original source passages,
+filter by format or document date, and open the full source with the matching passage
+highlighted. Canon's source disagreements appear beside the chart. The demo runs in
+a separate in-memory store and makes no model or live terminology calls.
+
+Search uses SQLite FTS5 with word stemming and Canon's existing terminology synonyms.
+The first search indexes saved documents, including documents ingested before search
+was added. Python's SQLite build must include FTS5.
+
+The same search is available through the existing authenticated API:
+
+```sh
+curl -H 'Authorization: Bearer <key>' \
+  'localhost:8080/v1/patients/<patient_id>/search?q=metformin&format=text&since=2026-01-01'
+curl -H 'Authorization: Bearer <key>' \
+  'localhost:8080/v1/patients/<patient_id>/documents/<document_id>/text'
+```
+
+Optional search filters are `format`, `since`, `until` (YYYY-MM-DD), and `limit` (1–50).
+Each result contains the exact source excerpt and its character offsets in the returned
+source text. PDF offsets refer to extracted text. Results contain one best passage per
+matching document. Empty searches list documents within the same filters. Dates refer
+to Canon's document dates, which can come from clinical content or document generation.
+Date filters exclude undated documents. Image-only PDFs are reported as needing OCR.
+
 ## Quickstart (Python 3.10+, no dependencies)
 
 ```bash
