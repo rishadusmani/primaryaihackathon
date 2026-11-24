@@ -50,7 +50,7 @@ class Canon:
     # ------------------------------------------------------------------ ingest
     def ingest(self, data: bytes | str, *, filename: str | None = None, content_type: str | None = None,
                fmt: str | None = None, patient_id: str | None = None, source_name: str | None = None,
-               use_llm: bool | None = None, actor: str = "api") -> dict:
+               use_llm: bool | None = None, actor: str = "api", document_id: str | None = None) -> dict:
         raw = data.encode("utf-8") if isinstance(data, str) else data
         if not raw.strip():
             raise CanonError("empty_document", "Document is empty.")
@@ -100,7 +100,7 @@ class Canon:
             info["generated"] = {"date": produced["generated"], "locator": produced["provenance"]["locator"]}
         if doc_date:
             info["date_basis"] = "clinical" if days else "generated"
-        doc_id = new_id("doc")
+        doc_id = document_id or new_id("doc")
         received = _now()
         self.store.execute("INSERT INTO patients (account_id, id, created_at) VALUES (?,?,?) ON CONFLICT DO NOTHING",
                            (self.account_id, pid, received))
@@ -145,6 +145,23 @@ class Canon:
         return {"patient_id": new_id("pat"), "method": "new_patient", "confidence": 1.0, "created": True}
 
     # ------------------------------------------------------------------ reads
+    def search(self, patient_id: str, query: str, **filters) -> dict:
+        from .search import search_patient
+        result = search_patient(self, patient_id, query, **filters)
+        self.store.audit(ts=_now(), event="chart.searched", actor="api", account_id=self.account_id,
+                         patient_id=patient_id, detail={"results": result["total"]})
+        return result
+
+    def document_text(self, patient_id: str, document_id: str) -> dict:
+        from .search import source_text
+        row = self.store.one("SELECT * FROM documents WHERE account_id=? AND patient_id=? AND id=?",
+                             (self.account_id, patient_id, document_id))
+        if not row:
+            raise CanonError("not_found", "No document found in this patient's chart.", 404)
+        self.store.audit(ts=_now(), event="document.read", actor="api", account_id=self.account_id,
+                         patient_id=patient_id, document_id=document_id, detail={"view": "source_text"})
+        return {**self.get_document(document_id), **source_text(row)}
+
     def get_document(self, doc_id: str, include_items: bool = False) -> dict:
         r = self.store.one("SELECT * FROM documents WHERE id=? AND account_id=?", (doc_id, self.account_id))
         if not r:

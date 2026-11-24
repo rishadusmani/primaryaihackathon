@@ -4,6 +4,8 @@ or by any WSGI server through `App.wsgi`.
 Public
     GET  /                               web demo (normalizes documents in the browser session, stores nothing)
     GET  /about                          why Canon exists (static HTML)
+    GET  /chart-search                   patient chart search using bundled synthetic records
+    GET  /v1/playground/charts[/{id}/search]  separate, in-memory synthetic charts
     GET  /v1/playground/samples          the 7-document sample patient (?set=tricky: the tricky-note demo)
     POST /v1/playground/normalize        {documents: [...]} -> records; stateless, no model calls on visitor input
     GET  /healthz
@@ -13,6 +15,8 @@ API (Authorization: Bearer <key> when CANON_API_KEYS is set)
     GET  /v1/documents/{id}[?items=1]
     GET  /v1/patients
     GET  /v1/patients/{id}/record | summary | observations | fhir
+    GET  /v1/patients/{id}/search?q=       patient-scoped source passage search
+    GET  /v1/patients/{id}/documents/{doc_id}/text
     GET  /v1/tools?format=anthropic|openai|mcp      POST /v1/tools/{name}
     POST /mcp                            MCP (Streamable HTTP, stateless, JSON responses)
     GET  /v1/audit[?patient_id=]
@@ -34,6 +38,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
 from . import playground
+from .chart_demo import ChartDemo
 from .service import Canon, CanonError
 from .store import Store
 from .mcp_server import handle as mcp_handle
@@ -75,6 +80,7 @@ class App:
         self.store = store or Store()
         self.canon = Canon(self.store)
         self.lock = threading.Lock()
+        self.chart_demo = None
         if api_keys is None:
             api_keys = {k.strip() for k in os.environ.get("CANON_API_KEYS", "").split(",") if k.strip()}
         self.api_keys = api_keys
@@ -102,6 +108,15 @@ class App:
             return Response(200, _web_page("index.html"))
         if method == "GET" and path == "/about":
             return Response(200, _web_page("about.html"))
+        if method == "GET" and path == "/chart-search":
+            return Response(200, _web_page("chart-search.html"))
+        if method == "GET" and path.startswith("/v1/playground/charts"):
+            if self.chart_demo is None:
+                self.chart_demo = ChartDemo()
+            demo = self.chart_demo
+            if path == "/v1/playground/charts":
+                return Response(200, {"synthetic": True, "patients": demo.patients})
+            return self._chart_route(demo.canon, path.replace("/v1/playground/charts", "/v1/patients", 1), q)
         if method == "GET" and path == "/v1/playground/samples":
             if q.get("set") == "tricky":
                 return Response(200, {"documents": playground.samples("tricky"), "walkthrough": playground.walkthrough()})
@@ -121,6 +136,9 @@ class App:
             return r
         canon = self.canon
         actor = "api"
+
+        if method == "GET" and re.fullmatch(r"/v1/patients/[\w-]+/(search|documents/[\w-]+/text)", path):
+            return self._chart_route(canon, path, q)
 
         if method == "POST" and path == "/mcp":
             return self._mcp(canon, actor, body)
@@ -172,6 +190,18 @@ class App:
             v = self.store.verify_audit_chain()
             return Response(200, {"valid": v["valid"], "entries_checked": v["entries_checked"]})
         return _err(404, "not_found", f"No route {method} {path}")
+
+    def _chart_route(self, canon: Canon, path: str, query: dict) -> Response:
+        match = re.fullmatch(r"/v1/patients/([\w-]+)/search", path)
+        if match:
+            result = canon.search(match.group(1), query.get("q", ""), fmt=query.get("format"),
+                                  since=query.get("since"), until=query.get("until"),
+                                  limit=int(query.get("limit", "12")))
+            return Response(200, result)
+        match = re.fullmatch(r"/v1/patients/([\w-]+)/documents/([\w-]+)/text", path)
+        if match:
+            return Response(200, canon.document_text(*match.groups()))
+        return _err(404, "not_found", "No chart endpoint found.")
 
     def _mcp(self, canon: Canon, actor: str, body: bytes) -> Response:
         """MCP Streamable HTTP: one JSON-RPC message (or a batch) per POST, answered as JSON.

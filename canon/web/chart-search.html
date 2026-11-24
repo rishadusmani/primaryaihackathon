@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Chart Search · Primary AI</title>
+    <meta
+      name="description"
+      content="Search synthetic patient charts with Canon and inspect the original source passages."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;650&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --paper: #f5f1e8;
+        --card: #fffdfa;
+        --ink: #29221c;
+        --muted: #6b6259;
+        --line: #ded6c9;
+        --accent: #a14b2e;
+        --soft: #eee5d8;
+        --warning: #7b4a16;
+        --serif: "Source Serif 4", Georgia, serif;
+        --sans: Inter, system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font: 14px/1.55 var(--sans);
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button,
+      a,
+      input,
+      select {
+        touch-action: manipulation;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:disabled {
+        cursor: wait;
+        opacity: 0.6;
+      }
+      a {
+        color: var(--accent);
+      }
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      select:focus-visible {
+        outline: 3px solid #ae6b43;
+        outline-offset: 3px;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .topbar {
+        height: 76px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 38px;
+        gap: 18px;
+        background: var(--card);
+      }
+      .brand {
+        font: 600 24px var(--serif);
+        color: var(--ink);
+        text-decoration: none;
+        letter-spacing: -0.6px;
+      }
+      .product {
+        font: 400 13px var(--sans);
+        color: var(--muted);
+        border-left: 1px solid var(--line);
+        padding-left: 16px;
+        margin-left: 18px;
+        letter-spacing: 0;
+      }
+      .toplinks {
+        display: flex;
+        align-items: center;
+        gap: 23px;
+      }
+      .toplinks a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 12px;
+      }
+      .demo-tag {
+        background: var(--soft);
+        padding: 5px 10px;
+        border-radius: 5px;
+        color: #665341;
+        font-size: 11px;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 248px minmax(0, 1fr);
+        max-width: 1680px;
+        margin: auto;
+        min-height: calc(100vh - 76px);
+      }
+      .sidebar {
+        border-right: 1px solid var(--line);
+        padding: 32px 22px;
+      }
+      .label {
+        font-size: 10px;
+        font-weight: 650;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 0 0 15px;
+      }
+      .patient-choice {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: none;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        padding: 13px 12px;
+        margin-bottom: 7px;
+        color: var(--ink);
+      }
+      .patient-choice[aria-pressed="true"] {
+        background: var(--card);
+        border-color: var(--line);
+        box-shadow: 0 2px 5px #39250e05;
+      }
+      .patient-choice:hover {
+        background: var(--card);
+      }
+      .patient-choice strong {
+        display: block;
+        font-weight: 550;
+      }
+      .patient-choice small {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        margin-top: 3px;
+      }
+      .sidebar-note {
+        font-size: 11px;
+        color: var(--muted);
+        margin: 21px 10px 26px;
+        line-height: 1.7;
+      }
+      .sidebar hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 24px 0;
+      }
+      .conflict-item {
+        font-size: 12px;
+        margin: 0 0 12px;
+        color: var(--warning);
+        padding-left: 12px;
+        border-left: 2px solid #d5aa78;
+      }
+      .conflict-count {
+        font-weight: 600;
+        font-size: 12px;
+        margin-bottom: 14px;
+      }
+      .coverage-note {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.7;
+      }
+      main {
+        min-width: 0;
+        padding: 36px 40px 60px;
+      }
+      .patient-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 28px;
+      }
+      .patient-heading h1 {
+        font: 500 32px/1.2 var(--serif);
+        margin: 0 0 8px;
+        letter-spacing: -0.65px;
+      }
+      .patient-meta {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .patient-heading .mode {
+        font-size: 11px;
+        color: var(--muted);
+        padding-top: 7px;
+      }
+      .search-form {
+        display: flex;
+        background: var(--card);
+        border: 1px solid #b8a693;
+        border-radius: 10px;
+        padding: 6px;
+        gap: 6px;
+        box-shadow: 0 3px 8px #3d28150a;
+      }
+      .search-form:focus-within {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px #a14b2e13;
+      }
+      .search-symbol {
+        font-size: 23px;
+        align-self: center;
+        color: var(--muted);
+        margin: 0 6px 0 12px;
+        line-height: 1;
+      }
+      .search-form input {
+        width: 100%;
+        min-width: 0;
+        border: 0;
+        background: none;
+        padding: 12px 5px;
+        color: var(--ink);
+        outline: none;
+        font-size: 15px;
+      }
+      .search-form input:focus-visible {
+        outline: none;
+      }
+      .search-form button {
+        background: var(--ink);
+        color: var(--card);
+        border: 0;
+        border-radius: 6px;
+        padding: 10px 22px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .suggestions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 12px 0 24px;
+      }
+      .suggestions button {
+        background: none;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        color: var(--muted);
+        padding: 5px 11px;
+        font-size: 11px;
+      }
+      .suggestions button:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .filterbar {
+        display: flex;
+        align-items: end;
+        gap: 12px;
+        padding-bottom: 21px;
+        border-bottom: 1px solid var(--line);
+        flex-wrap: wrap;
+      }
+      .filterbar label {
+        display: grid;
+        gap: 5px;
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .filterbar select,
+      .filterbar input {
+        max-width: 150px;
+        background: transparent;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 7px 9px;
+        color: var(--ink);
+        font-size: 11px;
+        min-height: 34px;
+      }
+      .filterbar button {
+        border: 0;
+        background: none;
+        color: var(--muted);
+        font-size: 11px;
+        padding: 9px 0;
+        text-decoration: underline;
+      }
+      .feedback {
+        margin: 17px 0 10px;
+        font-size: 12px;
+        color: var(--muted);
+        min-height: 19px;
+      }
+      .error {
+        color: #9f2e22;
+      }
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
+        align-items: start;
+      }
+      .workspace.has-source {
+        grid-template-columns: minmax(300px, 0.9fr) minmax(340px, 1.1fr);
+      }
+      .results {
+        min-width: 0;
+      }
+      .result {
+        width: 100%;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        padding: 21px 23px;
+        margin: 0 0 12px;
+        text-align: left;
+        color: var(--ink);
+        display: block;
+      }
+      .result:hover,
+      .result[aria-pressed="true"] {
+        border-color: #b4886b;
+      }
+      .result[aria-pressed="true"] {
+        box-shadow: inset 3px 0 var(--accent);
+      }
+      .result-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 9px;
+      }
+      .format {
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 1.1px;
+        font-size: 9px;
+        font-weight: 600;
+      }
+      .date {
+        color: var(--muted);
+        font-size: 10px;
+        white-space: nowrap;
+      }
+      .result h2 {
+        font: 500 20px/1.3 var(--serif);
+        margin: 0 0 12px;
+      }
+      .excerpt {
+        font-size: 12px;
+        color: #51483f;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        line-height: 1.8;
+        display: block;
+      }
+      .result-bottom {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 15px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .open-text {
+        color: var(--accent);
+      }
+      mark {
+        color: inherit;
+        background: #f2dfb7;
+        padding: 1px 0;
+      }
+      .source {
+        position: sticky;
+        top: 22px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        min-width: 0;
+        overflow: hidden;
+      }
+      .source-head {
+        padding: 19px 22px 15px;
+        border-bottom: 1px solid var(--line);
+      }
+      .source-head h2 {
+        font: 500 22px/1.3 var(--serif);
+        margin: 7px 22px 8px 0;
+        overflow-wrap: anywhere;
+      }
+      .source-head p {
+        font-size: 10px;
+        color: var(--muted);
+        margin: 0;
+      }
+      .close-source {
+        float: right;
+        background: none;
+        border: 0;
+        padding: 0 3px;
+        font-size: 22px;
+        line-height: 1;
+        color: var(--muted);
+      }
+      .source-body {
+        margin: 0;
+        padding: 22px;
+        max-height: 65vh;
+        overflow: auto;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        font:
+          11px/1.9 ui-monospace,
+          SFMono-Regular,
+          Consolas,
+          monospace;
+        color: #544a40;
+      }
+      .source-body mark {
+        background: #f7e9ce;
+      }
+      .empty {
+        border: 1px dashed var(--line);
+        border-radius: 8px;
+        padding: 35px 24px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .empty strong {
+        display: block;
+        font: 500 22px var(--serif);
+        color: var(--ink);
+        margin-bottom: 10px;
+      }
+      .sources-heading {
+        font-size: 10px;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 22px 0 12px;
+      }
+      .disclosure {
+        color: var(--muted);
+        font-size: 10px;
+        line-height: 1.7;
+        margin-top: 24px;
+      }
+      .skip {
+        position: absolute;
+        left: -9999px;
+      }
+      .skip:focus {
+        left: 12px;
+        top: 12px;
+        z-index: 9;
+        background: white;
+        padding: 10px;
+      }
+      @media (min-width: 1450px) {
+        main {
+          padding-left: 54px;
+          padding-right: 54px;
+        }
+      }
+      @media (max-width: 1120px) {
+        .workspace.has-source {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .source {
+          position: relative;
+          top: 0;
+          grid-row: 1;
+        }
+        .source-body {
+          max-height: 45vh;
+        }
+      }
+      @media (max-width: 760px) {
+        .topbar {
+          padding: 0 20px;
+          height: 65px;
+        }
+        .brand {
+          font-size: 21px;
+        }
+        .product {
+          margin-left: 10px;
+          padding-left: 10px;
+          font-size: 11px;
+        }
+        .toplinks a {
+          display: none;
+        }
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+          padding: 18px 20px 13px;
+        }
+        .sidebar > .label {
+          margin-bottom: 8px;
+        }
+        .patient-list {
+          display: flex;
+          gap: 8px;
+        }
+        .patient-choice {
+          margin: 0;
+          width: 50%;
+          padding: 10px;
+        }
+        .sidebar-note,
+        .sidebar hr,
+        .sidebar .coverage-note {
+          display: none;
+        }
+        .sidebar .conflicts {
+          display: block;
+          margin-top: 14px;
+        }
+        main {
+          padding: 25px 20px 40px;
+        }
+        .patient-heading {
+          margin-bottom: 20px;
+        }
+        .patient-heading h1 {
+          font-size: 28px;
+        }
+        .patient-heading .mode {
+          display: none;
+        }
+        .search-form button {
+          padding: 10px 14px;
+        }
+        .search-form input {
+          font-size: 13px;
+        }
+        .filterbar {
+          gap: 9px;
+        }
+        .filterbar input {
+          width: 128px;
+        }
+        .result {
+          padding: 18px;
+        }
+        .source-body {
+          padding: 16px;
+        }
+        .toplinks {
+          gap: 8px;
+        }
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .result,
+        .patient-choice {
+          transition:
+            border-color 0.15s,
+            background 0.15s;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#search-input">Skip to chart search</a>
+    <header class="topbar">
+      <a class="brand" href="/"
+        >Primary AI<span class="product">Chart search</span></a
+      >
+      <nav class="toplinks" aria-label="Demo navigation">
+        <a href="/about">About Canon</a
+        ><span class="demo-tag">Synthetic charts</span>
+      </nav>
+    </header>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Synthetic patient charts">
+        <p class="label">Patient charts</p>
+        <div id="patients" class="patient-list"></div>
+        <p class="sidebar-note">
+          Explore the same patient across notes, lab feeds, and exported
+          records.
+        </p>
+        <hr />
+        <details class="conflicts" aria-label="Source disagreements" open>
+          <summary class="label">Source disagreements</summary>
+          <div id="conflicts"></div>
+        </details>
+        <hr />
+        <p class="coverage-note">
+          These are Canon’s bundled fictional records. Dates and statements
+          belong to the source documents.
+        </p>
+      </aside>
+      <main>
+        <div class="patient-heading">
+          <div>
+            <h1 id="patient-name">Search the patient chart</h1>
+            <div id="patient-meta" class="patient-meta">
+              Loading synthetic charts…
+            </div>
+          </div>
+          <span class="mode">Powered by Canon</span>
+        </div>
+        <form
+          id="search-form"
+          class="search-form"
+          role="search"
+          aria-label="Patient chart search"
+        >
+          <span class="search-symbol" aria-hidden="true">⌕</span
+          ><input
+            id="search-input"
+            name="q"
+            type="search"
+            maxlength="300"
+            aria-label="Search this patient's chart"
+            placeholder="Find a medication, result, or reason for a change"
+            autocomplete="off"
+          /><button id="search-button" type="submit">Search chart</button>
+        </form>
+        <div
+          id="suggestions"
+          class="suggestions"
+          aria-label="Example searches"
+        ></div>
+        <div class="filterbar">
+          <label for="format"
+            >Source format<select id="format">
+              <option value="">All formats</option>
+            </select></label
+          >
+          <label for="since">From<input id="since" type="date" /></label
+          ><label for="until">To<input id="until" type="date" /></label>
+          <button id="clear-filters" type="button">Reset filters</button>
+        </div>
+        <div
+          id="feedback"
+          class="feedback"
+          role="status"
+          aria-live="polite"
+        ></div>
+        <div class="workspace" id="workspace">
+          <section
+            id="results"
+            class="results"
+            aria-label="Search results"
+            aria-busy="true"
+          ></section>
+          <aside
+            id="source-panel"
+            class="source"
+            aria-label="Source document"
+            hidden
+          >
+            <div class="source-head">
+              <button
+                id="close-source"
+                class="close-source"
+                type="button"
+                aria-label="Close source document"
+              >
+                ×</button
+              ><span id="source-type" class="format"></span>
+              <h2 id="source-title" tabindex="-1"></h2>
+              <p id="source-meta"></p>
+            </div>
+            <pre
+              id="source-body"
+              class="source-body"
+              tabindex="0"
+              aria-label="Full source text"
+            ></pre>
+          </aside>
+        </div>
+        <p class="disclosure">
+          Results are passages from the selected synthetic chart. A match can
+          include a past condition, a negative finding, or a family history.
+          Read the source for context.
+        </p>
+      </main>
+    </div>
+    <script type="module">
+      const $ = (id) => document.getElementById(id);
+      const formats = {
+        text: "Clinical note",
+        pdf: "PDF letter",
+        fhir: "FHIR export",
+        hl7v2: "Lab feed",
+        ccda: "Hospital record",
+        csv: "Lab export",
+        x12_837: "Insurance claim",
+      };
+      const state = {
+        patients: [],
+        patient: null,
+        terms: [],
+        searchVersion: 0,
+        sourceVersion: 0,
+        controller: null,
+        sourceButton: null,
+      };
+      document.querySelector(".conflicts").open =
+        window.matchMedia("(min-width: 761px)").matches;
+      function element(tag, className, text) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+      }
+      function displayDate(value) {
+        if (!value) return "Undated source";
+        const day = value.slice(0, 10);
+        const date = new Date(day + "T12:00:00");
+        return Number.isNaN(date.getTime())
+          ? value
+          : date.toLocaleDateString("en-CA", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            });
+      }
+      async function request(path, signal) {
+        const response = await fetch(path, { signal });
+        const data = await response.json();
+        if (!response.ok)
+          throw new Error(data.error?.message || "Could not load this chart.");
+        return data;
+      }
+      function feedback(message, error = false) {
+        $("feedback").textContent = message;
+        $("feedback").classList.toggle("error", error);
+      }
+      function highlighted(text, terms) {
+        const fragment = document.createDocumentFragment();
+        const escaped = terms
+          .filter(Boolean)
+          .sort((a, b) => b.length - a.length)
+          .map((term) => term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+        if (!escaped.length) {
+          fragment.append(document.createTextNode(text));
+          return fragment;
+        }
+        const expression = new RegExp(
+          "\\b(?:" + escaped.join("|") + ")\\b",
+          "giu",
+        );
+        let start = 0;
+        for (const match of text.matchAll(expression)) {
+          fragment.append(
+            document.createTextNode(text.slice(start, match.index)),
+          );
+          fragment.append(element("mark", "", match[0]));
+          start = match.index + match[0].length;
+        }
+        fragment.append(document.createTextNode(text.slice(start)));
+        return fragment;
+      }
+      function closeSource(restoreFocus = false) {
+        state.sourceVersion++;
+        $("source-panel").hidden = true;
+        $("workspace").classList.remove("has-source");
+        document
+          .querySelectorAll(".result[aria-pressed=true]")
+          .forEach((button) => button.setAttribute("aria-pressed", "false"));
+        $("source-body").replaceChildren();
+        if (restoreFocus) state.sourceButton?.focus();
+      }
+      async function openSource(sourceRecord, button) {
+        closeSource();
+        const version = state.sourceVersion;
+        const patientId = state.patient.patient_id;
+        state.sourceButton = button;
+        button.setAttribute("aria-pressed", "true");
+        $("source-panel").hidden = false;
+        $("workspace").classList.add("has-source");
+        $("source-title").textContent =
+          sourceRecord.source_name || sourceRecord.filename;
+        $("source-meta").textContent = "Loading source…";
+        $("source-type").textContent =
+          formats[sourceRecord.format] || sourceRecord.format;
+        try {
+          const source = await request(
+            `/v1/playground/charts/${encodeURIComponent(patientId)}/documents/${encodeURIComponent(sourceRecord.document_id || sourceRecord.id)}/text`,
+          );
+          if (
+            version !== state.sourceVersion ||
+            patientId !== state.patient.patient_id
+          )
+            return;
+          $("source-meta").textContent = [
+            displayDate(source.document_date),
+            source.filename,
+            source.text_basis,
+            sourceRecord.locator,
+          ]
+            .filter(Boolean)
+            .join(" · ");
+          const body = $("source-body");
+          body.replaceChildren();
+          if (sourceRecord.start !== undefined) {
+            const chars = Array.from(source.text);
+            body.append(
+              document.createTextNode(
+                chars.slice(0, sourceRecord.start).join(""),
+              ),
+            );
+            const match = element(
+              "mark",
+              "",
+              chars.slice(sourceRecord.start, sourceRecord.end).join(""),
+            );
+            body.append(
+              match,
+              document.createTextNode(chars.slice(sourceRecord.end).join("")),
+            );
+            body.scrollTop = Math.max(0, match.offsetTop - body.offsetTop - 70);
+          } else body.textContent = source.text || source.warnings.join(" ");
+          $("source-title").focus({ preventScroll: true });
+          if (window.innerWidth < 1120)
+            $("source-panel").scrollIntoView({ block: "nearest" });
+        } catch (error) {
+          if (version === state.sourceVersion) {
+            $("source-meta").textContent = "Source could not be loaded.";
+            $("source-body").textContent = error.message;
+          }
+        }
+      }
+      function card(document, isResult) {
+        const button = element("button", "result");
+        button.type = "button";
+        button.setAttribute("aria-pressed", "false");
+        const top = element("span", "result-top");
+        top.append(
+          element(
+            "span",
+            "format",
+            formats[document.format] || document.format,
+          ),
+          element("span", "date", displayDate(document.document_date)),
+        );
+        button.append(
+          top,
+          element("h2", "", document.source_name || document.filename),
+        );
+        if (isResult) {
+          const excerpt = element("span", "excerpt");
+          excerpt.append(highlighted(document.excerpt, state.terms));
+          button.append(excerpt);
+        }
+        const bottom = element("span", "result-bottom");
+        bottom.append(
+          element("span", "", document.locator || document.filename),
+          element("span", "open-text", "Open source ↗"),
+        );
+        button.append(bottom);
+        button.addEventListener("click", () => openSource(document, button));
+        return button;
+      }
+      function showDocuments(documents) {
+        const results = $("results");
+        results.replaceChildren(
+          element("p", "sources-heading", "Source documents"),
+        );
+        for (const document of [...documents].sort((a, b) =>
+          (b.document_date || "").localeCompare(a.document_date || ""),
+        ))
+          results.append(card(document, false));
+        if (!documents.length)
+          results.append(
+            element("p", "empty", "No source documents match these filters."),
+          );
+      }
+      async function search() {
+        if (!state.patient) return;
+        closeSource();
+        state.controller?.abort();
+        state.controller = new AbortController();
+        const version = ++state.searchVersion;
+        const query = $("search-input").value.trim();
+        const params = new URLSearchParams({ q: query });
+        for (const key of ["format", "since", "until"])
+          if ($(key).value) params.set(key, $(key).value);
+        $("results").setAttribute("aria-busy", "true");
+        $("results").replaceChildren();
+        feedback("Searching this chart…");
+        try {
+          const result = await request(
+            `/v1/playground/charts/${encodeURIComponent(state.patient.patient_id)}/search?${params}`,
+            state.controller.signal,
+          );
+          if (version !== state.searchVersion) return;
+          state.terms = result.terms;
+          const coverage = result.coverage;
+          const dates = coverage.first_date
+            ? ` · ${displayDate(coverage.first_date)} – ${displayDate(coverage.last_date)}`
+            : "";
+          feedback(
+            `${result.total} matching source${result.total === 1 ? "" : "s"} · ${coverage.searched_documents} of ${coverage.documents} documents searched${dates}`,
+          );
+          if (coverage.unsearchable_documents)
+            feedback(
+              $("feedback").textContent +
+                ` · ${coverage.unsearchable_documents} document(s) need OCR`,
+            );
+          if (!query) {
+            feedback(
+              `${coverage.selected_documents} of ${coverage.documents} source documents${dates}`,
+            );
+            showDocuments(result.documents);
+            return;
+          }
+          if (!result.results.length) {
+            const empty = element("div", "empty");
+            empty.append(
+              element("strong", "", "No matching passages"),
+              document.createTextNode(
+                "Try a medication name, a shorter phrase, or a wider date range. This search covers the connected source documents.",
+              ),
+            );
+            $("results").append(empty);
+            return;
+          }
+          for (const document of result.results)
+            $("results").append(card(document, true));
+          if (result.total > result.results.length)
+            $("results").append(
+              element(
+                "p",
+                "coverage-note",
+                `Showing the first ${result.results.length} matching sources. Narrow your search to see more.`,
+              ),
+            );
+        } catch (error) {
+          if (error.name !== "AbortError" && version === state.searchVersion)
+            feedback(error.message, true);
+        } finally {
+          if (version === state.searchVersion)
+            $("results").setAttribute("aria-busy", "false");
+        }
+      }
+      function selectPatient(patient) {
+        state.controller?.abort();
+        state.searchVersion++;
+        closeSource();
+        state.patient = patient;
+        document
+          .querySelectorAll(".patient-choice")
+          .forEach((button) =>
+            button.setAttribute(
+              "aria-pressed",
+              String(button.dataset.patient === patient.patient_id),
+            ),
+          );
+        $("patient-name").textContent =
+          (patient.patient.names || [])[0] || "Synthetic patient";
+        $("patient-meta").textContent =
+          `DOB ${displayDate(patient.patient.birth_date)} · ${patient.documents.length} source documents · Fictional patient`;
+        $("suggestions").replaceChildren();
+        for (const question of patient.questions) {
+          const button = element("button", "", question);
+          button.type = "button";
+          button.addEventListener("click", () => {
+            $("search-input").value = question;
+            search();
+          });
+          $("suggestions").append(button);
+        }
+        $("format").replaceChildren(new Option("All formats", ""));
+        for (const format of [
+          ...new Set(patient.documents.map((document) => document.format)),
+        ])
+          $("format").add(new Option(formats[format], format));
+        $("since").value = "";
+        $("until").value = "";
+        $("search-input").value = patient.questions[0];
+        $("conflicts").replaceChildren(
+          element(
+            "p",
+            "conflict-count",
+            `${patient.conflicts.length} flagged by Canon`,
+          ),
+        );
+        for (const conflict of patient.conflicts)
+          $("conflicts").append(
+            element("p", "conflict-item", conflict.message),
+          );
+        search();
+      }
+      $("search-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        search();
+      });
+      for (const key of ["format", "since", "until"])
+        $(key).addEventListener("change", search);
+      $("clear-filters").addEventListener("click", () => {
+        for (const key of ["format", "since", "until"]) $(key).value = "";
+        search();
+      });
+      $("close-source").addEventListener("click", () => closeSource(true));
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeSource(true);
+      });
+      $("search-input").addEventListener("input", () => {
+        if (!$("search-input").value) search();
+      });
+      try {
+        const data = await request("/v1/playground/charts");
+        state.patients = data.patients;
+        for (const patient of state.patients) {
+          const button = element("button", "patient-choice");
+          button.type = "button";
+          button.dataset.patient = patient.patient_id;
+          button.append(
+            element(
+              "strong",
+              "",
+              (patient.patient.names || [])[0] || "Synthetic patient",
+            ),
+            element(
+              "small",
+              "",
+              `${patient.documents.length} sources · ${patient.patient.sex || ""}`,
+            ),
+          );
+          button.addEventListener("click", () => selectPatient(patient));
+          $("patients").append(button);
+        }
+        if (state.patients.length) selectPatient(state.patients[0]);
+        else feedback("No synthetic charts are available.", true);
+      } catch (error) {
+        feedback(error.message, true);
+        $("results").setAttribute("aria-busy", "false");
+      }
+    </script>
+  </body>
+</html>
