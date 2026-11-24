@@ -84,6 +84,11 @@ matching document. Empty searches list documents within the same filters. Dates 
 to Canon's document dates, which can come from clinical content or document generation.
 Date filters exclude undated documents. Image-only PDFs are reported as needing OCR.
 
+The repository's Vercel deployment serves the synthetic chart demo through
+`api/index.py`. The home page redirects to `/chart-search`. The hosted entry point
+allows only the demo pages and reads from the bundled synthetic charts. It uses an
+in-memory database and needs no database credentials or model keys.
+
 ## Quickstart (Python 3.10+, no dependencies)
 
 ```bash

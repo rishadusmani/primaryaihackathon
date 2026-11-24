@@ -50,7 +50,7 @@ class Canon:
     # ------------------------------------------------------------------ ingest
     def ingest(self, data: bytes | str, *, filename: str | None = None, content_type: str | None = None,
                fmt: str | None = None, patient_id: str | None = None, source_name: str | None = None,
-               use_llm: bool | None = None, actor: str = "api") -> dict:
+               use_llm: bool | None = None, actor: str = "api", document_id: str | None = None) -> dict:
         raw = data.encode("utf-8") if isinstance(data, str) else data
         if not raw.strip():
             raise CanonError("empty_document", "Document is empty.")
@@ -100,7 +100,7 @@ class Canon:
             info["generated"] = {"date": produced["generated"], "locator": produced["provenance"]["locator"]}
         if doc_date:
             info["date_basis"] = "clinical" if days else "generated"
-        doc_id = new_id("doc")
+        doc_id = document_id or new_id("doc")
         received = _now()
         self.store.execute("INSERT INTO patients (account_id, id, created_at) VALUES (?,?,?) ON CONFLICT DO NOTHING",
                            (self.account_id, pid, received))

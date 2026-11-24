@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 
 from . import playground, live_terminology
 from .service import Canon
@@ -23,7 +24,8 @@ class ChartDemo:
                     raw = (base64.b64decode(document["content"]) if document["encoding"] == "base64"
                            else document["content"].encode())
                     self.canon.ingest(raw, filename=document["filename"], source_name=document["source_name"],
-                                      patient_id=patient_id, use_llm=False, actor="synthetic_demo")
+                                      patient_id=patient_id, use_llm=False, actor="synthetic_demo",
+                                      document_id="demo_doc_" + hashlib.sha256(patient_id.encode() + raw).hexdigest()[:24])
             record = self.canon.record(patient_id, actor=None)
             self.patients.append({"patient_id": patient_id, "patient": record["patient"],
                                   "documents": record["sources"], "conflicts": record["conflicts"],
